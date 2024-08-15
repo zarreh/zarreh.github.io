@@ -1,0 +1,15 @@
+User-agent: *
+Disallow: /private/
+Disallow: /tmp/
+Disallow: /old/
+Disallow: /test/
+Disallow: /cgi-bin/
+Disallow: /admin/
+Disallow: /images/
+Disallow: /Archive/
+
+# Allow all other areas of the site to be indexed
+Allow: /
+
+# Specify the location of the sitemap
+Sitemap: https://www.zarreh.ai/sitemap.xml
