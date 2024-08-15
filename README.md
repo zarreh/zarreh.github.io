@@ -3,5 +3,6 @@
 - [ ] Fix portfolio size
 - [x] tab show title
 - [ ] work on meta and tags
-- [ ] old website --> my CV
+- [x] old website --> my CV
 - [ ] Add another project
+- [ ] Add google analytics
