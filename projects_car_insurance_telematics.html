@@ -1,11 +1,11 @@
 <!DOCTYPE HTML>
 <html>
     <head>
-        <title>Forecasting Engine for Retail Analytics - Ali Zarreh</title>
+        <title>Car Insurance Telematics Risk Assessment - Ali Zarreh</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-        <meta name="description" content="Ali Zarreh's detailed project on Forecasting Engine for Retail Analytics. Discover the technological innovations and impacts in retail analytics." />
-        <meta name="keywords" content="Ali Zarreh, Ali R. Zarreh, Alireza Zarreh, Forecasting Engine, Retail Analytics, Machine Learning, Ray, Vertex AI, Google Cloud Platform, GCP, Distributed Computing, Inventory Management, Data Science, Scalable Solutions" />
+        <meta name="description" content="Ali Zarreh's comprehensive project on Car Insurance Telematics Risk Assessment. Explore advanced machine learning models and telematics data analysis for insurance risk prediction." />
+        <meta name="keywords" content="Ali Zarreh, Ali R. Zarreh, Alireza Zarreh, Car Insurance, Telematics, Machine Learning, XGBoost, Optuna, Feature Engineering, Risk Assessment, Data Science" />
         <link rel="stylesheet" href="assets/css/main.css" />
         <link rel="icon" type="image/png" href="images/Header_icon.png" />
         <!-- Google tag (gtag.js) -->
@@ -20,15 +20,15 @@
             {
               "@context": "https://schema.org",
               "@type": "CreativeWork",
-              "name": "Forecasting Engine for Retail Analytics",
-              "url": "https://www.zarreh.ai/projects_demand_forecast.html",
+              "name": "Car Insurance Telematics Risk Assessment",
+              "url": "https://www.zarreh.ai/projects_car_insurance_telematics.html",
               "creator": {
                 "@type": "Person",
                 "name": "Ali Zarreh"
               },
-              "datePublished": "2024-01-01",
-              "description": "Developed a robust forecasting engine at a retail company, utilizing Ray and Vertex AI on GCP. Achieved 9% error reduction and 15% reduction for promoted items.",
-              "keywords": ["Forecasting", "Machine Learning", "Data Science", "Retail Analytics", "Ray", "Vertex AI", "GCP", "Big Data"]
+              "datePublished": "2024-07-01",
+              "description": "Developed a comprehensive machine learning system to predict insurance claim probability and severity using telematics data. Features advanced feature engineering, XGBoost modeling with Optuna hyperparameter tuning, and a modular inference pipeline.",
+              "keywords": ["Car Insurance", "Telematics", "Machine Learning", "XGBoost", "Optuna", "Feature Engineering", "Risk Assessment", "Data Science"]
             }
             </script>
             
@@ -53,46 +53,54 @@
                     <!-- Content -->                    
                     <section>
                             <header class="main">
-                                <h1>Forecasting Engine for Retail Analytics</h1>
+                                <h1>Car Insurance Telematics Risk Assessment</h1>
                             </header>
                             <!-- Header Image -->
-                            <span class="image main"><img src="images/Demand-Forecasting-in-Retail-Industry-1.jpg" alt="Forecasting Engine for Retail Analytics by Ali Zarreh" /></span>
+                            <span class="image main"><img src="images/telematics-project.jpg" alt="Car Insurance Telematics Risk Assessment by Ali Zarreh" /></span>
         
                             <!-- Introduction -->
-                            <p>Welcome to an in-depth look at the Forecasting Engine for Retail Analytics project. This project was spearheaded at retail company, where I, Ali Zarreh, led the development of a robust forecasting engine utilizing Ray and Vertex AI on Google Cloud Platform (GCP). The project achieved remarkable results, including a 9% error reduction and a 15% reduction for promoted items, ultimately enhancing inventory efficiency by 5%.</p>
+                            <p>Welcome to an in-depth look at the Car Insurance Telematics Risk Assessment project. This project involves developing a comprehensive machine learning system to predict insurance claim probability and severity using telematics data collected from vehicles. The system leverages advanced feature engineering, XGBoost models tuned with Optuna, and a modular inference pipeline to deliver accurate and interpretable risk assessments.</p>
         
                             <!-- Project Overview -->
                             <h2>Project Overview</h2>
-                            <p>The primary objective of this project was to develop a highly accurate and scalable forecasting engine capable of predicting demand for retail products, particularly focusing on promoted items. This engine was built using advanced technologies such as Ray for distributed computing and Vertex AI for managing machine learning workflows on GCP. The end goal was to minimize forecasting errors, optimize inventory management, and improve overall operational efficiency at the company.</p>
+                            <p>The goal of this project is to utilize telematics data—such as driving behavior, trip characteristics, and environmental factors—to build predictive models that estimate the likelihood and expected cost of insurance claims. The project includes extensive feature engineering, hyperparameter optimization using Optuna, and deployment-ready inference pipelines.</p>
         
                             <!-- Technologies Used -->
                             <h2>Technologies Used</h2>
                             <ul>
-                                <li><strong>Ray:</strong> Used for distributed computing, enabling the engine to handle large datasets and complex computations efficiently.</li>
-                                <li><strong>Vertex AI:</strong> Managed machine learning workflows, simplifying model deployment and monitoring in a production environment.</li>
-                                <li><strong>BigQuery:</strong> Used for extensive preprocessing and feature engeering.</li>
-                                <li><strong>Google Cloud Platform (GCP):</strong> Provided the cloud infrastructure, ensuring scalability and reliability of the forecasting engine.</li>
+                                <li><strong>Python:</strong> Core programming language for data processing and modeling.</li>
+                                <li><strong>XGBoost:</strong> Gradient boosting framework used for both classification and regression models.</li>
+                                <li><strong>Optuna:</strong> Hyperparameter optimization framework to tune model parameters efficiently.</li>
+                                <li><strong>Pandas & NumPy:</strong> Data manipulation and numerical computing.</li>
+                                <li><strong>Scikit-learn:</strong> Utilities for preprocessing, model evaluation, and calibration.</li>
+                                <li><strong>Jupyter Notebooks:</strong> Interactive experimentation and documentation.</li>
                             </ul>
         
                             <!-- Achievements and Impact -->
                             <h2>Achievements and Impact</h2>
                             <ul>
-                                <li>9% reduction in forecasting error, improving accuracy in demand predictions.</li>
-                                <li>15% reduction in forecasting error specifically for promoted items, significantly enhancing promotional strategy.</li>
-                                <li>5% increase in inventory efficiency, reducing waste and ensuring better stock availability.</li>
+                                <li>Developed a dual-model system predicting claim probability and severity with high accuracy.</li>
+                                <li>Implemented advanced feature engineering capturing driving behavior and environmental context.</li>
+                                <li>Optimized model performance using Optuna hyperparameter tuning.</li>
+                                <li>Created a modular and reusable inference pipeline for batch and real-time predictions.</li>
                             </ul>
         
                             <!-- Challenges and Solutions -->
                             <h2>Challenges and Solutions</h2>
-                            <p>During the development of the forecasting engine, one of the major challenges was managing the complexity of data across different product categories and promotional scenarios. By leveraging Ray for parallel processing and Vertex AI for streamlined machine learning workflows, we were able to address these challenges effectively, ensuring that the engine could deliver accurate predictions in a timely manner.</p>
+                            <p>Handling imbalanced claim data and skewed claim amounts were key challenges. These were addressed by using XGBoost’s scale_pos_weight parameter, log-transforming claim amounts, and carefully tuning hyperparameters with Optuna. Feature selection and engineering were critical to improving model generalization and interpretability.</p>
         
                             <!-- Future Work and Aspirations -->
                             <h2>Future Work and Aspirations</h2>
-                            <p>Looking ahead, there are plans to further refine the forecasting engine, incorporating more advanced machine learning models and expanding its applicability to other areas of retail operations. The insights and methodologies developed in this project will also be shared with the broader data science community to contribute to ongoing advancements in retail analytics.</p>
+                            <p>Future plans include integrating additional data sources such as weather and traffic, exploring deep learning models for temporal patterns, and deploying the system in a cloud environment for scalable real-time risk assessment.</p>
         
                             <!-- Call to Action -->
                             <h2>Explore More Projects</h2>
                             <p>If you're interested in learning more about my work or discussing potential collaborations, feel free to explore more of my projects in the portfolio section or get in touch directly.</p>
+
+                            <!-- Source Code Link -->
+                            <h2>Source Code</h2>
+                            <p>The full source code for this project is available on GitHub:</p>
+                            <p><a href="https://github.com/zarreh/car_insurance_telematics" target="_blank" class="button">View on GitHub</a></p>
         
                         </section>
                 </div>
