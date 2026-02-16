@@ -1,0 +1,289 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    <head>
+        <title>DualLens Analytics - RAG-Powered Investment Analysis - Ali Zarreh</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+        <meta name="description" content="Ali Zarreh's comprehensive project on DualLens Analytics - RAG-Powered Investment Analysis combining quantitative financial metrics with qualitative AI-initiative insights through a Retrieval-Augmented Generation pipeline." />
+        <meta name="keywords" content="Ali Zarreh, Ali R. Zarreh, Alireza Zarreh, DualLens Analytics, RAG, Investment Analysis, LangChain, ChromaDB, Streamlit, OpenAI, Financial Analysis, Vector Store, LLM" />
+        <link rel="stylesheet" href="assets/css/main.css" />
+        <link rel="icon" type="image/png" href="images/Header_icon.png" />
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-5GB5WB919N"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-5GB5WB919N');
+        </script>
+        <script type="application/ld+json">
+            {
+              "@context": "https://schema.org",
+              "@type": "CreativeWork",
+              "name": "DualLens Analytics - RAG-Powered Investment Analysis",
+              "url": "https://www.zarreh.ai/projects_duallens_analytics.html",
+              "creator": {
+                "@type": "Person",
+                "name": "Ali Zarreh"
+              },
+              "datePublished": "2025-02-15",
+              "description": "A production-grade RAG-powered investment analysis platform combining quantitative financial metrics from Yahoo Finance with qualitative AI-initiative insights extracted from company PDF reports, delivered through an interactive Streamlit dashboard.",
+              "keywords": ["DualLens Analytics", "RAG", "Investment Analysis", "LangChain", "ChromaDB", "Streamlit", "OpenAI", "Financial Analysis", "Vector Store", "LLM"]
+            }
+        </script>
+    </head>
+    <body class="is-preload">
+        <!-- Wrapper -->
+        <div id="wrapper">
+            <!-- Main -->
+            <div id="main">
+                <div class="inner">
+                    <!-- Header -->
+                    <header id="header">
+                        <a href="index.html" class="logo"><strong>Ali Zarreh</strong> - zarreh.ai</a>
+                        <ul class="icons">
+                            <li><a href="https://github.com/zarreh" class="icon brands fa-github" target="_blank"><span class="label">GitHub</span></a></li>
+                            <li><a href="https://www.linkedin.com/in/ali-zarreh" class="icon brands fa-linkedin" target="_blank"><span class="label">LinkedIn</span></a></li>
+                            <li><a href="https://scholar.google.com/citations?hl=en&user=BOhaCCAAAAAJ" class="icon brands fa-google" target="_blank"><span class="label">Google Scholar</span></a></li>
+                        </ul>
+                    </header>
+
+                    <!-- Content -->
+                    <section>
+                            <header class="main">
+                                <h1>DualLens Analytics — RAG-Powered Investment Analysis</h1>
+                            </header>
+                            <!-- Header Image -->
+                            <span class="image main"><img src="images/intelligent-invoice-processing-1920x639.jpg" alt="DualLens Analytics - RAG-Powered Investment Analysis by Ali Zarreh" /></span>
+
+                            <!-- Introduction -->
+                            <p>Explore DualLens Analytics, a production-grade investment analysis platform that merges two complementary lenses — quantitative financial metrics and qualitative AI-strategy insights — into a single interactive dashboard. By combining real-time Yahoo Finance data with a Retrieval-Augmented Generation (RAG) pipeline grounded in company PDF reports, the system enables investors and analysts to make more informed assessments of a company's financial health and AI readiness.</p>
+
+                            <!-- Project Overview -->
+                            <h2>Project Overview</h2>
+                            <p>DualLens Analytics delivers a <strong>dual-lens</strong> view of public companies by fusing two data streams: <strong>real-time stock prices and financial metrics</strong> from Yahoo Finance, and <strong>AI-strategy insights</strong> extracted from curated company PDF reports through a RAG pipeline powered by LangChain and ChromaDB. The result is an interactive four-tab Streamlit dashboard where users can explore financial trends, ask natural-language questions about AI initiatives, compare companies side-by-side, and view composite investment rankings — all grounded in a persisted vector knowledge base with <strong>36+ automated tests</strong> and <strong>Docker-ready deployment</strong>.</p>
+
+                            <!-- Technology Stack -->
+                            <h2>Technology Stack &amp; Architecture</h2>
+                            <h3>Core Technologies &amp; Architectural Decisions</h3>
+                            <ul>
+                                <li><strong>RAG Pipeline:</strong> LangChain orchestration with OpenAI <code>gpt-4o-mini</code> for generation and <code>text-embedding-ada-002</code> for semantic embeddings</li>
+                                <li><strong>Vector Store:</strong> ChromaDB with persistent storage, load-or-build logic for instant restarts, and cosine-similarity retrieval</li>
+                                <li><strong>Financial Data Engine:</strong> Yahoo Finance (<code>yfinance</code>) providing real-time stock prices, key metrics, and historical performance data</li>
+                                <li><strong>Interactive Frontend:</strong> Streamlit 4-tab layout with Plotly interactive charts, radar comparisons, and chat-style Q&amp;A interface</li>
+                                <li><strong>Configuration Management:</strong> Hydra / OmegaConf for structured YAML config with <code>.env</code> secrets management via python-dotenv</li>
+                                <li><strong>Production Deployment:</strong> Multi-stage Docker build, Docker Compose with health checks, NGINX reverse proxy with HTTPS</li>
+                                <li><strong>Code Quality:</strong> Poetry packaging, Ruff linting/formatting, pytest (36+ tests), MkDocs + mkdocs-material documentation</li>
+                            </ul>
+
+                            <h3>RAG Architecture Innovation</h3>
+                            <ul>
+                                <li><strong>Intelligent Document Pipeline:</strong> Automated ZIP extraction → PDF parsing → recursive character splitting with tiktoken-based chunking (1000 tokens, 200 overlap)</li>
+                                <li><strong>Persistent Vector Store:</strong> Load-or-build pattern that skips re-indexing on subsequent runs, reducing startup time from minutes to milliseconds</li>
+                                <li><strong>LLM-as-Judge Evaluation:</strong> Automated groundedness and relevance scoring (1–5) with justification for every RAG response</li>
+                                <li><strong>Composite Investment Ranking:</strong> Novel scoring algorithm blending quantitative financial metrics with LLM-assessed AI-strategy strength</li>
+                                <li><strong>Context-Grounded Generation:</strong> System prompts enforce answers strictly from retrieved context, preventing hallucination on financial topics</li>
+                                <li><strong>Multi-Company Analysis:</strong> Simultaneous tracking and comparison of GOOGL, MSFT, IBM, NVDA, and AMZN across both lenses</li>
+                            </ul>
+
+                            <!-- Dashboard Features -->
+                            <h2>Interactive Dashboard &amp; Features</h2>
+
+                            <h3>Four Specialized Analysis Tabs</h3>
+                            <p>The Streamlit dashboard provides four distinct analytical perspectives, each combining data from multiple sources:</p>
+
+                            <h4>📊 Dashboard — Financial Overview</h4>
+                            <ul>
+                                <li><strong>Stock Price Trends:</strong> Interactive Plotly time-series charts with configurable date ranges and multi-company overlays</li>
+                                <li><strong>Key Financial Metrics:</strong> Real-time Market Cap, P/E Ratio, Dividend Yield, Beta, and Total Revenue displayed in sortable tables</li>
+                                <li><strong>Visual Comparisons:</strong> Bar charts and radar diagrams for quick multi-company financial health assessment</li>
+                            </ul>
+
+                            <h4>🤖 AI Q&amp;A — RAG-Powered Intelligence</h4>
+                            <ul>
+                                <li><strong>Natural-Language Queries:</strong> Ask questions like "What is Google's approach to generative AI?" and receive context-grounded answers</li>
+                                <li><strong>Source Transparency:</strong> Every answer shows the retrieved PDF excerpts used for generation, enabling verification</li>
+                                <li><strong>Evaluation Scores:</strong> Automatic groundedness and relevance ratings via LLM-as-Judge for answer quality assurance</li>
+                            </ul>
+
+                            <h4>⚖️ Compare — Side-by-Side Analysis</h4>
+                            <ul>
+                                <li><strong>Financial Radar Charts:</strong> Multi-dimensional comparison of two companies across key financial metrics</li>
+                                <li><strong>AI-Initiative Summaries:</strong> LLM-generated comparative summaries of each company's AI strategy and investments</li>
+                                <li><strong>Dual-Lens Verdict:</strong> Combined quantitative + qualitative assessment for informed decision-making</li>
+                            </ul>
+
+                            <h4>🏆 Rankings — Composite Scoring</h4>
+                            <ul>
+                                <li><strong>Blended Investment Score:</strong> Proprietary algorithm combining financial health metrics with AI-strategy assessment</li>
+                                <li><strong>LLM-Powered Justification:</strong> Each ranking includes a detailed explanation of scoring factors</li>
+                                <li><strong>Dynamic Re-ranking:</strong> Scores update with latest financial data on every session</li>
+                            </ul>
+
+                            <!-- Technical Deep Dive -->
+                            <h2>Technical Excellence &amp; Engineering</h2>
+
+                            <h3>RAG Pipeline Architecture</h3>
+                            <p>The core intelligence layer implements a five-stage pipeline optimized for financial document analysis:</p>
+                            <ul>
+                                <li><strong>Document Ingestion:</strong> Automated extraction of company AI-initiative PDF reports from ZIP archive with intelligent directory discovery</li>
+                                <li><strong>Chunking Strategy:</strong> <code>RecursiveCharacterTextSplitter</code> with tiktoken (<code>cl100k_base</code>) encoding — 1000-token chunks with 200-token overlap preserving cross-boundary context</li>
+                                <li><strong>Embedding &amp; Indexing:</strong> OpenAI <code>text-embedding-ada-002</code> vectors stored in ChromaDB with persistent SQLite-backed storage at <code>data/chroma_db/</code></li>
+                                <li><strong>Similarity Retrieval:</strong> Cosine-similarity search returning top-k (configurable, default 10) most relevant document chunks per query</li>
+                                <li><strong>Grounded Generation:</strong> Context-injected prompts sent to <code>gpt-4o-mini</code> with strict instructions to answer only from retrieved passages</li>
+                            </ul>
+
+                            <h3>Production-Grade Infrastructure</h3>
+                            <ul>
+                                <li><strong>Multi-Stage Docker Build:</strong> Poetry dependency installation in builder stage, slim Python 3.12 runtime image (~1.2 GB with ML libraries)</li>
+                                <li><strong>Docker Compose Orchestration:</strong> Single-command deployment with <code>.env</code> injection, named volumes for data persistence, and container health checks</li>
+                                <li><strong>NGINX Reverse Proxy:</strong> WebSocket-aware proxy configuration with Let's Encrypt HTTPS for production domains</li>
+                                <li><strong>CI/CD Pipeline:</strong> GitHub Actions workflow for automated MkDocs build and GitHub Pages deployment on every push to <code>main</code></li>
+                                <li><strong>Structured Configuration:</strong> Hydra/OmegaConf YAML config with CLI overrides for LLM parameters, chunking, retrieval, and company selection</li>
+                            </ul>
+
+                            <h3>Code Quality &amp; Testing</h3>
+                            <ul>
+                                <li><strong>36+ Automated Tests:</strong> Comprehensive pytest suite covering config loading, data processing, evaluation logic, financial calculations, and report generation</li>
+                                <li><strong>Ruff Lint &amp; Format:</strong> Zero-warning codebase with enforced import sorting, type annotation checks, and best-practice rules</li>
+                                <li><strong>Google-Style Docstrings:</strong> Complete API documentation on all public functions and classes, auto-generated into MkDocs via mkdocstrings</li>
+                                <li><strong>Makefile Automation:</strong> 11+ developer workflow commands — <code>make check</code> runs lint, format-check, and tests in a single pass</li>
+                            </ul>
+
+                            <!-- Configuration -->
+                            <h2>Flexible Configuration &amp; Tuning</h2>
+                            <p>Every aspect of the pipeline is configurable through Hydra YAML, enabling rapid experimentation without code changes:</p>
+
+                            <table>
+                                <thead>
+                                    <tr><th>Parameter</th><th>Config Key</th><th>Default</th><th>Effect</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>Chunk size</td><td><code>chunking.chunk_size</code></td><td>1000</td><td>Larger = more context per chunk</td></tr>
+                                    <tr><td>Chunk overlap</td><td><code>chunking.chunk_overlap</code></td><td>200</td><td>Higher = less info loss at boundaries</td></tr>
+                                    <tr><td>Top-k results</td><td><code>retriever.k</code></td><td>10</td><td>More docs = richer context but noisier</td></tr>
+                                    <tr><td>Temperature</td><td><code>llm.temperature</code></td><td>0.0</td><td>Lower = more deterministic answers</td></tr>
+                                    <tr><td>Max tokens</td><td><code>llm.max_tokens</code></td><td>5000</td><td>Cap on answer length</td></tr>
+                                    <tr><td>LLM model</td><td><code>llm.model</code></td><td>gpt-4o-mini</td><td>Swap to gpt-4o, Claude, etc.</td></tr>
+                                    <tr><td>Companies</td><td><code>companies</code></td><td>GOOGL, MSFT, IBM, NVDA, AMZN</td><td>Add or remove tickers</td></tr>
+                                </tbody>
+                            </table>
+
+                            <!-- Technical Challenges -->
+                            <h2>Engineering Challenges &amp; Solutions</h2>
+
+                            <h3>Persistent Vector Store with Load-or-Build Pattern</h3>
+                            <p><strong>Challenge:</strong> Re-embedding hundreds of PDF pages on every application restart wasted time and API tokens. <strong>Solution:</strong> Engineered a <code>collection_exists()</code> check that detects an existing ChromaDB collection and loads it instantly, only triggering the full embed pipeline on first run or after explicit cache invalidation.</p>
+
+                            <h3>Dual-Lens Composite Scoring</h3>
+                            <p><strong>Challenge:</strong> Combining fundamentally different data types — numerical financial metrics and unstructured AI-strategy text — into a single investment ranking. <strong>Solution:</strong> Designed a hybrid scoring algorithm where financial metrics are normalized and weighted, then blended with LLM-assessed AI-strategy scores to produce a unified ranking with transparent justification.</p>
+
+                            <h3>Grounded Generation &amp; Hallucination Prevention</h3>
+                            <p><strong>Challenge:</strong> LLMs naturally generate plausible-sounding but fabricated financial data. <strong>Solution:</strong> Implemented strict context-grounding via system prompts that instruct the model to answer only from retrieved passages, paired with an LLM-as-Judge evaluation layer that scores groundedness and relevance for every response.</p>
+
+                            <h3>Production Docker Deployment</h3>
+                            <p><strong>Challenge:</strong> Complex dependency tree (tiktoken, ChromaDB native libraries, PyPDF) requiring careful build management. <strong>Solution:</strong> Multi-stage Docker build with Poetry dependency resolution in an isolated builder stage, producing a clean slim runtime image with named volumes for persistent data across container restarts.</p>
+
+                            <!-- Future Vision -->
+                            <h2>Scalability Vision &amp; Future Roadmap</h2>
+
+                            <h3>Planned Enhancements</h3>
+                            <ul>
+                                <li><strong>Extended Data Sources:</strong> Integration with SEC EDGAR filings, earnings call transcripts, and analyst reports for deeper qualitative analysis</li>
+                                <li><strong>Real-Time Streaming:</strong> WebSocket-based live price feeds replacing periodic Yahoo Finance polling for intraday analysis</li>
+                                <li><strong>Multi-Modal RAG:</strong> Chart and table extraction from PDF reports using vision models for richer document understanding</li>
+                                <li><strong>User Portfolio Tracking:</strong> Personalized watchlists with alerting when AI-strategy scores change significantly</li>
+                                <li><strong>Advanced Evaluation:</strong> A/B testing framework for prompt variations with automated metric tracking across retrieval strategies</li>
+                                <li><strong>Federated Knowledge Base:</strong> Multi-tenant vector store supporting custom document uploads per user or organization</li>
+                            </ul>
+
+                            <!-- Impact -->
+                            <h2>Impact &amp; Technical Excellence</h2>
+                            <p>DualLens Analytics demonstrates <strong>end-to-end AI engineering mastery</strong> — from RAG pipeline design and LLM orchestration to production Docker deployment and automated documentation. The project bridges the gap between quantitative financial analysis and qualitative AI-strategy assessment, delivering a tool that provides genuinely novel insights unavailable from either data source alone.</p>
+
+                            <p>The system showcases <strong>production-grade software engineering practices</strong>: comprehensive test coverage, type-safe configuration, structured logging, CI/CD automation, and security-conscious secrets management. Every architectural decision — from the persistent vector store to the multi-stage Docker build — reflects real-world deployment considerations for enterprise AI applications.</p>
+
+                            <p><strong>Key Technical Metrics:</strong> 36+ automated tests, zero lint warnings, sub-second vector store loads on subsequent runs, configurable pipeline with 7+ tunable parameters, and single-command Docker deployment with health monitoring. This project exemplifies the intersection of financial domain expertise and modern AI engineering.</p>
+
+                            <!-- Source Code Links -->
+                            <h2>Technical Resources &amp; Documentation</h2>
+                            <p>Comprehensive technical implementation showcasing production-grade RAG architecture and investment analysis system design:</p>
+                            <p>
+                                <a href="https://duallens.zarreh.ai/" target="_blank" class="button primary">Live Demo</a>
+                                <a href="https://github.com/zarreh/DualLens-Analytics" target="_blank" class="button">View Source Code</a>
+                                <a href="https://docs-duallens.zarreh.ai/" target="_blank" class="button">Technical Documentation</a>
+                            </p>
+
+                    </section>
+                </div>
+            </div>
+            <!-- Sidebar -->
+            <div id="sidebar">
+                <div class="inner">
+                    <!-- Menu -->
+                    <nav id="menu">
+                        <header class="major">
+                            <h2>Menu</h2>
+                        </header>
+                        <ul>
+                            <li><a href="index.html">Homepage</a></li>
+                            <li>
+                                <span class="opener">About Me</span>
+                                <ul>
+                                    <li><a href="biography.html">Biography</a></li>
+                                    <li><a href="about.html">My Background</a></li>
+                                    <li><a href="experiences.html">Professional Experiences</a></li>
+                                    <li><a href="research.html">Publications and Research</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <span class="opener">Portfolio</span>
+                                <ul>
+                                    <li><a href="projects_rxflow_pharmacy.html">RxFlow Pharmacy Assistant: AI-Powered Healthcare Workflow Automation</a></li>
+                                    <li><a href="projects_duallens_analytics.html">DualLens Analytics: RAG-Powered Investment Analysis</a></li>
+                                    <li><a href="projects_genai_docs_helper.html">GenAI Docs Helper: Intelligent Document Assistant</a></li>
+                                    <li><a href="projects_demand_forecast.html">Forecasting Engine for Retail Analytics</a></li>
+                                    <li><a href="projects_genai_job_finder.html">GenAI Job Finder: AI-Powered Career Discovery Platform</a></li>
+                                    <li><a href="projects_car_insurance_telematics.html">Car Insurance Telematics Risk Assessment</a></li>
+                                    <li><a href="projects_pipelearner.html">PipeLearner: Machine Learning Optimization Tool</a></li>
+                                    <li><a href="projects_price_optimization.html">Optimization of Promotional Forecasting Platforms</a></li>
+                                    <li><a href="https://github.com/zarreh/rohlik-orders-forecasting-challenge" target="_blank">Warehouses Orders Forecasting Challenge</a></li>
+                                    <li><a href="https://github.com/zarreh/mma_ranking" target="_blank">MMA Fighter Data Analysis and Ranking</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="#">Blog</a></li>
+                            <li><a href="Old_page.html" target="_blank">Curriculum Vitae</a></li>
+                            <li><a href="contact.html">Contact</a></li>
+                        </ul>
+                    </nav>
+
+                    <!-- Get in touch Section -->
+                    <section>
+                        <header class="major">
+                            <h2>Get in touch</h2>
+                        </header>
+                        <p>If you have any questions, collaboration ideas, or just want to say hello, feel free to reach out. I'm always open to discussing new opportunities or interesting projects.</p>
+                        <ul class="contact">
+                            <li class="icon solid fa-envelope"><a href="mailto:ali@zarreh.ai">ali@zarreh.ai</a></li>
+                            <li class="icon brands fa-linkedin"><a href="https://www.linkedin.com/in/ali-zarreh" target="_blank">LinkedIn: Ali Zarreh</a></li>
+                            <li class="icon brands fa-github"><a href="https://github.com/Zarreh" target="_blank">GitHub: AliZarreh</a></li>
+                            <li class="icon brands fa-google"><a href="https://scholar.google.com/citations?hl=en&user=BOhaCCAAAAAJ" target="_blank">Google Scholar: Ali Zarreh</a></li>
+                        </ul>
+                    </section>
+
+                    <!-- Footer -->
+                    <footer id="footer">
+                        <p class="copyright">&copy; 2025 Ali Zarreh. All rights reserved. Images: <a href="https://unsplash.com">Unsplash</a>. Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
+                    </footer>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scripts -->
+        <script src="assets/js/jquery.min.js"></script>
+        <script src="assets/js/browser.min.js"></script>
+        <script src="assets/js/breakpoints.min.js"></script>
+        <script src="assets/js/util.js"></script>
+        <script src="assets/js/main.js"></script>
+    </body>
+</html>
