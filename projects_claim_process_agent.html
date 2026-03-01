@@ -1,0 +1,296 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    <head>
+        <title>Claim Processing Agent - Agentic RAG for Auto Insurance - Ali Zarreh</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+        <meta name="description" content="Ali Zarreh's comprehensive project on an Intelligent Insurance Claim Processing Agent — a production-grade Agentic RAG system that automates the evaluation of auto insurance claims using dual LangChain/LangGraph and Smolagents pipelines." />
+        <meta name="keywords" content="Ali Zarreh, Ali R. Zarreh, Alireza Zarreh, Claim Processing Agent, Agentic RAG, Insurance AI, LangChain, LangGraph, Smolagents, ChromaDB, FastAPI, Streamlit, OpenAI, Auto Insurance" />
+        <link rel="stylesheet" href="assets/css/main.css" />
+        <link rel="icon" type="image/png" href="images/Header_icon.png" />
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-5GB5WB919N"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-5GB5WB919N');
+        </script>
+        <script type="application/ld+json">
+            {
+              "@context": "https://schema.org",
+              "@type": "CreativeWork",
+              "name": "Claim Processing Agent - Agentic RAG for Auto Insurance",
+              "url": "https://www.zarreh.ai/projects_claim_process_agent.html",
+              "creator": {
+                "@type": "Person",
+                "name": "Ali Zarreh"
+              },
+              "datePublished": "2026-03-01",
+              "description": "A production-grade Agentic RAG system that automates the evaluation of auto insurance claims. The system ingests claims as JSON, validates against policy records, retrieves relevant policy language via semantic search, estimates repair costs, and produces structured coverage decisions — all orchestrated by an AI agent.",
+              "keywords": ["Claim Processing Agent", "Agentic RAG", "Insurance AI", "LangChain", "LangGraph", "Smolagents", "ChromaDB", "FastAPI", "Streamlit", "OpenAI"]
+            }
+        </script>
+    </head>
+    <body class="is-preload">
+        <!-- Wrapper -->
+        <div id="wrapper">
+            <!-- Main -->
+            <div id="main">
+                <div class="inner">
+                    <!-- Header -->
+                    <header id="header">
+                        <a href="index.html" class="logo"><strong>Ali Zarreh</strong> - zarreh.ai</a>
+                        <ul class="icons">
+                            <li><a href="https://github.com/zarreh" class="icon brands fa-github" target="_blank"><span class="label">GitHub</span></a></li>
+                            <li><a href="https://www.linkedin.com/in/ali-zarreh" class="icon brands fa-linkedin" target="_blank"><span class="label">LinkedIn</span></a></li>
+                            <li><a href="https://scholar.google.com/citations?hl=en&user=BOhaCCAAAAAJ" class="icon brands fa-google" target="_blank"><span class="label">Google Scholar</span></a></li>
+                        </ul>
+                    </header>
+
+                    <!-- Content -->
+                    <section>
+                        <header class="main">
+                            <h1>Intelligent Insurance Claim Processing Agent — Agentic RAG for Auto Insurance</h1>
+                        </header>
+                        <!-- Header Image -->
+                        <span class="image main"><img src="images/office-assistant-module.jpg" alt="Intelligent Insurance Claim Processing Agent - Agentic RAG by Ali Zarreh" /></span>
+
+                        <!-- Introduction -->
+                        <p>Explore the Intelligent Insurance Claim Processing Agent, a production-grade Agentic RAG (Retrieval-Augmented Generation) system that fully automates the evaluation of auto insurance claims. By combining semantic policy retrieval, CSV-backed validation, real-time web search for repair cost estimation, and dual interchangeable AI pipelines, this system delivers structured, auditable coverage decisions — transforming a labor-intensive manual process into a transparent, sub-second automated workflow.</p>
+
+                        <!-- Project Overview -->
+                        <h2>Project Overview</h2>
+                        <p>The Claim Processing Agent ingests auto insurance claims as structured JSON, validates them against policy records, retrieves relevant policy language from a ChromaDB vector store, estimates market repair costs via DuckDuckGo web search, and produces structured <code>ClaimDecision</code> objects — all orchestrated by an AI agent. The system features <strong>two fully interchangeable pipelines</strong>: a deterministic LangChain/LangGraph state graph and an autonomous Smolagents agent, selectable via a single Hydra configuration change. With <strong>58 automated tests</strong>, a FastAPI REST backend, a Streamlit UI with reasoning trace viewer, and Docker deployment, the project represents a complete production-grade agentic system built on modern AI engineering practices.</p>
+
+                        <!-- Technology Stack -->
+                        <h2>Technology Stack &amp; Architecture</h2>
+                        <h3>Core Technologies &amp; Architectural Decisions</h3>
+                        <ul>
+                            <li><strong>Dual Agentic Pipelines:</strong> LangChain/LangGraph stateful graph and Smolagents autonomous agent — fully interchangeable via Hydra config with no code changes required</li>
+                            <li><strong>Agentic RAG:</strong> ChromaDB vector store with OpenAI <code>text-embedding-3-small</code> embeddings for semantic retrieval of policy document chunks</li>
+                            <li><strong>REST Backend:</strong> FastAPI with Pydantic v2 request/response schemas, structured middleware for logging and error handling, and async Uvicorn serving</li>
+                            <li><strong>Interactive Frontend:</strong> Streamlit UI with claim form (manual and JSON input modes), coverage decision result card, and step-by-step agent reasoning trace viewer</li>
+                            <li><strong>Configuration Management:</strong> Hydra / OmegaConf for structured YAML config — all pipeline, LLM, vector store, and server settings externalized</li>
+                            <li><strong>Production Deployment:</strong> Multi-stage Docker builds with Docker Compose orchestration, environment variable injection, and health-check configuration</li>
+                            <li><strong>Code Quality:</strong> Poetry packaging, Ruff linting/formatting, 58 pytest tests, MkDocs documentation, and Loguru structured logging</li>
+                        </ul>
+
+                        <h3>AI Architecture Innovation</h3>
+                        <ul>
+                            <li><strong>Deterministic LangGraph Orchestration:</strong> Eight-node <code>StateGraph</code> with explicit conditional edges encoding business logic — invalid policy and inflated cost checks cause deterministic graph branching</li>
+                            <li><strong>Autonomous Smolagents Alternative:</strong> <code>ToolCallingAgent</code> with custom system prompt enforcing the sequential workflow, offering a flexible autonomous alternative to the graph-based approach</li>
+                            <li><strong>Repair Cost Intelligence:</strong> Real-time DuckDuckGo web search estimates market repair costs per claim description, flagging inflated claims exceeding 40% above market estimates</li>
+                            <li><strong>Persistent Vector Store:</strong> Load-or-build pattern that detects an existing ChromaDB collection and skips re-embedding on subsequent runs, reducing startup overhead</li>
+                            <li><strong>Full Execution Tracing:</strong> Every graph node records its name, entry timestamp, and elapsed time in a <code>trace</code> list — surfaced in the Streamlit UI for complete observability</li>
+                            <li><strong>Pipeline Factory Pattern:</strong> Lazy-import factory reads <code>cfg.pipeline.type</code> and instantiates the correct pipeline, allowing runtime swapping with no dependency overhead</li>
+                        </ul>
+
+                        <!-- Workflow Design -->
+                        <h2>Technical Innovation &amp; System Design</h2>
+
+                        <h3>LangGraph Claim Processing Workflow</h3>
+                        <p>The LangChain pipeline implements a precise eight-node <code>StateGraph</code> that maps directly to the business workflow with <strong>100% deterministic routing</strong>:</p>
+
+                        <h4>Processing Nodes &amp; Conditional Edges:</h4>
+                        <ul>
+                            <li><strong>parse_claim:</strong> Validates incoming JSON against the <code>ClaimInfo</code> Pydantic schema, surfacing malformed input early</li>
+                            <li><strong>validate_claim:</strong> Checks policy existence, premium dues status, and coverage date range in the CSV records — conditional edge routes to <code>finalize_invalid</code> on failure</li>
+                            <li><strong>check_policy:</strong> LLM generates 3–5 targeted semantic search queries from claim details; ChromaDB returns the most relevant policy text chunks</li>
+                            <li><strong>price_check:</strong> DuckDuckGo web search retrieves market repair cost estimates — conditional edge routes to <code>finalize_inflated</code> when the claimed amount exceeds market by more than 40%</li>
+                            <li><strong>generate_recommendation:</strong> GPT-4o synthesizes claim data, retrieved policy text, and cost validation into a structured <code>PolicyRecommendation</code></li>
+                            <li><strong>finalize_decision / finalize_invalid / finalize_inflated:</strong> Three terminal nodes assembling the final <code>ClaimDecision</code> with appropriate coverage flags, deductible, payout, and notes</li>
+                        </ul>
+
+                        <h4>Smolagents Autonomous Pipeline:</h4>
+                        <ul>
+                            <li><strong>ToolCallingAgent Orchestration:</strong> Five registered tools covering parsing, validation, query generation, retrieval, and recommendation — the agent autonomously decides execution order within guardrails</li>
+                            <li><strong>Custom Prompt Engineering:</strong> Structured system prompt enforces the sequential workflow, preventing the agent from skipping validation or retrieval steps</li>
+                            <li><strong>Schema Guardrails:</strong> Agent output is validated against the <code>ClaimDecision</code> Pydantic schema with one automatic retry on malformed responses</li>
+                            <li><strong>OpenAIServerModel Backend:</strong> Provider-agnostic LLM interface supporting GPT-4o-mini, with extensibility for Anthropic Claude or local Ollama models</li>
+                        </ul>
+
+                        <!-- Key Features -->
+                        <h2>Technical Excellence &amp; Innovation Leadership</h2>
+
+                        <h3>Measurable Technical Achievements</h3>
+                        <p>Delivered quantifiable results demonstrating advanced agentic AI engineering and insurance domain expertise:</p>
+                        <ul>
+                            <li><strong>58 Automated Tests:</strong> Comprehensive pytest suite covering schemas, validation logic, retrieval accuracy, both pipeline implementations, and FastAPI endpoints</li>
+                            <li><strong>Dual Pipeline Architecture:</strong> Two fully interchangeable orchestration strategies — deterministic LangGraph graph and autonomous Smolagents agent — selectable without code changes</li>
+                            <li><strong>Fraud Detection via Web Search:</strong> Real-time DuckDuckGo integration flags inflated repair cost claims by comparing against market estimates, adding an AI-powered anti-fraud layer</li>
+                            <li><strong>Full Reasoning Transparency:</strong> Step-by-step agent trace surfaced in the Streamlit UI, enabling auditors and adjusters to inspect every decision the agent made</li>
+                            <li><strong>Sub-Second Policy Retrieval:</strong> Persistent ChromaDB load-or-build pattern delivers instant vector store access after the initial ingestion run</li>
+                        </ul>
+
+                        <h3>Architectural Excellence &amp; System Design</h3>
+                        <p>Engineered a clean separation of concerns across all system layers:</p>
+                        <ul>
+                            <li><strong>Layered Architecture:</strong> Streamlit frontend communicates exclusively via REST API — no direct Python imports from the backend, ensuring true microservices separation</li>
+                            <li><strong>Abstract Pipeline Interface:</strong> <code>BasePipeline(ABC)</code> contract enforces a consistent <code>process_claim()</code> API across both pipeline implementations</li>
+                            <li><strong>Core Logic Isolation:</strong> Validation, ingestion, and retrieval are plain Python functions in <code>src/claim_agent/core/</code> — framework-agnostic and directly unit-testable</li>
+                            <li><strong>Configuration-Driven Behavior:</strong> Hydra YAML controls pipeline type, LLM model, embedding model, chunk sizes, retrieval depth, and server settings — no hardcoded values anywhere</li>
+                            <li><strong>Structured Observability:</strong> Loguru logging with contextual fields (claim number, pipeline type, tool name, timing) for production-grade diagnostics</li>
+                        </ul>
+
+                        <h3>AI Engineering &amp; LLM Orchestration</h3>
+                        <p>Pioneered practical agentic RAG patterns for insurance domain automation:</p>
+                        <ul>
+                            <li><strong>LLM-Powered Query Generation:</strong> GPT-4o generates 3–5 targeted semantic search queries from claim context, dramatically improving retrieval precision over keyword-based approaches</li>
+                            <li><strong>Grounded Recommendation Generation:</strong> Coverage recommendations are anchored to retrieved policy text chunks, preventing hallucination on legally sensitive insurance language</li>
+                            <li><strong>Multi-Framework Competency:</strong> Side-by-side implementations in both LangChain/LangGraph and Smolagents demonstrate deep familiarity with the current agentic AI ecosystem</li>
+                            <li><strong>Healthcare-Grade Pydantic Validation:</strong> All inputs and outputs enforced through Pydantic v2 models, catching schema violations at system boundaries before they propagate</li>
+                            <li><strong>Conditional Business Logic as Graph Edges:</strong> Insurance adjudication rules (policy validity, cost inflation thresholds) encoded as LangGraph conditional edges rather than buried in LLM prompts</li>
+                        </ul>
+
+                        <!-- Quality Assurance -->
+                        <h2>Quality Assurance &amp; Production Excellence</h2>
+
+                        <h3>Comprehensive Testing Framework</h3>
+                        <ul>
+                            <li><strong>58 Automated Tests:</strong> Full pytest suite across schemas, claim validation, ChromaDB retrieval, LangChain pipeline, Smolagents pipeline, and FastAPI routes</li>
+                            <li><strong>Scenario-Based Validation:</strong> Four representative claim fixtures covering valid claims, expired policies, invalid policies, and inflated repair costs — ensuring all graph branches are exercised</li>
+                            <li><strong>Async API Testing:</strong> <code>pytest-asyncio</code> with <code>httpx</code> test client validates REST endpoint behavior including error handling and malformed input responses</li>
+                            <li><strong>Ruff Zero-Warning Codebase:</strong> Enforced import sorting, type annotation checks, and best-practice linting rules across the entire codebase</li>
+                            <li><strong>Makefile Automation:</strong> Single-command workflows — <code>make test</code>, <code>make lint</code>, <code>make format</code>, <code>make ingest</code>, <code>make docker-build</code> — streamlining the full development lifecycle</li>
+                        </ul>
+
+                        <!-- Technical Challenges -->
+                        <h2>Engineering Excellence &amp; Problem-Solving Innovation</h2>
+
+                        <h3>Dual Pipeline Architecture with Single Interface</h3>
+                        <p><strong>Challenge:</strong> Supporting two fundamentally different orchestration paradigms (explicit graph vs. autonomous agent) without forcing consumers to know which pipeline is active. <strong>Solution:</strong> Designed the <code>BasePipeline(ABC)</code> abstract interface with a <code>process_claim()</code> contract, a lazy-import pipeline factory reading from Hydra config, and completely independent tool implementations in each pipeline's subdirectory — zero shared mutable state between pipelines.</p>
+
+                        <h3>Repair Cost Fraud Detection</h3>
+                        <p><strong>Challenge:</strong> Auto insurance claims frequently include inflated repair cost estimates. Detecting fraud without access to internal adjuster databases requires creative tooling. <strong>Solution:</strong> Integrated DuckDuckGo web search as a real-time market intelligence tool — the agent searches for repair cost estimates matching the claim's vehicle and damage description, then flags claims where the submitted estimate exceeds market rates by more than 40%, triggering the <code>finalize_inflated</code> graph path.</p>
+
+                        <h3>Deterministic Agent Tracing for Auditability</h3>
+                        <p><strong>Challenge:</strong> Insurance coverage decisions require full audit trails — "the AI said so" is not acceptable in regulated environments. <strong>Solution:</strong> Every LangGraph node appends a structured entry to the <code>trace</code> list in <code>ClaimState</code>, recording node name, timestamp, inputs, and elapsed time. The FastAPI response includes the full trace, and the Streamlit trace viewer renders it step-by-step, giving adjusters a complete view of every decision the agent made.</p>
+
+                        <h3>Framework-Agnostic Core Logic</h3>
+                        <p><strong>Challenge:</strong> Keeping domain logic (policy validation, PDF ingestion, vector retrieval) portable across both pipeline frameworks without code duplication. <strong>Solution:</strong> Implemented all business logic as plain Python functions in <code>src/claim_agent/core/</code> — no LangChain or Smolagents imports — then wrapped them with framework-specific tool decorators in each pipeline's <code>tools.py</code>. This allows the core logic to be unit-tested in complete isolation from the agent frameworks.</p>
+
+                        <!-- Configuration -->
+                        <h2>Flexible Configuration &amp; Tuning</h2>
+                        <p>Every aspect of the system is configurable through Hydra YAML, enabling rapid experimentation without code changes:</p>
+
+                        <table>
+                            <thead>
+                                <tr><th>Parameter</th><th>Config Key</th><th>Default</th><th>Effect</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Pipeline type</td><td><code>pipeline.type</code></td><td>langchain</td><td>Switch between LangGraph and Smolagents</td></tr>
+                                <tr><td>LLM model</td><td><code>llm.model</code></td><td>gpt-4o-mini</td><td>Swap to gpt-4o, Claude, Ollama, etc.</td></tr>
+                                <tr><td>Temperature</td><td><code>llm.temperature</code></td><td>0.1</td><td>Lower = more deterministic decisions</td></tr>
+                                <tr><td>Max tokens</td><td><code>llm.max_tokens</code></td><td>4096</td><td>Cap on recommendation length</td></tr>
+                                <tr><td>Embedding model</td><td><code>vectordb.embedding_model</code></td><td>all-MiniLM-L6-v2</td><td>Swap for OpenAI or other embeddings</td></tr>
+                                <tr><td>Chunk size</td><td><code>vectordb.chunk_size</code></td><td>500</td><td>Larger = more context per retrieval chunk</td></tr>
+                                <tr><td>Retrieval depth</td><td><code>vectordb.n_results</code></td><td>5</td><td>More results = richer policy context</td></tr>
+                                <tr><td>Inflation threshold</td><td><code>pipeline.inflation_threshold</code></td><td>0.40</td><td>Flag claims exceeding market estimate by this %</td></tr>
+                            </tbody>
+                        </table>
+
+                        <!-- Future Vision -->
+                        <h2>Scalability Vision &amp; Future Roadmap</h2>
+
+                        <h3>Planned Enhancements</h3>
+                        <ul>
+                            <li><strong>Multi-Line Insurance Support:</strong> Extend beyond auto insurance to home, life, and health claims with domain-specific validation rules and policy corpora</li>
+                            <li><strong>LLM-as-Judge Evaluation:</strong> Automated scoring of coverage recommendation quality — groundedness, completeness, and regulatory compliance — for continuous quality monitoring</li>
+                            <li><strong>Human-in-the-Loop Escalation:</strong> Configurable confidence thresholds that pause the pipeline and route borderline claims to a human adjuster queue before finalizing decisions</li>
+                            <li><strong>Structured Output Streaming:</strong> Server-Sent Events (SSE) from FastAPI for real-time step-by-step trace streaming to the Streamlit UI during long-running agent runs</li>
+                            <li><strong>Multi-Modal Claim Intake:</strong> Accept photo evidence and repair shop invoices alongside JSON claims, using vision models to cross-validate damage descriptions against submitted images</li>
+                            <li><strong>Enterprise Auth &amp; Multi-Tenancy:</strong> JWT-based authentication with per-tenant policy corpora, enabling deployment across multiple insurance carriers from a single platform</li>
+                        </ul>
+
+                        <!-- Impact and Excellence -->
+                        <h2>Leadership Impact &amp; Technical Excellence</h2>
+                        <p>The Intelligent Insurance Claim Processing Agent represents a complete demonstration of <strong>production-grade agentic AI engineering</strong> — from LangGraph state machine design and ChromaDB RAG pipelines to FastAPI backend development, Streamlit UI construction, and Docker deployment. The dual-pipeline architecture, with both a deterministic LangGraph graph and an autonomous Smolagents agent sharing the same interface, showcases deep familiarity with the modern agentic AI ecosystem and the engineering discipline to keep complex systems clean and testable.</p>
+
+                        <p>The project's emphasis on <strong>auditability and transparency</strong> — full execution traces, Pydantic-validated outputs at every boundary, structured logging, and a reasoning trace viewer in the UI — reflects the real-world requirements of deploying AI in regulated industries where "the model decided" is never a sufficient explanation. Every architectural decision prioritizes explainability alongside automation.</p>
+
+                        <p><strong>Quantified Technical Achievements:</strong> 58 automated tests across five test modules, two fully interchangeable agentic pipelines, real-time web search fraud detection, sub-second vector store retrieval, and single-command Docker deployment. This project exemplifies the intersection of agentic AI architecture, software engineering rigor, and practical insurance domain expertise.</p>
+
+                        <!-- Source Code Links -->
+                        <h2>Technical Resources &amp; Documentation</h2>
+                        <p>Comprehensive technical implementation showcasing production-grade agentic RAG architecture and insurance claim automation system design:</p>
+                        <p>
+                            <a href="https://claim-agent.zarreh.ai/" target="_blank" class="button primary">Live Demo</a>
+                            <a href="https://github.com/zarreh/auto_insurance_claim_agent" target="_blank" class="button">View Source Code</a>
+                            <a href="https://claim-agent-docs.zarreh.ai/" target="_blank" class="button">Technical Documentation</a>
+                        </p>
+
+                    </section>
+                </div>
+            </div>
+            <!-- Sidebar -->
+            <div id="sidebar">
+                <div class="inner">
+                    <!-- Menu -->
+                    <nav id="menu">
+                        <header class="major">
+                            <h2>Menu</h2>
+                        </header>
+                        <ul>
+                            <li><a href="index.html">Homepage</a></li>
+                            <li>
+                                <span class="opener">About Me</span>
+                                <ul>
+                                    <li><a href="biography.html">Biography</a></li>
+                                    <li><a href="about.html">My Background</a></li>
+                                    <li><a href="experiences.html">Professional Experiences</a></li>
+                                    <li><a href="research.html">Publications and Research</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <span class="opener">Portfolio</span>
+                                <ul>
+                                    <li><a href="projects_claim_process_agent.html">Claim Processing Agent: Agentic RAG for Auto Insurance</a></li>
+                                    <li><a href="projects_duallens_analytics.html">DualLens Analytics: RAG-Powered Investment Analysis</a></li>
+                                    <li><a href="projects_rxflow_pharmacy.html">RxFlow Pharmacy Assistant: AI-Powered Healthcare Workflow Automation</a></li>
+                                    <li><a href="projects_genai_docs_helper.html">GenAI Docs Helper: Intelligent Document Assistant</a></li>
+                                    <li><a href="projects_demand_forecast.html">Forecasting Engine for Retail Analytics</a></li>
+                                    <li><a href="projects_genai_job_finder.html">GenAI Job Finder: AI-Powered Career Discovery Platform</a></li>
+                                    <li><a href="projects_car_insurance_telematics.html">Car Insurance Telematics Risk Assessment</a></li>
+                                    <li><a href="projects_pipelearner.html">PipeLearner: Machine Learning Optimization Tool</a></li>
+                                    <li><a href="projects_price_optimization.html">Optimization of Promotional Forecasting Platforms</a></li>
+                                    <li><a href="https://github.com/zarreh/rohlik-orders-forecasting-challenge" target="_blank">Warehouses Orders Forecasting Challenge</a></li>
+                                    <li><a href="https://github.com/zarreh/mma_ranking" target="_blank">MMA Fighter Data Analysis and Ranking</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="#">Blog</a></li>
+                            <li><a href="Old_page.html" target="_blank">Curriculum Vitae</a></li>
+                            <li><a href="contact.html">Contact</a></li>
+                        </ul>
+                    </nav>
+
+                    <!-- Get in touch Section -->
+                    <section>
+                        <header class="major">
+                            <h2>Get in touch</h2>
+                        </header>
+                        <p>If you have any questions, collaboration ideas, or just want to say hello, feel free to reach out. I'm always open to discussing new opportunities or interesting projects.</p>
+                        <ul class="contact">
+                            <li class="icon solid fa-envelope"><a href="mailto:ali@zarreh.ai">ali@zarreh.ai</a></li>
+                            <li class="icon brands fa-linkedin"><a href="https://www.linkedin.com/in/ali-zarreh" target="_blank">LinkedIn: Ali Zarreh</a></li>
+                            <li class="icon brands fa-github"><a href="https://github.com/Zarreh" target="_blank">GitHub: AliZarreh</a></li>
+                            <li class="icon brands fa-google"><a href="https://scholar.google.com/citations?user=XXXXXXXXX" target="_blank">Google Scholar: Ali Zarreh</a></li>
+                        </ul>
+                    </section>
+
+                    <!-- Footer -->
+                    <footer id="footer">
+                        <p class="copyright">&copy; 2026 Ali Zarreh. All rights reserved. Images: <a href="https://unsplash.com">Unsplash</a>. Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
+                    </footer>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scripts -->
+        <script src="assets/js/jquery.min.js"></script>
+        <script src="assets/js/browser.min.js"></script>
+        <script src="assets/js/breakpoints.min.js"></script>
+        <script src="assets/js/util.js"></script>
+        <script src="assets/js/main.js"></script>
+    </body>
+</html>
