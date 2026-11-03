@@ -3,7 +3,7 @@
 
   <url>
     <loc>https://www.zarreh.ai/</loc>
-    <lastmod>2024-08-12</lastmod>
+    <lastmod>2026-11-02</lastmod>
     <priority>1.00</priority>
   </url>
 
@@ -21,7 +21,7 @@
 
   <url>
     <loc>https://www.zarreh.ai/experiences.html</loc>
-    <lastmod>2024-08-12</lastmod>
+    <lastmod>2026-11-02</lastmod>
     <priority>0.80</priority>
   </url>
 
@@ -64,6 +64,30 @@
   <url>
     <loc>https://www.zarreh.ai/projects_duallens_analytics.html</loc>
     <lastmod>2025-02-15</lastmod>
+    <priority>0.80</priority>
+  </url>
+
+  <url>
+    <loc>https://www.zarreh.ai/projects_cohort_risk_lab.html</loc>
+    <lastmod>2026-11-02</lastmod>
+    <priority>0.80</priority>
+  </url>
+
+  <url>
+    <loc>https://www.zarreh.ai/projects_clinical_care_navigator.html</loc>
+    <lastmod>2026-11-02</lastmod>
+    <priority>0.80</priority>
+  </url>
+
+  <url>
+    <loc>https://www.zarreh.ai/projects_credit_decisioning.html</loc>
+    <lastmod>2026-11-02</lastmod>
+    <priority>0.80</priority>
+  </url>
+
+  <url>
+    <loc>https://www.zarreh.ai/projects_trade_surveillance_agent.html</loc>
+    <lastmod>2026-11-02</lastmod>
     <priority>0.80</priority>
   </url>
 

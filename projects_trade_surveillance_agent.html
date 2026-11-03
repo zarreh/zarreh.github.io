@@ -1,0 +1,193 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    <head>
+        <title>Trade Surveillance Agent - Insider-Trading Review That Shows Its Work - Ali Zarreh</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+        <meta name="description" content="Ali Zarreh's Trade Surveillance Agent: an AI that investigates SEC Form 4 insider filings, checks every claim in its draft against the evidence it gathered, and sends a flag or escalation to a human reviewer. A research prototype." />
+        <meta name="keywords" content="Ali Zarreh, Ali R. Zarreh, Alireza Zarreh, Trade Surveillance, Insider Trading, SEC Form 4, RegTech, LangGraph, Grounded AI, Agent Evaluation, FastAPI, Compliance" />
+        <link rel="stylesheet" href="assets/css/main.css" />
+        <link rel="icon" type="image/png" href="images/Header_icon.png" />
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-5GB5WB919N"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-5GB5WB919N');
+        </script>
+        <script type="application/ld+json">
+            {
+              "@context": "https://schema.org",
+              "@type": "CreativeWork",
+              "name": "Trade Surveillance Agent - Insider-Trading Review That Shows Its Work",
+              "url": "https://www.zarreh.ai/projects_trade_surveillance_agent.html",
+              "creator": {
+                "@type": "Person",
+                "name": "Ali Zarreh"
+              },
+              "dateModified": "2026-11-02",
+              "description": "A research prototype that investigates SEC Form 4 insider filings, checks each claim in its draft against gathered evidence before publishing, and routes flags to a human reviewer.",
+              "keywords": ["Trade Surveillance", "Insider Trading", "SEC Form 4", "RegTech", "LangGraph", "Grounded AI", "Agent Evaluation", "FastAPI"]
+            }
+        </script>
+    </head>
+    <body class="is-preload">
+        <!-- Wrapper -->
+        <div id="wrapper">
+            <!-- Main -->
+            <div id="main">
+                <div class="inner">
+                    <!-- Header -->
+                    <header id="header">
+                        <a href="index.html" class="logo"><strong>Ali Zarreh</strong> - zarreh.ai</a>
+                        <ul class="icons">
+                            <li><a href="https://github.com/zarreh" class="icon brands fa-github" target="_blank"><span class="label">GitHub</span></a></li>
+                            <li><a href="https://www.linkedin.com/in/ali-zarreh" class="icon brands fa-linkedin" target="_blank"><span class="label">LinkedIn</span></a></li>
+                            <li><a href="https://scholar.google.com/citations?hl=en&user=BOhaCCAAAAAJ" class="icon brands fa-google" target="_blank"><span class="label">Google Scholar</span></a></li>
+                        </ul>
+                    </header>
+
+                    <!-- Content -->
+                    <section>
+                        <header class="main">
+                            <h1>Trade Surveillance Agent — Insider-Trading Review That Shows Its Work</h1>
+                        </header>
+                        <!-- Header Image -->
+                        <span class="image main"><img src="images/trade_surveillance_agent.png" alt="Trade Surveillance Agent sample case page: a synthetic Chief Financial Officer sale two days before earnings, with a research-prototype notice" /></span>
+
+                        <!-- Introduction -->
+                        <p>Executives, directors and large shareholders must publicly report their own trades within two business days. A compliance team then has to decide which filings deserve a closer look. This project is an AI investigator for that first review. It takes a real SEC Form 4 filing, gathers evidence from the insider's trading history and a firm-policy database, drafts a conclusion, and <strong>refuses to publish any claim it cannot back with retrieved evidence</strong>. The outcome is <em>clear</em>, <em>flag</em> or <em>escalate</em> for a human, never an accusation.</p>
+
+                        <p><strong>Scope note:</strong> a research prototype using public SEC data and synthetic firm policy. It is not a supervisory system of record and not legal or compliance advice. The sample cases shown in the app are synthetic trades.</p>
+
+                        <!-- Why -->
+                        <h2>Why This Project Exists</h2>
+                        <p>A filing on its own cannot show whether an insider knew anything. A sale just before earnings is a classic warning sign, but it may also be a pre-planned trade or a routine tax disposition. Compliance reviewers need an assistant that surfaces concerns and mitigating factors together, cites its sources, and is honest when its evidence is thin. A fluent paragraph that sounds right but is not grounded in the record is worse than no assistant at all, because it creates false confidence.</p>
+
+                        <!-- How -->
+                        <h2>How an Investigation Runs</h2>
+                        <p>The pipeline is a LangGraph state machine: <strong>plan</strong> the evidence needed, <strong>check the plan</strong> in code, <strong>investigate</strong> with read-only tools, <strong>draft a finding</strong>, <strong>extract claims</strong> from the draft, <strong>judge grounding</strong>, and only then <strong>publish</strong>.</p>
+                        <ul>
+                            <li><strong>The grounding loop is the centerpiece.</strong> The draft is decomposed into individual claims and each is checked against the evidence actually gathered. If a claim fails, the investigation returns to gather more evidence rather than quietly rewriting the answer.</li>
+                            <li><strong>Publication is deterministic.</strong> Once grounding is evaluated, code assembles the result, so the model cannot re-word its way around a failed check.</li>
+                            <li><strong>Concerns and exculpatory factors appear side by side.</strong> Rule hits such as a blackout-window sale sit next to factors that may explain the trade, such as the filing being on time and below firm limits.</li>
+                        </ul>
+
+                        <h3>What Is Judged by a Model and What Is Plain Code</h3>
+                        <p>Whether a claim is supported is judged by an LLM. Everything around that judgment is deterministic: the plan check, the exculpatory factors, a <strong>process audit</strong> (was the required evidence gathered, in a sensible order, with real citations and supported exemptions), and the reward signal for an included Gymnasium environment. In that environment and its CI gate, shortcut strategies score far below a proper investigation, which makes "did the agent actually do the work?" measurable.</p>
+
+                        <h3>A Reviewer Workflow</h3>
+                        <p>A case-review queue lets an analyst accept or override the agent's disposition. The decision is recorded against the run and never changes the agent's finding, so the audit trail keeps both views.</p>
+
+                        <!-- Evidence -->
+                        <h2>Results and Honest Limits</h2>
+                        <ul>
+                            <li><strong>The grounding check does catch weak output.</strong> In the sample case the agent escalated a synthetic CFO sale two days before earnings, and the app reports that only 2 of 4 claims were supported, two cited no evidence, and human review is required.</li>
+                            <li><strong>Process audit improved from a real finding.</strong> The audit exposed a claim-extractor problem; after fixing it, live runs scoring zero on the audit fell from 8 of 10 to 0 of 10.</li>
+                            <li><strong>Accuracy is not solved.</strong> Disposition accuracy is still 5 of 10 on those live runs: the model clears most cases that should be flagged. Good process does not by itself mean the right call, and the project reports that gap openly.</li>
+                            <li><strong>Evaluation design:</strong> a canonical set gates every pull request, and recorded live-model runs are shown next to scripted policies but are not gated. A larger hand-labelled evaluation with confidence intervals has not been done.</li>
+                            <li><strong>Status:</strong> complete and available as a public demo, with a single model provider.</li>
+                        </ul>
+
+                        <!-- Engineering -->
+                        <h2>Engineering Decisions Worth Noting</h2>
+                        <ul>
+                            <li><strong>Plan once, validate in code</strong> rather than trusting the model's own plan.</li>
+                            <li><strong>Vocabulary discipline:</strong> the interface says "flag" and "escalate" rather than accusing anyone, so wording does not overclaim what the evidence supports.</li>
+                            <li><strong>No vector store:</strong> a deliberate, documented design decision rather than a default RAG setup.</li>
+                            <li><strong>Quality gates:</strong> lint, strict typing, import contracts, tests, an evaluation harness, documentation build, and Playwright browser tests.</li>
+                        </ul>
+                        <p><strong>Stack:</strong> LangGraph, FastAPI with server-sent events, Next.js, SQLite, pytest, mypy in strict mode, Gymnasium (development only), and MkDocs.</p>
+
+                        <!-- Value -->
+                        <h2>Who This Is For</h2>
+                        <p>For <strong>compliance and RegTech teams</strong>, this is a pattern for AI-assisted review that is explainable and honest about uncertainty. For <strong>AI engineering leaders</strong>, it shows how to evaluate an agent on <em>how</em> it worked as well as what it concluded. If you want this approach applied to your domain, let's talk.</p>
+
+                        <!-- Source Code Links -->
+                        <h2>Technical Resources</h2>
+                        <p>
+                            <a href="https://surveillance.zarreh.ai/" target="_blank" rel="noopener noreferrer" class="button primary">Live App</a>
+                            <a href="https://github.com/zarreh/trade_sureillance_agent" target="_blank" rel="noopener noreferrer" class="button">View Source Code</a>
+                            <a href="https://zarreh.ai/trade_sureillance_agent/" target="_blank" rel="noopener noreferrer" class="button">Technical Documentation</a>
+                            <a href="contact.html" class="button">Discuss a Similar Project</a>
+                        </p>
+
+                    </section>
+                </div>
+            </div>
+            <!-- Sidebar -->
+            <div id="sidebar">
+                <div class="inner">
+                    <!-- Menu -->
+                    <nav id="menu">
+                        <header class="major">
+                            <h2>Menu</h2>
+                        </header>
+                        <ul>
+                            <li><a href="index.html">Homepage</a></li>
+                            <li>
+                                <span class="opener">About Me</span>
+                                <ul>
+                                    <li><a href="biography.html">Biography</a></li>
+                                    <li><a href="about.html">My Background</a></li>
+                                    <li><a href="experiences.html">Professional Experiences</a></li>
+                                    <li><a href="research.html">Publications and Research</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <span class="opener">Portfolio</span>
+                                <ul>
+                                    <li><a href="projects_cohort_risk_lab.html">Cohort Risk &amp; Review Lab: Fair, Clinician-Reviewed Risk Stratification</a></li>
+                                    <li><a href="projects_clinical_care_navigator.html">Clinical Care Navigator: A Patient-Facing Assistant That Is Allowed to Refuse</a></li>
+                                    <li><a href="projects_credit_decisioning.html">Credit Decisioning: Verified Adverse-Action Notices</a></li>
+                                    <li><a href="projects_trade_surveillance_agent.html">Trade Surveillance Agent: Insider-Trading Review That Shows Its Work</a></li>
+                                    <li><a href="projects_rxflow_pharmacy.html">RxFlow Pharmacy Assistant: AI-Powered Healthcare Workflow Automation</a></li>
+                                    <li><a href="projects_claim_process_agent.html">Claim Processing Agent: Agentic RAG for Auto Insurance</a></li>
+                                    <li><a href="projects_duallens_analytics.html">DualLens Analytics: RAG-Powered Investment Analysis</a></li>
+                                    <li><a href="projects_genai_docs_helper.html">GenAI Docs Helper: Intelligent Document Assistant</a></li>
+                                    <li><a href="projects_demand_forecast.html">Forecasting Engine for Retail Analytics</a></li>
+                                    <li><a href="projects_genai_job_finder.html">GenAI Job Finder: AI-Powered Career Discovery Platform</a></li>
+                                    <li><a href="projects_car_insurance_telematics.html">Car Insurance Telematics Risk Assessment</a></li>
+                                    <li><a href="projects_pipelearner.html">PipeLearner: Machine Learning Optimization Tool</a></li>
+                                    <li><a href="projects_price_optimization.html">Optimization of Promotional Forecasting Platforms</a></li>
+                                    <li><a href="https://github.com/zarreh/rohlik-orders-forecasting-challenge" target="_blank">Warehouses Orders Forecasting Challenge</a></li>
+                                    <li><a href="https://github.com/zarreh/mma_ranking" target="_blank">MMA Fighter Data Analysis and Ranking</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="#">Blog</a></li>
+                            <li><a href="Old_page.html" target="_blank">Curriculum Vitae</a></li>
+                            <li><a href="contact.html">Contact</a></li>
+                        </ul>
+                    </nav>
+
+                    <!-- Get in touch Section -->
+                    <section>
+                        <header class="major">
+                            <h2>Get in touch</h2>
+                        </header>
+                        <p>If you have any questions, collaboration ideas, or just want to say hello, feel free to reach out. I’m always open to discussing new opportunities or interesting projects.</p>
+                        <ul class="contact">
+                            <li class="icon solid fa-envelope"><a href="mailto:ali@zarreh.ai">ali@zarreh.ai</a></li>
+                            <li class="icon brands fa-linkedin"><a href="https://www.linkedin.com/in/ali-zarreh" target="_blank">LinkedIn: Ali Zarreh</a></li>
+                            <li class="icon brands fa-github"><a href="https://github.com/zarreh" target="_blank">GitHub: zarreh</a></li>
+                            <li class="icon brands fa-google"><a href="https://scholar.google.com/citations?hl=en&user=BOhaCCAAAAAJ" target="_blank">Google Scholar: Ali Zarreh</a></li>
+                        </ul>
+                    </section>
+
+                    <!-- Footer -->
+                    <footer id="footer">
+                        <p class="copyright">&copy; 2024 Ali Zarreh. All rights reserved. Images: <a href="https://unsplash.com">Unsplash</a>. Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
+                    </footer>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scripts -->
+        <script src="assets/js/jquery.min.js"></script>
+        <script src="assets/js/browser.min.js"></script>
+        <script src="assets/js/breakpoints.min.js"></script>
+        <script src="assets/js/util.js"></script>
+        <script src="assets/js/main.js"></script>
+    </body>
+</html>
