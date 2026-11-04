@@ -18,9 +18,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: npm
@@ -55,7 +55,7 @@ jobs:
 
       - name: Upload Playwright report
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-report
           path: playwright-report
@@ -72,8 +72,8 @@ jobs:
     needs: site
     continue-on-error: true
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: npm
@@ -83,7 +83,9 @@ jobs:
           lycheeVersion: v0.24.2
           args: >-
             --no-progress --max-retries 2 --timeout 20 --index-files index.html
+            --accept '200..=299,429'
             --exclude 'linkedin\.com' --exclude 'researchgate\.net' --exclude 'medium\.com'
+            --exclude 'scholar\.google\.com'
             --exclude 'doi\.org' --exclude 'googletagmanager' --exclude 'api\.web3forms\.com'
             --exclude '^https://zarreh\.ai/(?:$|about|experience|work|research|contact|writing|advisory|speaking|og/|rss|sitemap|press)'
             --root-dir ${{ github.workspace }}/dist
@@ -98,8 +100,8 @@ jobs:
       run:
         working-directory: services/ask-api
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v5
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10
         with:
           enable-cache: true
       - run: uv sync --frozen
