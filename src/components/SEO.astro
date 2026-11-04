@@ -35,8 +35,13 @@ const ld = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>{title}</title>
 <meta name="description" content={description} />
-<link rel="canonical" href={canonical} />
-{noindex && <meta name="robots" content="noindex, follow" />}
+{
+  noindex ? (
+    <meta name="robots" content="noindex, follow" />
+  ) : (
+    <link rel="canonical" href={canonical} />
+  )
+}
 <meta name="author" content={profile.name} />
 <meta name="generator" content={Astro.generator} />
 

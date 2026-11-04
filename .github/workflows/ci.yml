@@ -39,8 +39,9 @@ jobs:
       - name: Internal link check
         uses: lycheeverse/lychee-action@v2
         with:
+          lycheeVersion: v0.24.2
           args: >-
-            --offline --no-progress --include-fragments
+            --offline --no-progress --include-fragments --index-files index.html
             --root-dir ${{ github.workspace }}/dist
             --exclude-path dist/pagefind
             'dist/**/*.html'
@@ -79,10 +80,12 @@ jobs:
       - run: npm ci && npm run build
       - uses: lycheeverse/lychee-action@v2
         with:
+          lycheeVersion: v0.24.2
           args: >-
-            --no-progress --max-retries 2 --timeout 20
+            --no-progress --max-retries 2 --timeout 20 --index-files index.html
             --exclude 'linkedin\.com' --exclude 'researchgate\.net' --exclude 'medium\.com'
-            --exclude 'doi\.org' --exclude 'googletagmanager'
+            --exclude 'doi\.org' --exclude 'googletagmanager' --exclude 'api\.web3forms\.com'
+            --exclude '^https://zarreh\.ai/(?:$|about|experience|work|research|contact|writing|advisory|speaking|og/|rss|sitemap|press)'
             --root-dir ${{ github.workspace }}/dist
             'dist/**/*.html'
           fail: true
