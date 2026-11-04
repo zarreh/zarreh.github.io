@@ -1,0 +1,17 @@
+# ask-api settings template.
+# On the server: cp deploy/settings.example ask.env, then add your API key. Never commit ask.env.
+OPENAI_API_KEY=
+ASK_MODEL=gpt-4o-mini
+ASK_EMBEDDING_MODEL=text-embedding-3-small
+
+# Optional OpenAI-compatible fallback (example: Gemini's OpenAI endpoint)
+# ASK_FALLBACK_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai/
+# ASK_FALLBACK_MODEL=gemini-2.0-flash
+# ASK_FALLBACK_API_KEY=
+
+ASK_CORPUS_URL=https://zarreh.ai/ask/corpus.json
+ASK_ALLOWED_ORIGINS=["https://zarreh.ai","https://www.zarreh.ai"]
+ASK_RATE_PER_MINUTE=6
+ASK_RATE_PER_DAY=60
+ASK_DAILY_BUDGET_USD=2.0
+ASK_LOG_QUESTIONS=false
