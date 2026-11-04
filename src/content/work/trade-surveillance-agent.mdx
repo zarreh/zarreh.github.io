@@ -1,0 +1,77 @@
+---
+title: "Trade Surveillance Agent"
+headline: "An insider-trading investigator that refuses to publish what it cannot prove."
+summary: "An AI investigator for SEC Form 4 insider filings. It gathers evidence, drafts a finding, checks every claim against what it actually retrieved, and hands a clear, flag or escalate outcome to a human — while openly reporting where its accuracy still falls short."
+domains: [finance]
+capabilities: [agents, evaluation]
+status: live
+featured: true
+order: 3
+cover: ../../assets/images/work/trade_surveillance_agent.png
+coverAlt: "Trade Surveillance Agent sample case: a synthetic Chief Financial Officer sale two days before earnings, with a research-prototype notice"
+links:
+  demo: https://surveillance.zarreh.ai/
+  docs: https://zarreh.ai/trade_sureillance_agent/
+  repo: https://github.com/zarreh/trade_sureillance_agent
+metrics:
+  - { value: "8 → 0", label: "live runs failing the process audit (of 10)" }
+  - { value: "5 / 10", label: "disposition accuracy, reported openly" }
+  - { value: "2 of 4", label: "claims grounded in the sample case — so it escalated" }
+stack: [LangGraph, FastAPI + SSE, Next.js, SQLite, Gymnasium, pytest, mypy (strict), MkDocs]
+scopeNote: "A research prototype using public SEC data and synthetic firm policy. It is not a supervisory system of record and not legal or compliance advice. Sample cases in the app are synthetic trades."
+legacy: projects_trade_surveillance_agent
+date: 2026-11-02
+---
+
+## Why it exists
+
+Executives, directors and large shareholders must publicly report their own trades within two business days, and a compliance team then has to decide which filings deserve a closer look.
+
+A filing on its own cannot show whether an insider knew anything. A sale just before earnings is a classic warning sign — but it may also be a pre-planned trade or a routine tax disposition. Reviewers need an assistant that surfaces concerns and mitigating factors together, cites its sources, and is honest when its evidence is thin. A fluent paragraph that sounds right but is not grounded in the record is worse than no assistant at all, because it creates false confidence.
+
+## How it works
+
+<Flow
+  steps={[
+    { label: "Form 4 filing", kind: "input" },
+    { label: "Plan the evidence", kind: "ai" },
+    { label: "Validate the plan", kind: "code" },
+    { label: "Investigate & draft", kind: "ai", note: "read-only tools" },
+    { label: "Claim-by-claim grounding", kind: "check" },
+    { label: "Publish clear / flag / escalate", kind: "code" },
+    { label: "Analyst accepts or overrides", kind: "human" },
+  ]}
+/>
+
+The pipeline is a LangGraph state machine: plan the evidence needed, check the plan in code, investigate with read-only tools over the insider's trading history and a firm-policy database, draft a finding, extract claims, judge grounding — and only then publish.
+
+- **The grounding loop is the centerpiece.** The draft is decomposed into individual claims and each is checked against the evidence actually gathered. If a claim fails, the investigation goes back for more evidence rather than quietly rewriting the answer.
+- **Publication is deterministic.** Once grounding is evaluated, code assembles the result, so the model cannot re-word its way around a failed check.
+- **Concerns and exculpatory factors sit side by side.** A blackout-window sale appears next to factors that may explain it, such as an on-time filing below firm limits.
+
+### What a model judges, and what is plain code
+
+Whether a claim is supported is judged by an LLM. Everything around that judgment is deterministic: the plan check, the exculpatory factors, and a **process audit** — was the required evidence gathered, in a sensible order, with real citations and supported exemptions? An included Gymnasium environment uses the same signal, and in its CI gate shortcut strategies score far below a proper investigation. That makes "did the agent actually do the work?" measurable.
+
+A review queue lets an analyst accept or override the agent's disposition. The decision is recorded against the run and never changes the agent's finding, so the audit trail keeps both views.
+
+## Results and honest limits
+
+- **The grounding check catches weak output.** In the sample case, the agent escalated a synthetic CFO sale two days before earnings because only 2 of 4 claims were supported; two cited no evidence, so human review is required.
+- **The process audit improved from a real finding.** It exposed a claim-extractor problem; after the fix, live runs scoring zero on the audit fell from 8 of 10 to 0 of 10.
+- **Evaluation design:** a canonical set gates every pull request; recorded live-model runs are shown next to scripted policies but are not gated.
+
+<Callout type="limit">
+**Accuracy is not solved.** Disposition accuracy is still 5 of 10 on those live runs — the model clears most cases that should be flagged. Good process does not by itself produce the right call. A larger hand-labelled evaluation with confidence intervals has not been done, and the demo uses a single model provider.
+</Callout>
+
+## Engineering decisions
+
+- **Plan once, validate in code**, rather than trusting the model's own plan.
+- **Vocabulary discipline:** the interface says "flag" and "escalate", never accuses, so the wording does not overclaim what the evidence supports.
+- **No vector store** — a deliberate, documented decision rather than a default RAG setup.
+- **Quality gates:** lint, strict typing, import contracts, tests, an evaluation harness, a documentation build and Playwright browser tests.
+
+## Who it's for
+
+For **compliance and RegTech teams**, it is a pattern for AI-assisted review that is explainable and honest about uncertainty. For **AI engineering leaders**, it shows how to evaluate an agent on *how* it worked as well as on what it concluded.

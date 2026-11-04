@@ -1,0 +1,63 @@
+---
+title: "Telematics Risk Assessment"
+headline: "Predicting insurance claims from how people actually drive."
+summary: "A dual-model machine-learning system that turns raw trip telematics — GPS, accelerometer, speed — into 50+ driving-behavior features, then predicts both the probability and the likely severity of an insurance claim, with interpretable risk factors and risk tiers."
+domains: [insurance]
+capabilities: [ml, mlops]
+status: open-source
+featured: false
+order: 10
+links:
+  repo: https://github.com/zarreh/car_insurance_telematics
+metrics:
+  - { value: "0.689", label: "claim ROC-AUC (baseline 0.524)" }
+  - { value: "0.485", label: "severity R² (baseline 0.398)" }
+  - { value: "50+", label: "engineered driving features" }
+stack: [Python, XGBoost, Optuna, scikit-learn, pandas, Docker, Jupyter]
+legacy: projects_car_insurance_telematics
+date: 2025-07-13
+updated: 2026-11-02
+---
+
+## Why it exists
+
+Usage-based insurance prices risk from behavior rather than from proxies such as age or postcode. That requires two things traditional rating models do not handle well: turning noisy, high-frequency sensor data into meaningful driving features, and predicting both *whether* a claim will happen and *how expensive* it is likely to be.
+
+## How it works
+
+<Flow
+  steps={[
+    { label: "Raw trip data", kind: "input", note: "GPS, accelerometer, speed" },
+    { label: "Feature engineering", kind: "code", note: "50+ behavior & time features" },
+    { label: "Claim probability", kind: "ai", note: "XGBoost classifier" },
+    { label: "Claim severity", kind: "ai", note: "XGBoost regressor" },
+    { label: "Risk tier & drivers", kind: "output", note: "low → very high" },
+  ]}
+/>
+
+- **Feature engineering** converts trip data into more than 50 features: harsh-driving intensity, speeding patterns, distance, night driving, time-of-day patterns and a composite risk score.
+- **Two models, two questions.** A classifier predicts claim probability; a separate regressor predicts claim amount. Class imbalance is handled with `scale_pos_weight`, and claim amounts are log-transformed.
+- **Tuned with Optuna**, then versioned in a simple model registry for batch or single-trip inference.
+- **Interpretable output:** each driver gets a risk tier and the factors behind it.
+
+## Results and honest limits
+
+From the project's experiments on a 1,200-driver dataset:
+
+- **Claim probability:** ROC-AUC improved from 0.524 to 0.689 and recall doubled after tuning and feature work.
+- **Claim severity:** RMSE fell from $2,156 to $1,847 and R² rose from 0.398 to 0.485.
+- **Top predictive features:** composite risk score, harsh-driving intensity, speed risk, total distance and night driving.
+
+<Callout type="limit">
+Claims are rare, and it shows: even after tuning, F1 is about 0.06 and precision about 0.08, so the classifier is a ranking signal for pricing and coaching, not a reliable predictor of individual claims. The dataset is small, and results would need validation on a real insurer's portfolio before informing any pricing decision.
+</Callout>
+
+## Engineering decisions
+
+- **Separate frequency and severity models**, mirroring how actuaries decompose expected loss.
+- **Explicit imbalance handling** and log-transformed targets rather than accepting a model that predicts "no claim" for everyone.
+- **Reproducible environment:** Docker and Docker Compose for training, inference and notebooks, with command-line, Python and notebook interfaces.
+
+## Who it's for
+
+For **insurers exploring usage-based products**, it is a transparent starting point that separates claim frequency from severity. For **data scientists**, it is an honest example of what imbalanced claim data does to headline metrics.

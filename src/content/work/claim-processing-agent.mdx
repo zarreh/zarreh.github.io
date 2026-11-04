@@ -1,0 +1,72 @@
+---
+title: "Claim Processing Agent"
+headline: "Auto-insurance claim decisions grounded in the policy, with business rules in the graph."
+summary: "An agentic RAG system that validates an auto-insurance claim against policy records, retrieves the relevant policy language, checks the claimed repair cost against market estimates, and returns a structured, explainable coverage decision — through two interchangeable agent frameworks."
+domains: [insurance]
+capabilities: [agents, rag, evaluation]
+status: live
+featured: false
+order: 6
+cover: ../../assets/images/work/claim_processing_agent.png
+coverAlt: "Claim Processing Agent claim-submission form with a sample auto-insurance claim and the active pipeline status"
+links:
+  demo: https://claim-agent.zarreh.ai/
+  repo: https://github.com/zarreh/auto_insurance_claim_agent
+metrics:
+  - { value: "58", label: "automated tests across five modules" }
+  - { value: "2", label: "interchangeable agent pipelines" }
+  - { value: "8", label: "nodes in the LangGraph workflow" }
+  - { value: "40%", label: "configurable cost-inflation threshold" }
+stack: [LangGraph, Smolagents, ChromaDB, OpenAI, FastAPI, Streamlit, Hydra, Docker, pytest]
+scopeNote: "A portfolio demonstration on sample policies and claims. It is not an insurer's system of record and does not make real coverage decisions."
+legacy: projects_claim_process_agent
+date: 2026-03-01
+updated: 2026-11-02
+---
+
+## Why it exists
+
+Most auto-insurance claims follow the same path: is the policy real and active, is the incident covered, is the amount reasonable, what does the policy say about deductibles and limits? Adjusters spend much of their time on that routine path, and inconsistency creeps in when the same questions are answered by different people reading long policy documents.
+
+The aim was a claim agent whose decisions are **grounded in the policy text**, whose business rules are explicit rather than buried in a prompt, and whose output is structured enough to audit.
+
+## How it works
+
+<Flow
+  steps={[
+    { label: "Claim (JSON)", kind: "input" },
+    { label: "Validate against records", kind: "code", note: "policy, premium, dates" },
+    { label: "Retrieve policy language", kind: "ai", note: "ChromaDB semantic search" },
+    { label: "Market price check", kind: "check", note: "flags inflated repair costs" },
+    { label: "Coverage decision", kind: "ai", note: "structured output" },
+    { label: "Decision + reasoning trace", kind: "output" },
+  ]}
+/>
+
+- **Validation is plain code.** Policy existence, premium status and coverage dates are checked against policy records before any model is involved; an invalid or expired policy ends the run with a clear reason.
+- **Agentic RAG over the policy.** Relevant policy language is retrieved from a ChromaDB vector store and given to the model with the claim.
+- **A market price check.** A web search estimates typical repair costs for the described damage; claims more than 40% above the estimate are routed to a separate "inflated" outcome. The threshold is configuration, not prompt text.
+- **Structured decisions.** The result is a typed `ClaimDecision` — covered or not, deductible, recommended payout and explanatory notes — with a reasoning trace shown in the interface.
+
+The same domain logic runs through two interchangeable pipelines — a stateful **LangGraph** graph and an autonomous **Smolagents** agent — selected with a single configuration switch, which makes the frameworks directly comparable on identical inputs.
+
+## Results and honest limits
+
+- **Tests:** 58 automated tests across schemas, validation, retrieval, both pipelines and the API.
+- **Scenario fixtures:** valid claims, expired policies, invalid policies and inflated repair costs, so every branch of the graph is exercised.
+- **Delivery:** FastAPI backend, Streamlit interface with a reasoning-trace viewer, Docker Compose deployment and Hydra-based configuration.
+
+<Callout type="limit">
+The tests prove the workflow and its branches behave as designed; they are not an accuracy measurement on real claims. The market price check depends on web-search results, which are noisy, and the sample policies and claims are illustrative rather than drawn from an insurer.
+</Callout>
+
+## Engineering decisions
+
+- **Business rules as graph edges.** Policy validity and the cost-inflation threshold are conditional edges in the LangGraph workflow, so they are visible, testable and changeable without touching prompts.
+- **Framework-agnostic core.** Validation, ingestion and retrieval are plain Python functions shared by both pipelines — no logic is duplicated per framework.
+- **Externalized configuration.** Models, thresholds and the pipeline choice live in Hydra config, so a change of behavior is a reviewed config change.
+- **Load-or-build vector store**, so policy retrieval is immediate after the first ingestion run.
+
+## Who it's for
+
+For **insurers and claims-operations teams**, it shows how to automate the routine path of adjudication while keeping every decision traceable to policy language and explicit rules. For **AI engineers**, it is a side-by-side comparison of a stateful graph and an autonomous agent on the same task.

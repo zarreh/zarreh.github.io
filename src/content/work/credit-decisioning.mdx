@@ -1,0 +1,94 @@
+---
+title: "Credit Decisioning"
+headline: "Adverse-action notices that are verified before anyone sends them."
+summary: "A calibrated credit model, notices written by code from a reviewed template, an independent eight-check verifier proven by mutation testing, and a human who makes the call. A read-only AI analyst explains cases — and code checks every number it states."
+domains: [finance]
+capabilities: [evaluation, fairness, ml, agents]
+status: live
+featured: true
+order: 1
+cover: ../../assets/images/work/credit_decisioning.png
+coverAlt: "Credit Decisioning review page showing the model's reasons and the eight notice-verification checks"
+links:
+  demo: https://credit.zarreh.ai/
+  docs: https://zarreh.ai/credit_decisioning/
+  repo: https://github.com/zarreh/credit_decisioning
+metrics:
+  - { value: "14", label: "mutation classes caught" }
+  - { value: "0", label: "genuine notices wrongly rejected (of 1,006)" }
+  - { value: "0.780", label: "AUROC, out-of-fold" }
+  - { value: "19 / 19", label: "analyst guardrail cases pass" }
+stack: [Python, Calibrated logistic regression, FastAPI + SSE, SQLite, LangChain agents, Next.js, MkDocs]
+scopeNote: "A portfolio demonstration on the 1994 UCI German Credit benchmark (1,000 applicants, CC BY 4.0); the review queue holds 60 synthetic applicants derived from it. It is not a lender and is not legal or compliance advice."
+legacy: projects_credit_decisioning
+date: 2026-10-29
+updated: 2026-11-02
+---
+
+## Why it exists
+
+In the United States, ECOA and Regulation B require a written notice with the principal reasons when credit is declined. "Insufficient score" is explicitly not enough, and the CFPB has said the duty is the same when a complex model makes the decision. In practice, two things go wrong:
+
+- **Reasons drift from what the model used** — after a template edit, a mapping change or a reviewer's rewording.
+- **Generated text adds things nobody checked** — a wrong number, a promise, or a prohibited basis such as age or sex.
+
+The applicant cannot contest a reason they were never given, and the lender carries the regulatory exposure. The project asks a practical question: *how do you prove a regulated document is correct before it is sent?*
+
+## How it works
+
+<Flow
+  steps={[
+    { label: "Application", kind: "input" },
+    { label: "Calibrated model", kind: "ai", note: "probability of a bad outcome" },
+    { label: "Policy band & reasons", kind: "code", note: "derived from the cost matrix" },
+    { label: "Notice from template", kind: "code" },
+    { label: "Eight-check verifier", kind: "check", note: "independent implementation" },
+    { label: "Reviewer decides", kind: "human" },
+  ]}
+/>
+
+Every artifact has a producer and a separate check:
+
+| Artifact | Produced by | Checked by |
+| --- | --- | --- |
+| Probability of a bad outcome | Calibrated logistic regression | Repeated 5×5 cross-validation, bootstrap intervals, reliability curve |
+| Approve / refer / decline band | Code, from the benchmark's cost matrix | Unit tests pin the derived (not tuned) threshold |
+| Principal reasons | Code, from the model's coefficients | Attributions must sum to the model's log-odds difference |
+| Notice text | Code, from a reviewed template | Eight deterministic verifier checks |
+| Analyst answers | A read-only LLM agent | Code checks every number against tool results |
+
+A reviewer sees the model's reasons, the verifier's results and the drafted notice, then records the decision. The model's recommendation stays on record even when the human overrides it.
+
+### The verifier is itself verified
+
+The verifier is a second, independent implementation — it never calls the renderer. It checks that reasons match the derivation, that there are one to four of them, that none rests on a prohibited basis, that each states the applicant's actual value, that the decision is consistent, that every number matches the application, that the legal text matches a pinned hash, and that each sentence is approved wording.
+
+To prove those checks earn their place, a **mutation suite** applies 14 kinds of defect to every genuine notice and requires each one to fail its *intended* check. A meta-test then switches each of the eight checks off in turn and requires the gate to notice.
+
+## Results and honest limits
+
+All figures come from one generated run (2026-10-29) on the benchmark's 1,000 applicants with out-of-fold predictions.
+
+- **Decision quality:** expected cost of 0.541 per applicant (95% interval 0.488–0.598) against 0.70 for declining everyone — the right baseline, because declining a good applicant costs 1 and approving a bad one costs 5. AUROC is 0.780 (0.751–0.810).
+- **Model choice:** a boosted-tree challenger gained +0.012 AUROC with an interval that includes zero, so the simpler, explainable model was kept.
+- **Verifier:** every applicable mutant was caught across 1,006 genuine notices, no genuine notice was rejected, and all eight checks were detected when disabled.
+- **Analyst agent:** 19 of 19 scripted guardrail cases pass. A separate live run of 15 questions behaved correctly on all 15 after fixes, with one answer flagged for a real transcription error — a smoke test, not a rate.
+
+<Callout type="limit">
+Protected attributes are excluded from the model, yet applicants under 25 are approved at **0.57** of the rate of the reference group — below the common 0.8 screen. Dropping a column does not remove its signal. Small groups are labelled "insufficient n" rather than given a number, and nothing here generalizes from 1,000 German applicants in the 1970s–90s to a current lender.
+</Callout>
+
+<Callout type="lesson" title="A lesson worth sharing">
+The first version let an LLM paraphrase each reason. Prose cannot be fully verified by code, so the notice became 100% template and the LLM moved to a read-only analyst role, where its numbers *can* be checked. Taking the model out of the notice made the compliance claim stronger, not weaker. Evaluation also caught a real bug in the analyst's number-checking guard, which is now pinned by tests.
+</Callout>
+
+## Engineering decisions
+
+- **No LLM on the decision path**, enforced by an import contract rather than by convention.
+- **The review workflow is a plain state machine** with atomic claims — a double start or a stale page returns a conflict — and a verified-hash binding before a notice can be sent.
+- **Reproducible by construction:** pinned, hash-checked data, and a single command that retrains from scratch and requires the evidence to match.
+- **Quality gates on every pull request:** lint, strict typing, import contracts, 90%+ test coverage and an evaluation gate.
+
+## Who it's for
+
+For **lenders and fintech teams**, it shows an approach to regulated, explainable decisions where every outbound document is independently verified. For **AI and risk leaders**, it is a worked example of using mutation testing to prove that your safety checks actually catch failures.

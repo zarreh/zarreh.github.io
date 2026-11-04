@@ -1,0 +1,35 @@
+---
+import { Icon } from "astro-icon/components";
+
+export interface Props {
+  type?: "note" | "scope" | "lesson" | "limit";
+  title?: string;
+}
+
+const { type = "note", title } = Astro.props;
+
+const config = {
+  note: { icon: "lucide:info", label: "Note", cls: "border-line-strong bg-sunken" },
+  scope: { icon: "lucide:flask-conical", label: "Scope", cls: "border-warm/40 bg-warm-soft" },
+  lesson: { icon: "lucide:lightbulb", label: "Lesson", cls: "border-accent/40 bg-accent-soft" },
+  limit: {
+    icon: "lucide:triangle-alert",
+    label: "Honest limit",
+    cls: "border-warm/40 bg-warm-soft",
+  },
+}[type];
+---
+
+<aside class:list={["not-prose my-8 rounded-2xl border p-5 sm:p-6", config.cls]}>
+  <p
+    class="flex items-center gap-2 font-mono text-xs font-medium tracking-[0.12em] text-ink uppercase"
+  >
+    <Icon name={config.icon} class="size-4" aria-hidden="true" />
+    {title ?? config.label}
+  </p>
+  <div
+    class="mt-3 text-base leading-relaxed text-ink-soft [&_a]:link [&_p+p]:mt-3 [&_strong]:text-ink"
+  >
+    <slot />
+  </div>
+</aside>

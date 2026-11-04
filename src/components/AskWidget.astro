@@ -1,0 +1,270 @@
+---
+import { Icon } from "astro-icon/components";
+import { env } from "@/data/profile";
+
+// Rendered only when PUBLIC_ASK_API_URL is set; the script also hides it unless /healthz is OK.
+const api = env.askApiUrl.replace(/\/$/, "");
+const suggestions = [
+  "What has Ali built with agentic AI?",
+  "What results did his forecasting work deliver?",
+  "How does Ali approach AI governance?",
+  "What services does he offer?",
+];
+---
+
+{
+  api && (
+    <div data-ask-root data-api={api} hidden data-no-print>
+      <button
+        type="button"
+        class="btn btn-primary fixed right-5 bottom-5 z-40 shadow-lg"
+        data-ask-open
+        aria-expanded="false"
+        aria-controls="ask-panel"
+      >
+        <Icon name="lucide:sparkles" class="size-4" aria-hidden="true" />
+        Ask about my work
+      </button>
+
+      <section
+        id="ask-panel"
+        class="card fixed right-3 bottom-3 z-50 hidden max-h-[min(40rem,calc(100dvh-1.5rem))] w-[min(26rem,calc(100vw-1.5rem))] flex-col overflow-hidden shadow-2xl"
+        aria-label="Ask about Ali's work"
+        data-ask-panel
+      >
+        <header class="flex items-center justify-between border-b border-line px-4 py-3">
+          <div>
+            <p class="text-sm font-semibold">Ask about my work</p>
+            <p class="text-xs text-muted">Answers come only from this site, with sources.</p>
+          </div>
+          <button type="button" class="btn btn-ghost px-2" data-ask-close aria-label="Close">
+            <Icon name="lucide:x" class="size-5" aria-hidden="true" />
+          </button>
+        </header>
+
+        <div
+          class="flex-1 space-y-4 overflow-y-auto px-4 py-4 text-sm"
+          data-ask-log
+          aria-live="polite"
+        >
+          <div data-ask-intro>
+            <p class="text-ink-soft">
+              Hi — I'm an AI assistant that answers from the case studies, experience and writing on
+              zarreh.ai. Try:
+            </p>
+            <ul class="mt-3 flex flex-col gap-2">
+              {suggestions.map((s) => (
+                <li>
+                  <button
+                    type="button"
+                    class="w-full rounded-xl border border-line bg-bg px-3 py-2 text-left text-ink-soft hover:border-line-strong hover:text-ink"
+                    data-ask-suggestion
+                  >
+                    {s}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <form class="border-t border-line p-3" data-ask-form>
+          <label for="ask-input" class="sr-only">
+            Your question
+          </label>
+          <div class="flex items-end gap-2">
+            <textarea
+              id="ask-input"
+              rows="1"
+              maxlength="500"
+              required
+              placeholder="Ask a question…"
+              class="max-h-32 min-h-10 flex-1 resize-none rounded-xl border border-line-strong bg-bg px-3 py-2 text-sm"
+              data-ask-input
+            />
+            <button type="submit" class="btn btn-primary px-3" aria-label="Send" data-ask-send>
+              <Icon name="lucide:arrow-up" class="size-4" aria-hidden="true" />
+            </button>
+          </div>
+          <p class="mt-2 text-[0.7rem] leading-snug text-muted">
+            AI-generated and can be wrong — check the linked sources. Questions aren't stored.
+          </p>
+        </form>
+      </section>
+    </div>
+  )
+}
+
+<script>
+  type Source = { n: number; title: string; section: string; url: string };
+  type Turn = { role: "user" | "assistant"; content: string };
+
+  const root = document.querySelector<HTMLElement>("[data-ask-root]");
+  const track = (name: string, params: Record<string, unknown> = {}) =>
+    (window as unknown as { zTrack?: (n: string, p: Record<string, unknown>) => void }).zTrack?.(
+      name,
+      params,
+    );
+
+  if (root) {
+    const api = root.dataset.api!;
+    const panel = root.querySelector<HTMLElement>("[data-ask-panel]")!;
+    const openBtn = root.querySelector<HTMLButtonElement>("[data-ask-open]")!;
+    const log = root.querySelector<HTMLElement>("[data-ask-log]")!;
+    const form = root.querySelector<HTMLFormElement>("[data-ask-form]")!;
+    const input = root.querySelector<HTMLTextAreaElement>("[data-ask-input]")!;
+    const send = root.querySelector<HTMLButtonElement>("[data-ask-send]")!;
+    const history: Turn[] = [];
+    let busy = false;
+
+    fetch(`${api}/healthz`, { mode: "cors" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((h) => {
+        if (h && h.status === "ok" && h.available) root.hidden = false;
+      })
+      .catch(() => {});
+
+    const setOpen = (open: boolean) => {
+      panel.classList.toggle("hidden", !open);
+      panel.classList.toggle("flex", open);
+      openBtn.classList.toggle("hidden", open);
+      openBtn.setAttribute("aria-expanded", String(open));
+      if (open) {
+        input.focus();
+        track("ask_open");
+      } else openBtn.focus();
+    };
+    openBtn.addEventListener("click", () => setOpen(true));
+    root.querySelector("[data-ask-close]")!.addEventListener("click", () => setOpen(false));
+    panel.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") setOpen(false);
+    });
+
+    root.querySelectorAll<HTMLButtonElement>("[data-ask-suggestion]").forEach((b) =>
+      b.addEventListener("click", () => {
+        input.value = b.textContent?.trim() ?? "";
+        form.requestSubmit();
+      }),
+    );
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        form.requestSubmit();
+      }
+    });
+
+    const bubble = (role: "user" | "assistant") => {
+      const el = document.createElement("div");
+      el.className =
+        role === "user"
+          ? "ml-8 rounded-2xl rounded-br-sm bg-ink px-3.5 py-2.5 text-bg"
+          : "mr-4 rounded-2xl rounded-bl-sm bg-sunken px-3.5 py-2.5 text-ink";
+      log.appendChild(el);
+      log.scrollTop = log.scrollHeight;
+      return el;
+    };
+
+    // Renders answer text, turning [n] markers into links to the cited page. Never uses innerHTML.
+    const renderAnswer = (el: HTMLElement, text: string, sources: Source[]) => {
+      el.replaceChildren();
+      for (const part of text.split(/(\[\d{1,2}\])/g)) {
+        const m = part.match(/^\[(\d{1,2})\]$/);
+        const src = m ? sources.find((s) => s.n === Number(m[1])) : undefined;
+        if (src) {
+          const a = document.createElement("a");
+          a.href = src.url;
+          a.textContent = `[${src.n}]`;
+          a.title = `${src.title} — ${src.section}`;
+          a.className = "align-super text-[0.7em] font-semibold text-accent no-underline";
+          el.appendChild(a);
+        } else {
+          el.appendChild(document.createTextNode(part));
+        }
+      }
+    };
+
+    const renderSources = (el: HTMLElement, sources: Source[], cited: number[]) => {
+      const used = sources.filter((s) => cited.includes(s.n));
+      if (!used.length) return;
+      const list = document.createElement("ul");
+      list.className = "mt-3 space-y-1 border-t border-line pt-2 text-xs";
+      for (const s of used) {
+        const li = document.createElement("li");
+        const a = document.createElement("a");
+        a.href = s.url;
+        a.className = "link";
+        a.textContent = `[${s.n}] ${s.title} — ${s.section}`;
+        a.addEventListener("click", () => track("ask_source_click", { url: s.url }));
+        li.appendChild(a);
+        list.appendChild(li);
+      }
+      el.appendChild(list);
+    };
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const question = input.value.trim();
+      if (!question || busy) return;
+      busy = true;
+      send.disabled = true;
+      root.querySelector("[data-ask-intro]")?.remove();
+      bubble("user").textContent = question;
+      input.value = "";
+      const out = bubble("assistant");
+      out.textContent = "…";
+      track("ask_question");
+
+      let text = "";
+      let sources: Source[] = [];
+      try {
+        const response = await fetch(`${api}/ask`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ question, history: history.slice(-4) }),
+        });
+        if (!response.ok || !response.body) {
+          const body = await response.json().catch(() => ({}));
+          out.textContent = body.message ?? "The assistant is unavailable right now.";
+          return;
+        }
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+        for (;;) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          const events = buffer.split("\n\n");
+          buffer = events.pop() ?? "";
+          for (const block of events) {
+            const event = block.match(/^event: (.*)$/m)?.[1];
+            const data = JSON.parse(block.match(/^data: (.*)$/m)?.[1] ?? "null");
+            if (event === "sources") sources = data;
+            else if (event === "token") {
+              text += data.t;
+              renderAnswer(out, text, sources);
+              log.scrollTop = log.scrollHeight;
+            } else if (event === "done") {
+              renderSources(out, sources, data.cited ?? []);
+              if (data.cited?.length === 0 && sources.length && !data.reason) {
+                const note = document.createElement("p");
+                note.className = "mt-2 text-xs text-muted";
+                note.textContent = "No sources were cited for this answer — treat it with care.";
+                out.appendChild(note);
+              }
+            } else if (event === "error") {
+              out.textContent = data.message;
+            }
+          }
+        }
+        history.push({ role: "user", content: question }, { role: "assistant", content: text });
+      } catch {
+        out.textContent = "Couldn't reach the assistant. Please try again later.";
+      } finally {
+        busy = false;
+        send.disabled = false;
+        log.scrollTop = log.scrollHeight;
+      }
+    });
+  }
+</script>

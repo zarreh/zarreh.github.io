@@ -1,0 +1,66 @@
+---
+title: "GenAI Job Finder"
+headline: "A job search that starts from your résumé, not from a keyword box."
+summary: "An AI-assisted job-search tool that turns a résumé into targeted search queries, collects and enriches job postings, cleans and classifies them with LLM chains, and offers a career-focused chat assistant — with each model task routed to the provider that suits it."
+domains: [careers]
+capabilities: [agents, ml]
+status: open-source
+featured: false
+order: 9
+links:
+  repo: https://github.com/zarreh/genai_job_finder
+metrics:
+  - { value: "5 + 8", label: "primary and secondary job titles generated per résumé" }
+  - { value: "7", label: "experience levels classified" }
+  - { value: "4", label: "LLM provider modes" }
+stack: [LangChain, LangGraph, OpenAI, Ollama (Llama 3.2), Streamlit, SQLite, Docker]
+scopeNote: "A personal open-source project. It collects public job postings and should be used in line with each site's terms of service."
+legacy: projects_genai_job_finder
+date: 2025-09-16
+updated: 2026-11-02
+---
+
+## Why it exists
+
+Job search is a matching problem dressed up as a keyword search. Candidates guess at titles, scroll through postings with inconsistent salary, location and seniority information, and lose track of which companies they have already looked at.
+
+GenAI Job Finder explores how far a small, practical pipeline can go: generate the right searches from a résumé, clean up what comes back, and give the candidate a focused assistant to reason about it.
+
+## How it works
+
+<Flow
+  steps={[
+    { label: "Résumé", kind: "input" },
+    { label: "Generate search queries", kind: "ai", note: "5 primary + 8 secondary titles" },
+    { label: "Collect postings", kind: "code", note: "rate-limited" },
+    { label: "Enrich companies", kind: "code", note: "lookup first, parse once" },
+    { label: "Clean & classify", kind: "ai", note: "salary, location, seniority" },
+    { label: "Explore & chat", kind: "output" },
+  ]}
+/>
+
+- **Résumé-based query generation.** An LLM reads the résumé and proposes five primary and eight secondary job titles to search for.
+- **Collection with restraint.** Postings are collected with built-in delays and rate limiting.
+- **Separate company enrichment.** Company details — industry, size, followers — live in their own table and are looked up before being parsed again, so repeat companies are not reprocessed.
+- **LLM data cleaning.** Specialized chains extract and normalize salary ranges, classify remote, hybrid or on-site work, and place each role in one of seven experience levels.
+- **A career-focused assistant.** A chat interface answers questions about the search and the résumé, and declines topics unrelated to careers.
+
+## Results and honest limits
+
+- **Delivery:** a multi-tab Streamlit app over a SQLite database with separate job and company tables, CSV export, and Docker images published to Docker Hub.
+- **Provider routing:** four configuration modes — all local (Ollama), all OpenAI, mixed (local chat, OpenAI for résumé analysis), or custom from environment.
+
+<Callout type="limit">
+The pipeline depends on the structure of public job sites, which changes without notice, and collection must respect those sites' terms. The cleaning and classification steps are LLM outputs that have not been measured against a labelled sample, so they should be treated as helpful normalization rather than verified data.
+</Callout>
+
+## Engineering decisions
+
+- **Right model for the task:** a fast local model for conversation, a stronger hosted model for résumé analysis — configurable rather than hard-coded.
+- **Lookup before parse:** the company pipeline avoids redundant work by checking the database first.
+- **Scoped assistant:** topic filtering keeps the chat on career questions instead of becoming a general chatbot.
+- **Containerized by default,** with scripts for hosted-model, local-model and pre-built-image deployments.
+
+## Who it's for
+
+For **job seekers and career coaches**, it is a practical tool for structured, résumé-driven search. For **engineers**, it is an example of combining data collection, LLM-based cleaning and multi-provider routing in one small application.

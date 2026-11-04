@@ -1,0 +1,118 @@
+---
+import { Icon } from "astro-icon/components";
+import ThemeToggle from "./ThemeToggle.astro";
+
+const nav = [
+  { href: "/work/", label: "Work" },
+  { href: "/experience/", label: "Experience" },
+  { href: "/advisory/", label: "Advisory" },
+  { href: "/speaking/", label: "Speaking" },
+  { href: "/writing/", label: "Writing" },
+  { href: "/about/", label: "About" },
+];
+
+const path = Astro.url.pathname;
+const isActive = (href: string) => path === href || path.startsWith(href);
+---
+
+<header
+  class="sticky top-0 z-40 border-b border-line/70 bg-bg/85 backdrop-blur-md supports-[backdrop-filter]:bg-bg/70"
+>
+  <div class="container-site flex h-16 items-center justify-between gap-4">
+    <a href="/" class="group flex items-center gap-2.5" aria-label="Ali Zarreh — home">
+      <span
+        class="grid size-8 place-items-center rounded-lg bg-ink font-serif text-[0.95rem] font-semibold text-bg transition-transform group-hover:-rotate-6"
+        aria-hidden="true">AZ</span
+      >
+      <span class="font-serif text-lg font-medium tracking-tight">Ali Zarreh</span>
+    </a>
+
+    <nav aria-label="Primary" class="hidden lg:block">
+      <ul class="flex items-center gap-1">
+        {
+          nav.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                class:list={[
+                  "rounded-full px-3 py-2 text-sm font-medium transition-colors",
+                  isActive(item.href) ? "text-ink" : "text-muted hover:text-ink",
+                ]}
+                aria-current={isActive(item.href) ? "page" : undefined}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="flex items-center gap-1">
+      <button
+        type="button"
+        class="btn-ghost btn rounded-full"
+        data-search-open
+        aria-label="Search the site"
+        title="Search (press /)"
+      >
+        <Icon name="lucide:search" class="size-[1.1rem]" aria-hidden="true" />
+      </button>
+      <ThemeToggle />
+      <a
+        href="/work-with-me/"
+        class="btn btn-primary ml-1 hidden sm:inline-flex"
+        data-track="cta_click"
+        data-track-label="header_work_with_me">Work with me</a
+      >
+      <button
+        type="button"
+        class="btn btn-ghost lg:hidden"
+        aria-expanded="false"
+        aria-controls="mobile-nav"
+        data-menu-toggle
+      >
+        <span class="sr-only">Open menu</span>
+        <Icon name="lucide:menu" class="size-5" aria-hidden="true" data-icon-open />
+        <Icon name="lucide:x" class="hidden size-5" aria-hidden="true" data-icon-close />
+      </button>
+    </div>
+  </div>
+
+  <nav id="mobile-nav" aria-label="Mobile" class="hidden border-t border-line bg-bg lg:hidden">
+    <ul class="container-site flex flex-col py-3">
+      {
+        nav.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              class:list={[
+                "block rounded-lg px-2 py-3 text-base font-medium",
+                isActive(item.href) ? "text-accent" : "text-ink",
+              ]}
+              aria-current={isActive(item.href) ? "page" : undefined}
+            >
+              {item.label}
+            </a>
+          </li>
+        ))
+      }
+      <li class="pt-2">
+        <a href="/work-with-me/" class="btn btn-primary w-full">Work with me</a>
+      </li>
+    </ul>
+  </nav>
+</header>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>("[data-menu-toggle]");
+  const panel = document.getElementById("mobile-nav");
+  toggle?.addEventListener("click", () => {
+    const open = toggle.getAttribute("aria-expanded") === "true";
+    toggle.setAttribute("aria-expanded", String(!open));
+    panel?.classList.toggle("hidden", open);
+    toggle.querySelector("[data-icon-open]")?.classList.toggle("hidden", !open);
+    toggle.querySelector("[data-icon-close]")?.classList.toggle("hidden", open);
+    toggle.querySelector(".sr-only")!.textContent = open ? "Open menu" : "Close menu";
+  });
+</script>

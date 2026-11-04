@@ -1,0 +1,34 @@
+---
+export interface Props {
+  text: string;
+  label?: string;
+}
+
+const { text, label = "Copy" } = Astro.props;
+---
+
+<button
+  type="button"
+  class="btn btn-secondary px-3 py-1.5 text-xs"
+  data-copy={text}
+  data-track="bio_copy"
+  data-track-label={label}
+>
+  <span data-copy-label>{label}</span>
+</button>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>("[data-copy]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const label = button.querySelector("[data-copy-label]");
+      const original = label?.textContent;
+      try {
+        await navigator.clipboard.writeText(button.dataset.copy ?? "");
+        if (label) label.textContent = "Copied";
+      } catch {
+        if (label) label.textContent = "Copy failed";
+      }
+      setTimeout(() => label && (label.textContent = original ?? "Copy"), 1800);
+    });
+  });
+</script>

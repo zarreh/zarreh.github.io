@@ -1,0 +1,53 @@
+---
+import "@fontsource-variable/inter";
+import "@fontsource-variable/fraunces";
+import "@fontsource-variable/jetbrains-mono";
+import "@/styles/global.css";
+import SEO, { type Props as SEOProps } from "@/components/SEO.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import Analytics from "@/components/Analytics.astro";
+import SearchDialog from "@/components/SearchDialog.astro";
+import AskWidget from "@/components/AskWidget.astro";
+import frauncesLatin from "@fontsource-variable/fraunces/files/fraunces-latin-wght-normal.woff2?url";
+import interLatin from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url";
+
+export interface Props extends SEOProps {
+  /** Pages that should not appear in on-site search (e.g. 404). */
+  searchable?: boolean;
+}
+
+const { searchable = true, ...seo } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <SEO {...seo} />
+    <link rel="preload" href={frauncesLatin} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={interLatin} as="font" type="font/woff2" crossorigin />
+    <script is:inline>
+      (() => {
+        const stored = localStorage.getItem("theme");
+        const theme =
+          stored ?? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
+    <Analytics />
+  </head>
+  <body class="flex min-h-dvh flex-col">
+    <a
+      href="#main"
+      class="sr-only z-50 rounded-full bg-accent px-4 py-2 text-accent-ink focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+      >Skip to content</a
+    >
+    <Header />
+    <main id="main" class="flex-1" {...searchable ? { "data-pagefind-body": "" } : {}}>
+      <slot />
+    </main>
+    <Footer />
+    <SearchDialog />
+    <AskWidget />
+  </body>
+</html>

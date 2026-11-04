@@ -1,0 +1,70 @@
+---
+title: "DualLens Analytics"
+headline: "Company analysis through two lenses: the financials, and what the company says about AI."
+summary: "An investment-research prototype that pairs Yahoo Finance metrics with AI-strategy insights retrieved from company reports through RAG. Every answer is scored for groundedness and relevance by an LLM judge, and companies can be compared and ranked on both lenses."
+domains: [finance]
+capabilities: [rag, evaluation]
+status: live
+featured: false
+order: 7
+cover: ../../assets/images/work/duallens_analytics.png
+coverAlt: "DualLens Analytics financial dashboard comparing stock-price trends for GOOGL, MSFT, IBM, NVDA and AMZN"
+links:
+  demo: https://duallens.zarreh.ai/
+  docs: https://docs-duallens.zarreh.ai/
+  repo: https://github.com/zarreh/DualLens-Analytics
+metrics:
+  - { value: "36+", label: "automated tests" }
+  - { value: "4", label: "analysis views" }
+  - { value: "1–5", label: "groundedness & relevance score on every answer" }
+stack: [LangChain, ChromaDB, OpenAI, yfinance, Plotly, Streamlit, Hydra, MkDocs]
+scopeNote: "An educational prototype. Financial data may be delayed or inaccurate, and nothing in the app is investment advice."
+legacy: projects_duallens_analytics
+date: 2026-02-15
+updated: 2026-03-01
+---
+
+## Why it exists
+
+Analysts increasingly need to judge two very different things about a company at once: its financial health, which lives in structured market data, and its AI strategy, which lives in long, unstructured reports. The first is easy to chart. The second usually means reading dozens of pages per company — and LLM summaries of those pages are only useful if you can tell when they are grounded in the source.
+
+DualLens puts both lenses in one place and makes the quality of every generated answer visible.
+
+## How it works
+
+<Flow
+  steps={[
+    { label: "Company reports (PDF)", kind: "input" },
+    { label: "Chunk & embed", kind: "code", note: "1,000-token chunks, 200 overlap" },
+    { label: "Retrieve & answer", kind: "ai", note: "top-k from ChromaDB" },
+    { label: "LLM-as-judge", kind: "check", note: "groundedness & relevance, 1–5" },
+    { label: "Market metrics", kind: "code", note: "Yahoo Finance" },
+    { label: "Compare & rank", kind: "output" },
+  ]}
+/>
+
+- **Quantitative lens:** stock prices and key financial metrics come straight from Yahoo Finance and are charted with Plotly — no model involved.
+- **Qualitative lens:** company AI-initiative reports are parsed, split into overlapping token-based chunks and embedded into ChromaDB. Questions are answered from the most relevant chunks.
+- **Every answer is judged.** A separate LLM-as-judge step scores each response for groundedness and relevance on a 1–5 scale, with a written justification shown next to the answer.
+- **Four views:** a financial dashboard, a chat-style Q&A over the reports, a side-by-side company comparison, and a composite ranking that blends financial health with an LLM-assessed AI-strategy score, each with its justification.
+
+## Results and honest limits
+
+- **Delivery:** a live Streamlit app with four analysis views, a documentation site, and a configurable company list (by default GOOGL, MSFT, IBM, NVDA and AMZN).
+- **Quality gates:** 36+ automated tests covering configuration, data processing, evaluation logic and financial calculations, plus lint and format checks in a single `make check`.
+- **Configuration:** chunking, retrieval depth, models and companies are set in Hydra config rather than in code.
+
+<Callout type="limit">
+The judge scores are a second model's opinion, not ground truth, and the composite ranking mixes hard numbers with LLM judgments — useful for exploration, not for investment decisions. The knowledge base is a curated set of reports, so answers are only as current and complete as those documents.
+</Callout>
+
+## Engineering decisions
+
+- **Keep the numbers out of the LLM.** Financial metrics are fetched and computed in code; the model only works with the unstructured reports.
+- **Evaluate every response, visibly.** Groundedness and relevance are surfaced to the user instead of being hidden in logs.
+- **Token-aware chunking** with overlap, so retrieval does not cut context at arbitrary character boundaries.
+- **Externalized configuration** with Hydra, so experiments with chunking and retrieval are reproducible config changes.
+
+## Who it's for
+
+For **research and strategy teams**, it is a pattern for combining structured data with retrieval over documents while keeping answer quality visible. For **AI teams**, it shows a lightweight way to put LLM-as-judge evaluation in front of users rather than only in offline tests.

@@ -1,0 +1,56 @@
+---
+title: "Take the LLM out of the notice"
+description: "What building a credit-decisioning prototype taught me about verifiable AI: if a regulated document must be provably correct, the model should not be the one writing it."
+date: 2026-11-03
+tags: [AI governance, Evaluation, Financial services]
+related: [credit-decisioning]
+---
+
+When a lender declines an application in the United States, the applicant is owed a written notice with the principal reasons. "Insufficient score" does not count, and regulators have been clear that the obligation is the same when a complex model makes the decision. That makes the adverse-action notice a useful test case for a broader question: **how do you prove that a document produced with AI is correct before anyone sends it?**
+
+I built a [credit-decisioning prototype](/work/credit-decisioning/) to find out. The most important design decision turned out to be the one I reversed.
+
+## The first version let the model write
+
+The obvious architecture looks like this: a calibrated model scores the application, a policy turns the score into approve, refer or decline, and an LLM turns the model's top reasons into a clear, friendly paragraph. It reads well, and it demos beautifully.
+
+It is also nearly impossible to verify.
+
+Prose has too many degrees of freedom. A paraphrase can soften a reason until it no longer matches what the model used. It can add a number that is slightly wrong, a reassurance that sounds like a promise, or — the one that should keep compliance teams up at night — a phrase that hints at a prohibited basis such as age. You can ask another model to check the first one, but then you have two probabilistic systems vouching for each other.
+
+## The second version let code write — and an independent verifier check
+
+So the notice became 100% template. Code derives the reasons from the model's coefficients, code fills a reviewed template, and a **separate verifier** — written independently, never calling the renderer — checks every notice before a human sees it:
+
+- the reasons match the derivation, and there are between one and four of them;
+- none rests on a prohibited basis;
+- each reason states the applicant's actual value;
+- the decision is consistent with the band;
+- every number matches the application;
+- the legal text matches a pinned hash;
+- every sentence is approved wording.
+
+That last property is only possible because the text is no longer free-form. Deterministic output can be checked deterministically.
+
+## Then verify the verifier
+
+A verifier that never fails is not evidence of anything. To show that each check earns its place, the project runs a **mutation suite**: it applies 14 kinds of deliberate defect to every genuine notice — swap a reason, change a number, inject a prohibited phrase — and requires each mutant to fail the *specific* check designed to catch it. A meta-test then switches each of the eight checks off in turn and requires the overall gate to notice.
+
+On the benchmark run, every applicable mutant was caught across 1,006 genuine notices, and no genuine notice was rejected. That is the kind of sentence I want to be able to say to a risk committee: not "the model is very good", but "here is the evidence that our safety checks catch the failures we care about".
+
+## The LLM did not disappear — it moved
+
+Taking the model out of the notice did not mean taking it out of the product. It moved into a **read-only analyst** role: a reviewer can ask it to explain a case, compare applicants or summarize the drivers of a decision. In that role, the model's claims *can* be checked — code compares every number it states against the tool results it retrieved.
+
+Evaluation of that analyst also caught a real bug in its number-checking guard, which is now pinned by tests. That is the point of building the checks: they find things.
+
+## What this means beyond credit
+
+The pattern generalizes to any regulated or high-stakes output — clinical summaries, claims decisions, compliance findings:
+
+1. **Decide what must be provably correct.** For those artifacts, prefer templates and code over generated prose.
+2. **Put the model where its output can be checked.** Explanation, retrieval and drafting for a human are good fits; final regulated text usually is not.
+3. **Build verifiers independently of generators,** and prove them with mutation testing rather than trusting a green dashboard.
+4. **Keep humans accountable for the decision,** and keep the model's recommendation on record even when they override it.
+
+Moving the model out of the notice made the compliance claim stronger, not weaker. In my experience, that trade — a little less fluency for a lot more evidence — is almost always the right one when the stakes are real.

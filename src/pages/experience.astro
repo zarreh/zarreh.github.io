@@ -1,0 +1,228 @@
+---
+import { Icon } from "astro-icon/components";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import PageHeader from "@/components/PageHeader.astro";
+import Section from "@/components/Section.astro";
+import CTABand from "@/components/CTABand.astro";
+import MetricStrip from "@/components/MetricStrip.astro";
+import { education, hebProjects, roles, skills } from "@/data/experience";
+import { proofPoints, resumeLink } from "@/data/profile";
+import { capabilities } from "@/data/taxonomy";
+import { breadcrumbSchema, profilePageSchema } from "@/lib/schema";
+
+const resume = resumeLink();
+const [heb, ...otherRoles] = roles;
+---
+
+<BaseLayout
+  title="Experience — AI, forecasting & optimization leadership · Ali Zarreh"
+  description="Ali Zarreh's experience: hands-on AI technical lead at H-E-B — agentic workflows on regulated data, demand forecasting, markdown and space optimization — plus teaching, board advisory and research."
+  type="profile"
+  jsonLd={[
+    profilePageSchema("/experience/"),
+    breadcrumbSchema([
+      { name: "Home", path: "/" },
+      { name: "Experience", path: "/experience/" },
+    ]),
+  ]}
+>
+  <PageHeader
+    eyebrow="Experience"
+    title="Seventeen years of turning models into decisions people use."
+    lead="I am a hands-on technical lead: I architect the system, write production code, set the evaluation bar and work directly with executives on what to build next. Most recently that has meant agentic AI on regulated data, and forecasting and optimization platforms that run planning across hundreds of stores."
+  >
+    <div class="mt-8 flex flex-wrap gap-3">
+      <a
+        href={resume.href}
+        class="btn btn-primary"
+        {...resume.download ? { download: "" } : { target: "_blank", rel: "noopener" }}
+        data-track="resume_click"
+        data-track-label="experience_header"
+      >
+        <Icon
+          name={resume.download ? "lucide:download" : "simple-icons:linkedin"}
+          class="size-4"
+          aria-hidden="true"
+        />
+        {resume.label}
+      </a>
+      <a
+        href="/contact/?topic=opportunity"
+        class="btn btn-secondary"
+        data-track="cta_click"
+        data-track-label="experience_contact"
+      >
+        Get in touch
+      </a>
+    </div>
+  </PageHeader>
+
+  <Section id="heb" innerClass="space-y-10">
+    <div class="grid gap-10 lg:grid-cols-[16rem_minmax(0,1fr)]">
+      <aside class="lg:sticky lg:top-24 lg:self-start" aria-label="On this page">
+        <p class="eyebrow">{heb!.period}</p>
+        <h2 class="mt-3 text-3xl font-medium">{heb!.org}</h2>
+        <p class="mt-1 font-medium text-ink-soft">{heb!.title}</p>
+        <p class="text-sm text-muted">{heb!.location}</p>
+        <nav class="mt-8 hidden lg:block" aria-label="H-E-B projects">
+          <p class="font-mono text-xs tracking-[0.12em] text-muted uppercase">Selected projects</p>
+          <ol class="mt-3 space-y-2 border-l border-line">
+            {
+              hebProjects.map((p) => (
+                <li>
+                  <a
+                    href={`#${p.id}`}
+                    class="-ml-px block border-l border-transparent pl-4 text-sm text-ink-soft hover:border-accent hover:text-ink"
+                  >
+                    {p.title}
+                  </a>
+                </li>
+              ))
+            }
+          </ol>
+        </nav>
+      </aside>
+
+      <div class="min-w-0 space-y-10">
+        <p class="lead">{heb!.summary}</p>
+        <MetricStrip items={proofPoints} />
+
+        {
+          hebProjects.map((p) => (
+            <article id={p.id} class="card scroll-mt-24 p-6 sm:p-8">
+              <div class="flex flex-wrap items-center gap-2">
+                {p.capabilities.map((c) => (
+                  <span class="chip">{capabilities[c]}</span>
+                ))}
+              </div>
+              <h3 class="mt-4 text-2xl font-medium sm:text-3xl">{p.title}</h3>
+              <p class="mt-1 font-mono text-xs tracking-wide text-accent uppercase">{p.role}</p>
+
+              <dl class="mt-6 grid gap-6">
+                <div>
+                  <dt class="font-mono text-xs tracking-[0.12em] text-muted uppercase">
+                    The problem
+                  </dt>
+                  <dd class="mt-2 leading-relaxed text-ink-soft">{p.problem}</dd>
+                </div>
+                <div>
+                  <dt class="font-mono text-xs tracking-[0.12em] text-muted uppercase">
+                    What I built and led
+                  </dt>
+                  <dd class="mt-2">
+                    <ul class="space-y-2.5 text-ink-soft">
+                      {p.built.map((b) => (
+                        <li class="flex gap-3 leading-relaxed">
+                          <span
+                            class="mt-2.5 size-1.5 shrink-0 rounded-full bg-accent"
+                            aria-hidden="true"
+                          />
+                          <span>{b}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </dd>
+                </div>
+              </dl>
+
+              <dl class="mt-7 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-4">
+                {p.outcomes.map((o) => (
+                  <div class="flex flex-col bg-sunken p-4">
+                    <dt class="order-2 text-xs leading-snug text-muted">{o.label}</dt>
+                    <dd class="order-1 font-serif text-2xl font-medium text-accent">{o.value}</dd>
+                  </div>
+                ))}
+              </dl>
+
+              <p class="mt-6 flex flex-wrap gap-1.5" aria-label="Stack">
+                {p.stack.map((s) => (
+                  <span class="chip">{s}</span>
+                ))}
+              </p>
+            </article>
+          ))
+        }
+
+        {
+          heb!.highlights && (
+            <div class="rounded-2xl border border-dashed border-line-strong p-6">
+              <p class="font-mono text-xs tracking-[0.12em] text-muted uppercase">Also at H-E-B</p>
+              <ul class="mt-3 space-y-2 text-ink-soft">
+                {heb!.highlights.map((h) => (
+                  <li>{h}</li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+      </div>
+    </div>
+  </Section>
+
+  <Section id="roles" tone="sunken" eyebrow="Career" title="Teaching, advisory and the path here">
+    <ol class="relative space-y-8 border-l border-line-strong pl-8">
+      {
+        otherRoles.map((r) => (
+          <li id={r.id} class="relative scroll-mt-24">
+            <span
+              class="absolute top-2 -left-[2.32rem] size-3 rounded-full border-2 border-accent bg-bg"
+              aria-hidden="true"
+            />
+            <p class="font-mono text-xs tracking-wide text-muted uppercase">
+              {r.period} · {r.location}
+            </p>
+            <h3 class="mt-1.5 text-2xl font-medium">{r.org}</h3>
+            <p class="font-medium text-ink-soft">{r.title}</p>
+            <p class="mt-3 max-w-3xl leading-relaxed text-ink-soft">{r.summary}</p>
+            {r.highlights && (
+              <ul class="mt-3 max-w-3xl list-disc space-y-1.5 pl-5 text-ink-soft marker:text-accent">
+                {r.highlights.map((h) => (
+                  <li>{h}</li>
+                ))}
+              </ul>
+            )}
+          </li>
+        ))
+      }
+    </ol>
+  </Section>
+
+  <Section id="education" eyebrow="Foundations" title="Education & skills">
+    <div class="grid gap-10 lg:grid-cols-[1fr_1.4fr]">
+      <ul class="space-y-6">
+        {
+          education.map((e) => (
+            <li class="card p-5">
+              <p class="font-mono text-xs text-muted">{e.year}</p>
+              <p class="mt-1 font-semibold">{e.degree}</p>
+              <p class="text-sm text-ink-soft">{e.school}</p>
+            </li>
+          ))
+        }
+      </ul>
+      <dl class="space-y-6">
+        {
+          skills.map((s) => (
+            <div>
+              <dt class="font-mono text-xs tracking-[0.12em] text-muted uppercase">{s.group}</dt>
+              <dd class="mt-2 flex flex-wrap gap-1.5">
+                {s.items.map((i) => (
+                  <span class="rounded-lg border border-line bg-elevated px-2.5 py-1 text-sm text-ink-soft">
+                    {i}
+                  </span>
+                ))}
+              </dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </Section>
+
+  <CTABand
+    title="Want to go deeper?"
+    body="I'm glad to walk through any of these systems — the architecture, how the teams worked, and what I would do differently next time."
+    primary={{ href: "/contact/", label: "Start a conversation" }}
+    topic="opportunity"
+  />
+</BaseLayout>

@@ -1,0 +1,53 @@
+---
+title: "Good process is not the right answer"
+description: "Evaluating an AI agent on how it worked — not only on what it concluded — exposed a real bug. It also showed that a well-behaved agent can still make the wrong call."
+date: 2026-11-03
+tags: [Agentic AI, Evaluation, Financial services]
+related: [trade-surveillance-agent, clinical-care-navigator]
+---
+
+Most agent evaluations ask one question: *was the final answer right?* That is necessary, but for agents that investigate — gather evidence, reason over it, and recommend an action — it is not enough. An agent can reach the right answer for the wrong reasons, or the wrong answer while doing everything a careful analyst would do. You want to know which one you have.
+
+While building a [trade-surveillance agent](/work/trade-surveillance-agent/) that reviews SEC Form 4 insider filings, I ended up measuring both. The results were more instructive than flattering.
+
+## Two different questions
+
+The agent's job is a first-line compliance review. Given a filing, it plans what evidence it needs, gathers it with read-only tools — the insider's trading history, a firm-policy database — drafts a finding, and publishes one of three outcomes for a human: *clear*, *flag* or *escalate*.
+
+So there are two things to evaluate:
+
+- **Disposition accuracy** — did it reach the outcome a careful reviewer would?
+- **Process quality** — did it gather the required evidence, in a sensible order, with real citations and justified exemptions?
+
+The second one is usually left to vibes. I made it a deterministic **process audit**: plain code that inspects the agent's trace and scores whether the investigation was actually done. The same signal powers a small Gymnasium environment, where shortcut strategies score far below a proper investigation — which makes "did the agent do the work?" a measurable property rather than an impression.
+
+## The process audit found a real bug
+
+On early live runs, the audit was brutal: **8 of 10 runs scored zero.** That was not the model being lazy. The audit exposed a problem in the claim extractor — the step that breaks the draft into individual claims so each one can be checked against the evidence. Once that was fixed, runs scoring zero fell from **8 of 10 to 0 of 10**.
+
+Without a process-level metric, that bug would have looked like random model flakiness. With it, the failure had an address.
+
+## Good process did not fix accuracy
+
+Here is the uncomfortable part. On those same live runs, disposition accuracy was **5 of 10**. The agent followed the process well and still cleared most of the cases that should have been flagged.
+
+That is worth sitting with. A clean audit trail, real citations and a sensible investigation order are signs of a trustworthy *process*. They are not proof of a correct *judgment*. If I had only reported the process audit, the project would have looked finished. If I had only reported accuracy, I would not have known that the remaining problem was in the judgment rather than the plumbing.
+
+So the project reports both, openly — including that a larger hand-labelled evaluation with confidence intervals has not been done yet.
+
+## Grounding as a gate, not a suggestion
+
+One design choice made both measurements more meaningful: **the agent cannot publish a claim it cannot back with retrieved evidence.** Each claim in the draft is checked against what the agent actually gathered; if a claim fails, the investigation goes back for more evidence instead of quietly rewording the answer. Once grounding is evaluated, code — not the model — assembles the published result.
+
+In the sample case, that is exactly what happened: a synthetic CFO sale two days before earnings was escalated because only 2 of 4 claims were supported. The system did not pretend to know more than it did.
+
+## What I take from it
+
+For anyone deploying agents in compliance, healthcare or finance:
+
+1. **Measure process and outcome separately.** They fail for different reasons and need different fixes.
+2. **Make process checks deterministic.** If a model judges the model, you have moved the uncertainty, not reduced it.
+3. **Treat grounding failures as control flow,** not as text to be smoothed over.
+4. **Publish the gap.** "Good process, 5 of 10 on outcomes" is far more useful to a decision-maker than a single flattering number — and far more credible.
+
+Honest limits are not a weakness of a system. They are what makes it safe to decide how far to trust it.

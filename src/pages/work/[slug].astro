@@ -1,0 +1,264 @@
+---
+import { Image } from "astro:assets";
+import { render } from "astro:content";
+import { Icon } from "astro-icon/components";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import MetricStrip from "@/components/MetricStrip.astro";
+import WorkCard from "@/components/WorkCard.astro";
+import CTABand from "@/components/CTABand.astro";
+import GeneratedCover from "@/components/GeneratedCover.astro";
+import Callout from "@/components/mdx/Callout.astro";
+import Flow from "@/components/mdx/Flow.astro";
+import { capabilities, domains, statuses } from "@/data/taxonomy";
+import { formatDate, getWork, workUrl, type WorkEntry } from "@/lib/content";
+import { breadcrumbSchema, caseStudySchema } from "@/lib/schema";
+
+export async function getStaticPaths() {
+  const work = await getWork();
+  return work.map((entry) => ({ params: { slug: entry.id }, props: { entry, all: work } }));
+}
+
+interface Props {
+  entry: WorkEntry;
+  all: WorkEntry[];
+}
+
+const { entry, all } = Astro.props;
+const { data } = entry;
+const { Content } = await render(entry);
+const path = workUrl(entry);
+
+const score = (other: WorkEntry) =>
+  other.data.domains.filter((d) => data.domains.includes(d)).length * 2 +
+  other.data.capabilities.filter((c) => data.capabilities.includes(c)).length;
+const related = all
+  .filter((other) => other.id !== entry.id)
+  .sort((a, b) => score(b) - score(a) || a.data.order - b.data.order)
+  .slice(0, 3);
+
+type Resource = { href: string; label: string; icon: string; track: string; primary?: boolean };
+const resources: Resource[] = [];
+if (data.links.demo)
+  resources.push({
+    href: data.links.demo,
+    label: "Open the live app",
+    icon: "lucide:play",
+    track: "demo_click",
+    primary: true,
+  });
+if (data.links.docs)
+  resources.push({
+    href: data.links.docs,
+    label: "Technical docs",
+    icon: "lucide:book-open",
+    track: "docs_click",
+  });
+if (data.links.repo)
+  resources.push({
+    href: data.links.repo,
+    label: "Source code",
+    icon: "simple-icons:github",
+    track: "repo_click",
+  });
+
+const jsonLd = [
+  caseStudySchema({
+    title: `${data.title} — ${data.headline}`,
+    description: data.summary,
+    path,
+    date: data.date,
+    updated: data.updated,
+    keywords: [...data.capabilities.map((c) => capabilities[c]), ...data.stack],
+    repo: data.links.repo,
+    demo: data.links.demo,
+  }),
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Work", path: "/work/" },
+    { name: data.title, path },
+  ]),
+];
+---
+
+<BaseLayout
+  title={`${data.title}: ${data.headline.replace(/\.$/, "")} · Ali Zarreh`}
+  description={data.summary}
+  ogImage={`/og/work/${entry.id}.png`}
+  type="article"
+  publishedTime={data.date}
+  modifiedTime={data.updated}
+  jsonLd={jsonLd}
+>
+  <article>
+    <header class="relative overflow-hidden border-b border-line">
+      <div class="bg-grid pointer-events-none absolute inset-0 opacity-60" aria-hidden="true"></div>
+      <div class="container-site relative pt-10 pb-12 sm:pt-14">
+        <nav aria-label="Breadcrumb" class="text-sm text-muted">
+          <ol class="flex items-center gap-2">
+            <li><a href="/work/" class="hover:text-ink">Work</a></li>
+            <li aria-hidden="true">/</li>
+            <li aria-current="page" class="text-ink-soft">{data.title}</li>
+          </ol>
+        </nav>
+        <div class="mt-8 flex flex-wrap items-center gap-2">
+          <span
+            class="rounded-full bg-accent-soft px-2.5 py-1 font-mono text-[0.68rem] font-medium tracking-wide text-accent uppercase"
+          >
+            {statuses[data.status]}
+          </span>
+          <span class="font-mono text-xs tracking-wide text-muted uppercase">
+            {data.domains.map((d) => domains[d]).join(" · ")}
+          </span>
+        </div>
+        <h1 class="mt-5 max-w-4xl text-4xl leading-[1.08] font-medium sm:text-5xl lg:text-6xl">
+          {data.title}
+        </h1>
+        <p
+          class="mt-5 max-w-3xl font-serif text-2xl leading-snug text-ink-soft italic sm:text-[1.7rem]"
+        >
+          {data.headline}
+        </p>
+        <p class="lead mt-6 max-w-3xl">{data.summary}</p>
+        {
+          resources.length > 0 && (
+            <div class="mt-8 flex flex-wrap gap-3">
+              {resources.map((r) => (
+                <a
+                  href={r.href}
+                  target="_blank"
+                  rel="noopener"
+                  class:list={["btn", r.primary ? "btn-primary" : "btn-secondary"]}
+                  data-track={r.track}
+                  data-track-label={entry.id}
+                >
+                  <Icon name={r.icon} class="size-4" aria-hidden="true" />
+                  {r.label}
+                </a>
+              ))}
+            </div>
+          )
+        }
+        {data.metrics.length > 0 && <MetricStrip items={data.metrics} class="mt-12" />}
+      </div>
+    </header>
+
+    <div class="container-site pt-12">
+      <div class="overflow-hidden rounded-2xl border border-line bg-sunken shadow-card">
+        {
+          data.cover ? (
+            <Image
+              src={data.cover}
+              alt={data.coverAlt ?? ""}
+              widths={[720, 1200, 1600]}
+              sizes="(min-width: 1152px) 1152px, 100vw"
+              class="max-h-[34rem] w-full object-cover object-top"
+              loading="eager"
+            />
+          ) : (
+            <GeneratedCover seed={data.title} label={data.title} class="aspect-[21/9] w-full" />
+          )
+        }
+      </div>
+    </div>
+
+    <div class="container-site grid gap-12 py-14 lg:grid-cols-[minmax(0,1fr)_18rem]">
+      <div class="prose prose-lg prose-site min-w-0">
+        <Content components={{ Callout, Flow }} />
+      </div>
+
+      <aside class="space-y-6 lg:sticky lg:top-24 lg:self-start" aria-label="Project details">
+        <div class="card p-5">
+          <p class="eyebrow">At a glance</p>
+          <dl class="mt-4 space-y-4 text-sm">
+            <div>
+              <dt class="text-muted">Capabilities</dt>
+              <dd class="mt-1.5 flex flex-wrap gap-1.5">
+                {data.capabilities.map((c) => <span class="chip">{capabilities[c]}</span>)}
+              </dd>
+            </div>
+            {
+              data.stack.length > 0 && (
+                <div>
+                  <dt class="text-muted">Stack</dt>
+                  <dd class="mt-1.5 flex flex-wrap gap-1.5">
+                    {data.stack.map((s) => (
+                      <span class="chip">{s}</span>
+                    ))}
+                  </dd>
+                </div>
+              )
+            }
+            <div>
+              <dt class="text-muted">Published</dt>
+              <dd class="mt-1 text-ink-soft">
+                {formatDate(data.date)}
+                {
+                  data.updated && (
+                    <span class="block text-xs text-muted">Updated {formatDate(data.updated)}</span>
+                  )
+                }
+              </dd>
+            </div>
+          </dl>
+        </div>
+        {
+          data.scopeNote && (
+            <div class="rounded-2xl border border-warm/40 bg-warm-soft p-5 text-sm leading-relaxed text-ink-soft">
+              <p class="mb-2 flex items-center gap-2 font-mono text-xs font-medium tracking-[0.12em] text-ink uppercase">
+                <Icon name="lucide:flask-conical" class="size-4" aria-hidden="true" />
+                Scope
+              </p>
+              {data.scopeNote}
+            </div>
+          )
+        }
+        <div class="card p-5">
+          <p class="text-sm font-semibold">Working on something similar?</p>
+          <p class="mt-1.5 text-sm text-muted">I'm glad to compare notes or help you build it.</p>
+          <a
+            href="/contact/?topic=project"
+            class="btn btn-primary mt-4 w-full"
+            data-track="cta_click"
+            data-track-label={`case_${entry.id}`}>Discuss a project</a
+          >
+        </div>
+      </aside>
+    </div>
+  </article>
+
+  <section
+    class="border-t border-line bg-sunken/60 py-16"
+    aria-labelledby="related-title"
+    data-no-print
+  >
+    <div class="container-site">
+      <div class="flex items-end justify-between gap-4">
+        <h2 id="related-title" class="text-3xl font-medium">More work</h2>
+        <a href="/work/" class="link text-sm font-medium">All case studies</a>
+      </div>
+      <div class="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {
+          related.map((r) => (
+            <WorkCard
+              href={workUrl(r)}
+              title={r.data.title}
+              summary={r.data.summary}
+              status={r.data.status}
+              domains={r.data.domains}
+              capabilities={r.data.capabilities}
+              cover={r.data.cover}
+              coverAlt={r.data.coverAlt}
+            />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <CTABand
+    title="Building AI that has to be right?"
+    body="I help teams design systems with verifiers, guardrails and human review built in from the start — not bolted on after the demo."
+    primary={{ href: "/contact/", label: "Discuss a project" }}
+    topic="project"
+  />
+</BaseLayout>

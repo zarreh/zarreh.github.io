@@ -1,0 +1,11 @@
+dist
+.astro
+node_modules
+package-lock.json
+public
+services/ask-api/.venv
+*.mdx
+*.md
+services
+test-results
+playwright-report

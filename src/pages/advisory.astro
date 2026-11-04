@@ -1,0 +1,244 @@
+---
+import { Image } from "astro:assets";
+import { Icon } from "astro-icon/components";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import PageHeader from "@/components/PageHeader.astro";
+import Section from "@/components/Section.astro";
+import CTABand from "@/components/CTABand.astro";
+import CopyButton from "@/components/CopyButton.astro";
+import headshot from "@/assets/images/profile/headshot.jpg";
+import portrait from "@/assets/images/profile/portrait.jpg";
+import { advisoryAreas, advisoryFormats, bios, principles } from "@/data/offerings";
+import { profile } from "@/data/profile";
+import { breadcrumbSchema } from "@/lib/schema";
+
+const bioList = [
+  { key: "short", title: "Short bio", words: bios.short.split(/\s+/).length, text: bios.short },
+  { key: "medium", title: "Medium bio", words: bios.medium.split(/\s+/).length, text: bios.medium },
+  { key: "long", title: "Long bio", words: bios.long.split(/\s+/).length, text: bios.long },
+];
+
+const why = [
+  {
+    title: "Operator, not commentator",
+    body: "I run AI programs inside a large enterprise today — architecture, evaluation, teams and executive stakeholders — so my advice comes from what actually ships.",
+  },
+  {
+    title: "Risk is my home turf",
+    body: "A Ph.D. in game-theoretic security and a portfolio of AI systems for credit, clinical and compliance decisions: I think about failure modes before features.",
+  },
+  {
+    title: "Strategy that survives contact",
+    body: "I translate between board-level questions and engineering reality — cost, timelines, data readiness and what the model can and cannot do.",
+  },
+];
+---
+
+<BaseLayout
+  title="Board & advisory — AI strategy, governance & technical due diligence · Ali Zarreh"
+  description="Ali Zarreh advises founders and boards on AI strategy, architecture, AI risk and governance, and technical due diligence. Currently Health Tech Board Advisor at Syne Life. Press kit and bios included."
+  jsonLd={breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Advisory", path: "/advisory/" },
+  ])}
+>
+  <PageHeader
+    eyebrow="Board & advisory"
+    title="An independent technical voice in the room."
+    lead="I help founders, executive teams and boards make AI decisions with clear eyes: where it creates durable value, what it really costs to operate, and how to govern it so customers and regulators can trust it."
+  >
+    <div class="mt-8 flex flex-wrap gap-3">
+      <a
+        href="/contact/?topic=advisory"
+        class="btn btn-primary"
+        data-track="cta_click"
+        data-track-label="advisory_header"
+      >
+        Discuss an advisory role
+      </a>
+      <a href="#press-kit" class="btn btn-secondary">Press kit</a>
+    </div>
+  </PageHeader>
+
+  <Section eyebrow="Current" title="Advisory roles">
+    <article class="card grid gap-6 p-6 sm:p-8 md:grid-cols-[1fr_2fr] md:items-center">
+      <div>
+        <p class="font-mono text-xs tracking-wide text-muted uppercase">
+          Aug 2026 – Present · Remote, UK
+        </p>
+        <h3 class="mt-2 text-3xl font-medium">Syne Life</h3>
+        <p class="text-ink-soft">Health Tech Board Advisor — AI & Technology</p>
+      </div>
+      <p class="leading-relaxed text-ink-soft">
+        I serve on the advisory board of a recovery-science wellness startup, advising the founding
+        team on technology strategy, platform architecture and AI/ML strategy across the product.
+      </p>
+    </article>
+  </Section>
+
+  <Section tone="sunken" eyebrow="What I bring" title="Where I add the most value">
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {
+        advisoryAreas.map((a) => (
+          <div class="card p-6">
+            <h3 class="font-sans text-lg font-semibold">{a.title}</h3>
+            <p class="mt-2 leading-relaxed text-ink-soft">{a.body}</p>
+          </div>
+        ))
+      }
+    </div>
+    <div class="mt-12 grid gap-6 lg:grid-cols-3">
+      {
+        why.map((w) => (
+          <div class="border-t-2 border-accent pt-5">
+            <h3 class="font-sans text-base font-semibold">{w.title}</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink-soft">{w.body}</p>
+          </div>
+        ))
+      }
+    </div>
+  </Section>
+
+  <Section eyebrow="Formats" title="Ways to engage">
+    <div class="grid gap-6 md:grid-cols-2">
+      {
+        advisoryFormats.map((f) => (
+          <div class="flex gap-4 rounded-2xl border border-line p-6">
+            <Icon
+              name="lucide:circle-check"
+              class="mt-0.5 size-5 shrink-0 text-accent"
+              aria-hidden="true"
+            />
+            <div>
+              <h3 class="font-sans text-lg font-semibold">{f.title}</h3>
+              <p class="mt-1 leading-relaxed text-ink-soft">{f.body}</p>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+    <div class="mt-12 rounded-2xl border border-line bg-sunken p-6 sm:p-8">
+      <p class="font-mono text-xs tracking-[0.12em] text-muted uppercase">How I advise</p>
+      <ul class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        {
+          principles.map((p) => (
+            <li>
+              <p class="font-semibold">{p.title}</p>
+              <p class="mt-1 text-sm text-ink-soft">{p.body}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </Section>
+
+  <Section id="press-kit" tone="sunken" eyebrow="Press kit" title="Bios, headshots and the facts">
+    <p class="-mt-4 mb-10 max-w-3xl text-ink-soft">
+      For event organizers, boards and editors. Please use these as written or lightly edited; for
+      anything else, email <a href={`mailto:${profile.email}`} class="link">{profile.email}</a>.
+    </p>
+    <div class="grid gap-10 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
+      <div class="space-y-6">
+        {
+          bioList.map((b) => (
+            <div class="card p-6">
+              <div class="flex items-center justify-between gap-4">
+                <h3 class="font-sans text-base font-semibold">
+                  {b.title} <span class="font-normal text-muted">· {b.words} words</span>
+                </h3>
+                <CopyButton text={b.text} label={`Copy ${b.key}`} />
+              </div>
+              <p class="mt-3 leading-relaxed text-ink-soft">{b.text}</p>
+            </div>
+          ))
+        }
+      </div>
+      <div class="space-y-6">
+        <div class="card p-6">
+          <h3 class="font-sans text-base font-semibold">Headshots</h3>
+          <div class="mt-4 grid grid-cols-2 gap-4">
+            <a
+              href="/press/ali-zarreh-headshot.jpg"
+              download
+              class="group block"
+              data-track="press_download"
+              data-track-label="headshot"
+            >
+              <Image
+                src={headshot}
+                alt="Ali Zarreh headshot"
+                widths={[240, 360]}
+                sizes="180px"
+                class="aspect-square w-full rounded-xl object-cover"
+              />
+              <span
+                class="mt-2 flex items-center gap-1.5 text-xs text-muted group-hover:text-accent"
+              >
+                <Icon name="lucide:download" class="size-3.5" aria-hidden="true" /> Square · JPG
+              </span>
+            </a>
+            <a
+              href="/press/ali-zarreh-portrait.jpg"
+              download
+              class="group block"
+              data-track="press_download"
+              data-track-label="portrait"
+            >
+              <Image
+                src={portrait}
+                alt="Ali Zarreh portrait"
+                widths={[240, 360]}
+                sizes="180px"
+                class="aspect-square w-full rounded-xl object-cover object-[50%_25%]"
+              />
+              <span
+                class="mt-2 flex items-center gap-1.5 text-xs text-muted group-hover:text-accent"
+              >
+                <Icon name="lucide:download" class="size-3.5" aria-hidden="true" /> Portrait · JPG
+              </span>
+            </a>
+          </div>
+        </div>
+        <div class="card p-6">
+          <h3 class="font-sans text-base font-semibold">Quick facts</h3>
+          <dl class="mt-4 space-y-3 text-sm">
+            <div>
+              <dt class="text-muted">Name</dt>
+              <dd>Ali Zarreh, Ph.D. (also published as AliReza / Alireza Zarreh)</dd>
+            </div>
+            <div>
+              <dt class="text-muted">Title</dt>
+              <dd>{profile.role}</dd>
+            </div>
+            <div>
+              <dt class="text-muted">Based in</dt>
+              <dd>{profile.location}</dd>
+            </div>
+            <div>
+              <dt class="text-muted">Topics</dt>
+              <dd>
+                Agentic AI · AI evaluation & governance · Forecasting & optimization · AI strategy
+              </dd>
+            </div>
+            <div>
+              <dt class="text-muted">Links</dt>
+              <dd>
+                <a href={profile.links.linkedin} class="link" target="_blank" rel="noopener"
+                  >LinkedIn</a
+                > ·{" "}
+                <a href="/speaking/" class="link">Talk topics</a>
+              </dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </Section>
+
+  <CTABand
+    title="Building a board that understands AI?"
+    body="I'm open to a small number of advisory seats where I can make a real difference. Let's see if it's a fit."
+    primary={{ href: "/contact/", label: "Discuss an advisory role" }}
+    topic="advisory"
+  />
+</BaseLayout>

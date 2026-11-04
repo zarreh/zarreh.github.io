@@ -1,0 +1,49 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import PageHeader from "@/components/PageHeader.astro";
+import { formatDate, getPosts, postUrl, type PostEntry } from "@/lib/content";
+import { slugify } from "@/lib/slug";
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  const tags = [...new Set(posts.flatMap((p) => p.data.tags))];
+  return tags.map((tag) => ({
+    params: { tag: slugify(tag) },
+    props: { tag, posts: posts.filter((p) => p.data.tags.includes(tag)) },
+  }));
+}
+
+interface Props {
+  tag: string;
+  posts: PostEntry[];
+}
+
+const { tag, posts } = Astro.props;
+---
+
+<BaseLayout
+  title={`Writing on ${tag} · Ali Zarreh`}
+  description={`Essays by Ali Zarreh on ${tag}.`}
+>
+  <PageHeader eyebrow="Writing · Topic" title={tag} />
+  <section class="container-site py-14">
+    <ul class="divide-y divide-line border-y border-line">
+      {
+        posts.map((post) => (
+          <li class="py-6">
+            <p class="font-mono text-xs text-muted">{formatDate(post.data.date, "short")}</p>
+            <h2 class="mt-2 text-2xl font-medium">
+              <a href={postUrl(post)} class="hover:text-accent">
+                {post.data.title}
+              </a>
+            </h2>
+            <p class="mt-2 text-ink-soft">{post.data.description}</p>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="mt-8">
+      <a href="/writing/" class="link text-sm"> ← All writing </a>
+    </p>
+  </section>
+</BaseLayout>

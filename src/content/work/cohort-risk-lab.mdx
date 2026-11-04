@@ -1,0 +1,76 @@
+---
+title: "Cohort Risk & Review Lab"
+headline: "Patient risk stratification that is fair by measurement, not by assumption."
+summary: "A calibrated risk model decides who is flagged, fairness is audited for every subgroup, an AI agent assembles the evidence, and a clinician makes every enrolment decision. It also reproduces how training on cost instead of illness burden skews who gets care."
+domains: [healthcare]
+capabilities: [fairness, agents, ml, evaluation]
+status: live
+featured: true
+order: 2
+cover: ../../assets/images/work/cohort_risk_lab.png
+coverAlt: "Cohort Risk & Review Lab home page showing the four-step flow from risk model to fairness audit to AI evidence agent to clinician decision"
+links:
+  demo: https://cohort-risk.zarreh.ai/
+  docs: https://zarreh.ai/cohort_risk_lab/
+  repo: https://github.com/zarreh/cohort_risk_lab
+metrics:
+  - { value: "19,409", label: "flagged patients in the review queue" }
+  - { value: "5.7 pts", label: "enrolment gap from the label-choice experiment" }
+  - { value: "4", label: "subgroup axes audited with confidence intervals" }
+stack: [Python, Calibrated risk model, LangGraph, FastAPI, Next.js, Playwright, import-linter]
+scopeNote: "A research prototype built entirely on synthetic Synthea patients. It is not a medical device, does not diagnose, and does not screen for disease."
+legacy: projects_cohort_risk_lab
+date: 2026-11-02
+---
+
+## Why it exists
+
+A care-management team can only call so many patients. Deciding who to call first is a ranking problem, and the most dangerous failure is a model that looks accurate on average while quietly under-serving one group.
+
+Two things go wrong in practice. First, a score is often trained on a convenient label such as *future cost* when the real goal is *future need*. Groups that face barriers to care generate less cost for the same illness, so they are ranked as lower risk — the label-choice failure documented by Obermeyer et al. (*Science*, 2019). Second, a single overall accuracy figure hides the groups where the model performs badly.
+
+The goal was a pipeline where both failures are measured and visible, and where no automated component can enrol a patient on its own.
+
+## How it works
+
+<Flow
+  steps={[
+    { label: "Patient record", kind: "input" },
+    { label: "Calibrated risk model", kind: "ai", note: "never sees race" },
+    { label: "Per-subgroup fairness audit", kind: "check", note: "age, sex, race, insurance" },
+    { label: "Evidence brief", kind: "ai", note: "read-only tools, cannot change the score" },
+    { label: "Clinician decides", kind: "human", note: "enrol, decline or defer" },
+  ]}
+/>
+
+Each step has a clear owner:
+
+- **A calibrated model scores every patient.** A statistical model — not a chatbot — estimates each patient's chance of a high illness burden.
+- **Fairness is audited per group.** Calibration and true-positive-rate parity are reported across age, sex, race and insurance strata with confidence intervals. Strata with too few patients show "insufficient data" instead of a misleading number.
+- **An AI agent assembles the evidence.** For each flagged patient it gathers encounters, labs and care gaps into a short brief: drivers, corroborating evidence and what is missing. It cannot change the score or recommend enrolment.
+- **A clinician decides.** Nothing happens to a patient without that decision.
+
+### The label-choice experiment
+
+The most instructive part of the app is a single interactive artifact: two otherwise identical models, one trained to predict cost and one trained to predict illness burden. On this synthetic cohort, which has a deliberately injected access gap, the cost-trained model enrols Black patients at a lower rate — a **5.7 percentage-point** gap between the two labels. It demonstrates the mechanism on controlled data; it is not a finding about any real health system.
+
+## Results and honest limits
+
+- **Gated in CI:** a validation harness fits both models on a frozen, race-stratified sample of the generated cohort and requires AUROC and calibration floors, correct small-sample handling, and that the label-choice gap never silently regresses to zero.
+- **Scenario tests:** four hand-authored patients exercise the care-gap tools — including one with no recorded history, where every evidence category must be reported as missing.
+- **Full-stack delivery:** a review queue of 19,409 flagged patients, case pages, the fairness audit and the label-choice chart, served by a persistent API and a Next.js interface covered by Playwright browser tests.
+
+<Callout type="limit">
+The LLM-backed evidence agent and brief writer are **not** covered by the automated gate; the graph's control flow around them is tested with stand-ins. The data is synthetic, and the 5.7-point gap comes from an access gap injected on purpose — it illustrates a mechanism rather than measuring one.
+</Callout>
+
+## Engineering decisions
+
+- **Model and agent are separated by contract.** The risk pipeline — features, calibration, thresholds, fairness audit — may not import any LLM framework, and an import-linter rule enforces it in CI.
+- **Typed tools, not text-to-SQL.** The agent can only call a fixed set of read-only evidence tools, so its reach into patient data is bounded and testable.
+- **Human review is a real graph interrupt.** The case flow suspends at the decision step and resumes through the API once a clinician decides, with a streaming trace of each step.
+- **No fabricated numbers.** Below the minimum sample size, the audit reports a subgroup as missing rather than computing a statistic from a handful of patients.
+
+## Who it's for
+
+For **health systems and payers**, it shows how to put a risk model, a fairness audit and a human reviewer into one auditable workflow. For **teams evaluating AI in regulated settings**, it shows how to keep an LLM useful while keeping it out of the decision path.

@@ -1,0 +1,31 @@
+# dependencies
+node_modules/
+
+# build output
+dist/
+.astro/
+
+# tests
+test-results/
+playwright-report/
+.lighthouseci/
+
+# environment
+.env
+.env.*
+!.env.example
+
+# python service
+services/**/__pycache__/
+services/**/.venv/
+services/**/data/
+
+# OS / editor
+.DS_Store
+*.log
+
+# The full resume (with phone number) is kept out of the repo on purpose.
+Ali Zarreh_resume_*.pdf
+
+# ask-api runtime secrets (server only)
+services/ask-api/ask.env

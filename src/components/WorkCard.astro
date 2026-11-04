@@ -1,0 +1,127 @@
+---
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+import { Icon } from "astro-icon/components";
+import GeneratedCover from "./GeneratedCover.astro";
+import {
+  capabilities,
+  domains,
+  statuses,
+  type CapabilityKey,
+  type DomainKey,
+  type StatusKey,
+} from "@/data/taxonomy";
+
+export interface Props {
+  href: string;
+  title: string;
+  summary: string;
+  status: StatusKey;
+  domains: DomainKey[];
+  capabilities: CapabilityKey[];
+  cover?: ImageMetadata;
+  coverAlt?: string;
+  metric?: { value: string; label: string };
+  external?: boolean;
+  eager?: boolean;
+  headingLevel?: "h2" | "h3";
+}
+
+const {
+  href,
+  title,
+  summary,
+  status,
+  domains: domainList,
+  capabilities: capabilityList,
+  cover,
+  coverAlt,
+  metric,
+  external = false,
+  eager = false,
+  headingLevel = "h3",
+} = Astro.props;
+
+const Heading = headingLevel;
+const statusStyle: Record<StatusKey, string> = {
+  live: "bg-accent-soft text-accent",
+  "open-source": "bg-sunken text-ink-soft",
+  enterprise: "bg-warm-soft text-warm",
+  lab: "bg-sunken text-muted",
+};
+---
+
+<article
+  class="group card relative flex h-full flex-col overflow-hidden transition-all duration-300 hover:-translate-y-0.5 hover:border-line-strong"
+  data-work-card
+  data-domains={domainList.join(" ")}
+  data-capabilities={capabilityList.join(" ")}
+  data-status={status}
+>
+  <div class="aspect-[16/9] overflow-hidden border-b border-line">
+    {
+      cover ? (
+        <Image
+          src={cover}
+          alt={coverAlt ?? ""}
+          widths={[480, 720, 960]}
+          sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+          class="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.02]"
+          loading={eager ? "eager" : "lazy"}
+        />
+      ) : (
+        <GeneratedCover
+          seed={title}
+          label={title}
+          variant={status === "enterprise" ? "warm" : "accent"}
+          class="h-full w-full"
+        />
+      )
+    }
+  </div>
+  <div class="flex flex-1 flex-col p-6">
+    <div class="flex flex-wrap items-center gap-2">
+      <span
+        class:list={[
+          "rounded-full px-2.5 py-1 font-mono text-[0.68rem] font-medium tracking-wide uppercase",
+          statusStyle[status],
+        ]}
+      >
+        {statuses[status]}
+      </span>
+      <span class="font-mono text-[0.7rem] tracking-wide text-muted uppercase">
+        {domainList.map((d) => domains[d]).join(" · ")}
+      </span>
+    </div>
+    <Heading class="mt-4 font-serif text-xl leading-snug font-medium">
+      <a
+        href={href}
+        class="after:absolute after:inset-0 focus-visible:outline-none"
+        {...external ? { target: "_blank", rel: "noopener" } : {}}
+      >
+        {title}
+      </a>
+    </Heading>
+    <p class="mt-3 line-clamp-4 text-[0.95rem] leading-relaxed text-ink-soft">{summary}</p>
+    <div class="mt-auto pt-5">
+      {
+        metric && (
+          <p class="mb-4 flex items-baseline gap-2">
+            <span class="font-serif text-2xl font-medium text-accent">{metric.value}</span>
+            <span class="text-sm text-muted">{metric.label}</span>
+          </p>
+        )
+      }
+      <div class="flex items-center justify-between gap-3">
+        <ul class="flex flex-wrap gap-1.5" aria-label="Capabilities">
+          {capabilityList.slice(0, 3).map((c) => <li class="chip">{capabilities[c]}</li>)}
+        </ul>
+        <Icon
+          name={external ? "lucide:arrow-up-right" : "lucide:arrow-right"}
+          class="size-5 shrink-0 text-muted transition-all group-hover:translate-x-0.5 group-hover:text-accent"
+          aria-hidden="true"
+        />
+      </div>
+    </div>
+  </div>
+</article>

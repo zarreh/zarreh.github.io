@@ -1,0 +1,44 @@
+---
+export interface Props {
+  items: readonly { value: string; label: string; context?: string }[];
+  class?: string;
+  size?: "md" | "lg";
+}
+
+const { items, class: className, size = "md" } = Astro.props;
+---
+
+<dl
+  class:list={[
+    "grid divide-line overflow-hidden rounded-2xl border border-line bg-elevated sm:grid-cols-2",
+    items.length >= 4 ? "lg:grid-cols-4" : items.length === 3 ? "lg:grid-cols-3" : "",
+    "divide-y sm:divide-y-0",
+    className,
+  ]}
+>
+  {
+    items.map((item, i) => (
+      <div
+        class:list={[
+          "flex flex-col gap-1 p-6",
+          i % 2 === 1 && "sm:border-l sm:border-line",
+          i >= 2 && "sm:border-t sm:border-line lg:border-t-0",
+          i > 0 && items.length >= 3 && "lg:border-l lg:border-line",
+        ]}
+      >
+        <dt class="order-2 text-sm font-medium text-ink-soft">{item.label}</dt>
+        <dd
+          class:list={[
+            "order-1 font-serif font-medium tracking-tight text-accent",
+            size === "lg" ? "text-4xl sm:text-5xl" : "text-3xl sm:text-4xl",
+          ]}
+        >
+          {item.value}
+        </dd>
+        {item.context && (
+          <dd class="order-3 mt-1 text-xs leading-relaxed text-muted">{item.context}</dd>
+        )}
+      </div>
+    ))
+  }
+</dl>

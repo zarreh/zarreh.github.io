@@ -1,0 +1,22 @@
+---
+export interface Props {
+  eyebrow?: string;
+  title: string;
+  lead?: string;
+  class?: string;
+}
+
+const { eyebrow, title, lead, class: className } = Astro.props;
+---
+
+<div class:list={["relative overflow-hidden border-b border-line", className]}>
+  <div class="bg-grid pointer-events-none absolute inset-0 opacity-60" aria-hidden="true"></div>
+  <div class="container-site relative pt-16 pb-14 sm:pt-24 sm:pb-20">
+    {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+    <h1 class="mt-4 max-w-4xl text-4xl leading-[1.08] font-medium sm:text-5xl lg:text-6xl">
+      {title}
+    </h1>
+    {lead && <p class="lead mt-6 max-w-3xl">{lead}</p>}
+    <slot />
+  </div>
+</div>

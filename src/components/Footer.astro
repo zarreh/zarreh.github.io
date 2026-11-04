@@ -1,0 +1,115 @@
+---
+import { Icon } from "astro-icon/components";
+import { profile, resumeLink, socialLabels, type SocialKey } from "@/data/profile";
+
+const resume = resumeLink();
+const year = new Date().getFullYear();
+
+const socialIcons: Record<SocialKey, string> = {
+  linkedin: "simple-icons:linkedin",
+  github: "simple-icons:github",
+  scholar: "simple-icons:googlescholar",
+  researchgate: "simple-icons:researchgate",
+  medium: "simple-icons:medium",
+};
+
+const columns = [
+  {
+    title: "Work",
+    links: [
+      { href: "/work/", label: "Case studies" },
+      { href: "/experience/", label: "Experience" },
+      { href: "/research/", label: "Research" },
+      { href: "/writing/", label: "Writing" },
+    ],
+  },
+  {
+    title: "Engage",
+    links: [
+      { href: "/work-with-me/", label: "Work with me" },
+      { href: "/advisory/", label: "Board & advisory" },
+      { href: "/speaking/", label: "Speaking & teaching" },
+      { href: "/contact/", label: "Contact" },
+    ],
+  },
+  {
+    title: "More",
+    links: [
+      { href: "/about/", label: "About" },
+      { href: "/advisory/#press-kit", label: "Press kit" },
+      { href: resume.href, label: resume.download ? "Résumé (PDF)" : "Résumé" },
+      { href: "/rss.xml", label: "RSS" },
+    ],
+  },
+];
+---
+
+<footer class="mt-24 border-t border-line bg-sunken/60" data-no-print>
+  <div class="container-site grid gap-12 py-14 md:grid-cols-[1.4fr_2fr]">
+    <div class="max-w-sm">
+      <p class="font-serif text-2xl font-medium">Ali Zarreh, Ph.D.</p>
+      <p class="mt-3 text-sm leading-relaxed text-muted">
+        {profile.positioning}
+        {profile.availability}
+      </p>
+      <a
+        href={`mailto:${profile.email}`}
+        class="link mt-5 inline-flex items-center gap-2 text-sm font-medium"
+        data-track="email_click"
+        data-track-label="footer"
+      >
+        <Icon name="lucide:mail" class="size-4" aria-hidden="true" />
+        {profile.email}
+      </a>
+      <ul class="mt-6 flex flex-wrap gap-2" aria-label="Profiles">
+        {
+          (Object.keys(profile.links) as SocialKey[]).map((key) => (
+            <li>
+              <a
+                href={profile.links[key]}
+                class="grid size-9 place-items-center rounded-full border border-line bg-elevated text-muted transition-colors hover:border-ink hover:text-ink"
+                rel="me noopener"
+                target="_blank"
+                aria-label={socialLabels[key]}
+                title={socialLabels[key]}
+                data-track="profile_click"
+                data-track-label={key}
+              >
+                <Icon name={socialIcons[key]} class="size-4" aria-hidden="true" />
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+    <div class="grid grid-cols-2 gap-8 sm:grid-cols-3">
+      {
+        columns.map((col) => (
+          <div>
+            <p class="eyebrow text-muted">{col.title}</p>
+            <ul class="mt-4 space-y-2.5">
+              {col.links.map((link) => (
+                <li>
+                  <a
+                    href={link.href}
+                    class="text-sm text-ink-soft transition-colors hover:text-accent"
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+  <div class="border-t border-line">
+    <div
+      class="container-site flex flex-col gap-2 py-6 text-xs text-muted sm:flex-row sm:items-center sm:justify-between"
+    >
+      <p>© {year} Ali Zarreh. Views are my own and do not represent my employer.</p>
+      <p>{profile.location} · Built with Astro, hosted on GitHub Pages.</p>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,52 @@
+{
+  "name": "zarreh-ai",
+  "type": "module",
+  "version": "3.0.0",
+  "private": true,
+  "description": "Personal site of Ali Zarreh, Ph.D. — zarreh.ai",
+  "engines": {
+    "node": ">=20.3.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build && pagefind --site dist",
+    "preview": "astro preview",
+    "check": "astro check",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "playwright test",
+    "test:install": "playwright install --with-deps chromium",
+    "capture:covers": "node scripts/capture-covers.mjs",
+    "ci": "npm run check && npm run format:check && npm run build && npm run test"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^4.3.14",
+    "@astrojs/rss": "^4.0.19",
+    "@astrojs/sitemap": "^3.7.4",
+    "@fontsource-variable/fraunces": "^5.3.0",
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
+    "@iconify-json/lucide": "^1.2.151",
+    "@iconify-json/simple-icons": "^1.2.101",
+    "@tailwindcss/typography": "^0.5.20",
+    "@tailwindcss/vite": "^4.3.4",
+    "astro": "^5.18.2",
+    "astro-icon": "^1.1.5",
+    "sharp": "^0.35.5",
+    "tailwindcss": "^4.3.4"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "@axe-core/playwright": "^4.13.0",
+    "@fontsource/fraunces": "^5.3.0",
+    "@fontsource/inter": "^5.3.0",
+    "@playwright/test": "^1.64.1",
+    "@resvg/resvg-js": "^2.6.2",
+    "pagefind": "^1.6.0",
+    "prettier": "^3.9.10",
+    "prettier-plugin-astro": "^0.14.1",
+    "satori": "^0.63.2",
+    "typescript": "^5.9.3",
+    "vite": "^6.4.5"
+  }
+}

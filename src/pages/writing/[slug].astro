@@ -1,0 +1,138 @@
+---
+import { render } from "astro:content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import CTABand from "@/components/CTABand.astro";
+import WorkCard from "@/components/WorkCard.astro";
+import Callout from "@/components/mdx/Callout.astro";
+import Flow from "@/components/mdx/Flow.astro";
+import { profile } from "@/data/profile";
+import {
+  formatDate,
+  getPosts,
+  getWork,
+  postUrl,
+  readingTime,
+  workUrl,
+  type PostEntry,
+} from "@/lib/content";
+import { blogPostingSchema, breadcrumbSchema } from "@/lib/schema";
+import { slugify } from "@/lib/slug";
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+interface Props {
+  post: PostEntry;
+}
+
+const { post } = Astro.props;
+const { data } = post;
+const { Content } = await render(post);
+const path = postUrl(post);
+const ogImage = `/og/writing/${post.id}.png`;
+const work = await getWork();
+const related = work.filter((w) => data.related.includes(w.id));
+---
+
+<BaseLayout
+  title={`${data.title} · Ali Zarreh`}
+  description={data.description}
+  ogImage={ogImage}
+  type="article"
+  publishedTime={data.date}
+  modifiedTime={data.updated}
+  canonical={data.canonical}
+  jsonLd={[
+    blogPostingSchema({
+      title: data.title,
+      description: data.description,
+      path,
+      date: data.date,
+      updated: data.updated,
+      tags: data.tags,
+      image: ogImage,
+    }),
+    breadcrumbSchema([
+      { name: "Home", path: "/" },
+      { name: "Writing", path: "/writing/" },
+      { name: data.title, path },
+    ]),
+  ]}
+>
+  <article>
+    <header class="border-b border-line">
+      <div class="container-site max-w-4xl pt-12 pb-12 sm:pt-16">
+        <nav aria-label="Breadcrumb" class="text-sm text-muted">
+          <a href="/writing/" class="hover:text-ink">← Writing</a>
+        </nav>
+        <h1 class="mt-8 text-4xl leading-[1.1] font-medium sm:text-5xl">{data.title}</h1>
+        <p class="lead mt-5">{data.description}</p>
+        <p class="mt-6 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted">
+          <span>{profile.name}</span>
+          <span aria-hidden="true">·</span>
+          <time datetime={data.date.toISOString()}>{formatDate(data.date)}</time>
+          <span aria-hidden="true">·</span>
+          <span>{readingTime(post.body)} min read</span>
+        </p>
+        <p class="mt-4 flex flex-wrap gap-1.5">
+          {
+            data.tags.map((t) => (
+              <a href={`/writing/tags/${slugify(t)}/`} class="chip hover:border-ink hover:text-ink">
+                {t}
+              </a>
+            ))
+          }
+        </p>
+      </div>
+    </header>
+    <div class="container-site max-w-4xl py-12">
+      <div class="prose prose-lg prose-site mx-auto">
+        <Content components={{ Callout, Flow }} />
+      </div>
+      <footer
+        class="mx-auto mt-14 max-w-(--container-prose) rounded-2xl border border-line bg-sunken p-6"
+      >
+        <p class="font-semibold">About the author</p>
+        <p class="mt-2 text-sm leading-relaxed text-ink-soft">
+          Ali Zarreh, Ph.D., builds trustworthy AI for regulated, high-stakes businesses, teaches
+          applied generative and agentic AI in Johns Hopkins University and UT Austin programs, and
+          advises startups on AI strategy. <a href="/about/" class="link">More about Ali</a>.
+        </p>
+      </footer>
+    </div>
+  </article>
+
+  {
+    related.length > 0 && (
+      <section
+        class="border-t border-line bg-sunken/60 py-14"
+        aria-labelledby="related-work"
+        data-no-print
+      >
+        <div class="container-site">
+          <h2 id="related-work" class="text-2xl font-medium">
+            Related case studies
+          </h2>
+          <div class="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {related.map((r) => (
+              <WorkCard
+                href={workUrl(r)}
+                title={r.data.title}
+                summary={r.data.summary}
+                status={r.data.status}
+                domains={r.data.domains}
+                capabilities={r.data.capabilities}
+                cover={r.data.cover}
+                coverAlt={r.data.coverAlt}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <CTABand />
+</BaseLayout>
