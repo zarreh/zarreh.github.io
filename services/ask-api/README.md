@@ -40,6 +40,7 @@ uv run ruff check . && uv run ruff format --check .
 
 # Run against a local build of the site
 (cd ../.. && npm run build)
+# or simply `make api-dev` from the repo root
 OPENAI_API_KEY=sk-... ASK_CORPUS_PATH=../../dist/ask/corpus.json \
   ASK_ALLOWED_ORIGINS='["http://localhost:4321"]' \
   uv run uvicorn ask_api.app:app_factory --factory --port 8090

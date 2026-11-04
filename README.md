@@ -26,6 +26,22 @@ simple; CI uses Node 22.
 
 ## Commands
 
+A `Makefile` wraps the npm and uv commands so both halves of the repo share one entry point.
+Run `make` to list every target.
+
+| Shortcut         | What it does                                                        |
+| ---------------- | ------------------------------------------------------------------- |
+| `make install`   | Install site and API dependencies (`make browsers` once for tests)  |
+| `make dev`       | Dev server at http://localhost:4321 with hot reload                 |
+| `make preview`   | Production build, then serve it (search works here)                 |
+| `make check`     | Type-check and verify formatting                                    |
+| `make test`      | Build, then run Playwright e2e + axe accessibility tests            |
+| `make ci`        | Everything CI runs except the link check and Lighthouse             |
+| `make api-test`  | Lint and test the assistant API                                     |
+| `make api-dev`   | Run the assistant locally against `dist/` (needs `OPENAI_API_KEY`)  |
+
+The underlying npm scripts:
+
 | Command                    | What it does                                                   |
 | -------------------------- | -------------------------------------------------------------- |
 | `npm install`              | Install dependencies                                           |
