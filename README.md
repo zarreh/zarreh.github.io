@@ -1,15 +1,20 @@
 # zarreh.ai
 
-Personal site of **Ali Zarreh, Ph.D.** — AI solution architect, educator and board advisor.
-Positioning: *production AI that shows its work* — trustworthy AI for regulated, high-stakes businesses.
+Personal site of **Ali Zarreh, Ph.D.** — hands-on AI engineer, AI solution architect and data
+scientist; educator and board advisor.
+Positioning: *hands-on AI leadership, from problem to production* — trustworthy AI, built directly
+with the customer teams who use it, in any industry.
 
-The site is written for three audiences, each with its own path from the homepage:
+The homepage leads with public evidence (a qualitative production summary and the open portfolio),
+then offers three engagement paths:
 
-| Audience                     | Lands on        | Proof they need                                          |
-| ---------------------------- | --------------- | -------------------------------------------------------- |
-| Hiring managers & executives | `/experience/`  | Enterprise outcomes, leadership scope, stack             |
-| Clients & collaborators      | `/work-with-me/`| Case studies, live demos, engagement models, FAQ         |
-| Founders & boards            | `/advisory/`    | Advisory areas, current seat, principles, press kit      |
+| Path                         | Lands on                | Proof they need                                   |
+| ---------------------------- | ----------------------- | ------------------------------------------------- |
+| Design & build solutions     | `/work-with-me/`        | Case studies, live demos, engagement models, FAQ  |
+| Evaluate & improve AI systems| `/work-with-me/#review` | Evaluation & guardrails review, verifier patterns |
+| Board & advisory             | `/advisory/`            | Advisory areas, current seat, principles, press kit |
+
+Employer project names and figures are kept off the homepage; career detail lives on `/experience/`.
 
 ## Stack
 
@@ -84,6 +89,12 @@ without one get a generated diagram cover.
 
 **Add a post** — create `src/content/posts/<slug>.mdx` with `title`, `description`, `date`, `tags`
 (and `canonical` if it was first published elsewhere). Set `draft: true` to hide it in production.
+
+Writing is currently hidden until the first article is published: the existing posts are drafts
+(visible only in `npm run dev`), and the Writing/RSS links are removed from the header and footer.
+`/writing/` and `/rss.xml` still build with an empty state. To launch, publish a post without
+`draft: true` and add `/writing/` back to `nav` in `src/components/Header.astro` and the footer
+columns in `src/components/Footer.astro`.
 
 **Change headline, links or availability** — edit `src/data/profile.ts`.
 

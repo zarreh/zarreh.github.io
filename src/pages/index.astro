@@ -3,42 +3,58 @@ import { Image } from "astro:assets";
 import { Icon } from "astro-icon/components";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import Section from "@/components/Section.astro";
-import MetricStrip from "@/components/MetricStrip.astro";
 import WorkCard from "@/components/WorkCard.astro";
 import CTABand from "@/components/CTABand.astro";
 import headshot from "@/assets/images/profile/headshot.jpg";
-import { affiliations, credibility, profile, proofPoints } from "@/data/profile";
-import { hebProjects } from "@/data/experience";
+import { affiliations, credibility, profile } from "@/data/profile";
 import { principles, teaching } from "@/data/offerings";
-import { formatDate, getPosts, getWork, postUrl, workUrl } from "@/lib/content";
+import { getWork, workUrl } from "@/lib/content";
 import { personSchema, websiteSchema } from "@/lib/schema";
 
 const work = await getWork();
 const featured = work.filter((w) => w.data.featured).slice(0, 3);
-const enterprise = hebProjects.filter((p) => p.featured).slice(0, 3);
-const posts = (await getPosts()).slice(0, 3);
+
+// Kept qualitative on purpose: employer project names and figures stay off the homepage.
+const practice = [
+  {
+    title: "Agentic AI & LLM systems",
+    body: "Agentic workflows, retrieval and multimodal intake on real enterprise data.",
+  },
+  {
+    title: "Forecasting & optimization",
+    body: "Forecasting and optimization platforms that planners rely on week to week.",
+  },
+  {
+    title: "Evaluation & guardrails",
+    body: "Evaluation from day one, LLM-as-judge pipelines and human review where stakes are high.",
+  },
+  {
+    title: "MLOps & cloud",
+    body: "Production pipelines and services on GCP, AWS and Databricks.",
+  },
+];
 
 const paths = [
   {
-    eyebrow: "Hiring managers & executives",
-    title: "Evaluating a hands-on AI leader?",
-    body: "Enterprise results in forecasting, optimization and agentic AI — and how I lead teams that ship them.",
-    href: "/experience/",
-    cta: "See experience",
-    icon: "lucide:briefcase",
-  },
-  {
-    eyebrow: "Clients & collaborators",
-    title: "Have an AI project to get right?",
-    body: "From strategy and evaluation reviews to building agentic systems and forecasting platforms.",
+    eyebrow: "Design & build",
+    title: "Have a problem worth solving with AI?",
+    body: "I work with your team to design and implement AI, forecasting and optimization solutions in any field — from framing the problem to production code.",
     href: "/work-with-me/",
     cta: "Ways to work together",
     icon: "lucide:layers",
   },
   {
-    eyebrow: "Founders & boards",
+    eyebrow: "Evaluate & improve",
+    title: "Need to trust an AI system you already have?",
+    body: "An independent review of an LLM or agent system: evaluation, guardrails, failure modes and a prioritized plan to fix them.",
+    href: "/work-with-me/#review",
+    cta: "Evaluation reviews",
+    icon: "lucide:shield-check",
+  },
+  {
+    eyebrow: "Board & advisory",
     title: "Strengthening your advisory bench?",
-    body: "Independent counsel on AI strategy, architecture, governance and technical due diligence.",
+    body: "Independent counsel for founders and boards on AI strategy, architecture, governance and technical due diligence.",
     href: "/advisory/",
     cta: "Board & advisory",
     icon: "lucide:landmark",
@@ -47,8 +63,8 @@ const paths = [
 ---
 
 <BaseLayout
-  title="Ali Zarreh, Ph.D. — AI Solution Architect, Educator & Board Advisor"
-  description="Ali Zarreh builds trustworthy, production AI for regulated, high-stakes businesses: agentic workflows, forecasting and optimization. AI leader at H-E-B, instructor in Johns Hopkins University and UT Austin programs, and board advisor."
+  title="Ali Zarreh, Ph.D. — AI Engineer & AI Solution Architect"
+  description="Ali Zarreh is a hands-on AI engineer and AI solution architect who works directly with customer teams to design, build and deploy AI in any industry, and advises founders and boards."
   type="profile"
   jsonLd={[websiteSchema(), personSchema()]}
 >
@@ -61,7 +77,7 @@ const paths = [
       <div>
         <p class="eyebrow">{profile.roles.join(" · ")}</p>
         <h1 class="mt-5 text-5xl leading-[1.02] font-medium tracking-tight sm:text-6xl lg:text-7xl">
-          Production AI that <em class="text-accent">shows its work.</em>
+          Hands-on AI leadership, <em class="text-accent">from problem to production.</em>
         </h1>
         <p class="lead mt-7 max-w-2xl">{profile.intro}</p>
         <div class="mt-9 flex flex-wrap items-center gap-3">
@@ -114,7 +130,7 @@ const paths = [
             Ph.D. · 17+ years
           </p>
           <p class="mt-1.5 text-sm leading-snug font-medium">
-            Building AI at H-E-B · Teaching in JHU & UT Austin programs
+            Hands-on with customer teams · Teaching in JHU & UT Austin programs
           </p>
         </div>
       </div>
@@ -135,69 +151,39 @@ const paths = [
     </div>
   </div>
 
-  <!-- Audience paths -->
+  <!-- Production practice -->
   <Section
-    id="paths"
-    eyebrow="Start here"
-    title="Three ways people work with me"
-    lead="Whether you are hiring, building or governing AI, the evidence you need is one click away."
-  >
-    <div class="grid gap-6 md:grid-cols-3">
-      {
-        paths.map((p) => (
-          <a
-            href={p.href}
-            class="group card relative flex flex-col p-7 transition-all hover:-translate-y-0.5 hover:border-line-strong"
-            data-track="audience_path"
-            data-track-label={p.href}
-          >
-            <span class="grid size-11 place-items-center rounded-xl bg-accent-soft text-accent">
-              <Icon name={p.icon} class="size-5" aria-hidden="true" />
-            </span>
-            <p class="eyebrow mt-6 text-muted">{p.eyebrow}</p>
-            <h3 class="mt-2 text-2xl leading-snug font-medium">{p.title}</h3>
-            <p class="mt-3 leading-relaxed text-ink-soft">{p.body}</p>
-            <span class="mt-6 inline-flex items-center gap-1.5 pt-2 text-sm font-semibold text-accent">
-              {p.cta}
-              <Icon
-                name="lucide:arrow-right"
-                class="size-4 transition-transform group-hover:translate-x-0.5"
-                aria-hidden="true"
-              />
-            </span>
-          </a>
-        ))
-      }
-    </div>
-  </Section>
-
-  <!-- Proof -->
-  <Section
-    id="results"
+    id="practice"
     tone="sunken"
-    eyebrow="Enterprise results"
-    title="Measured in production, not in a demo"
-    lead="Selected outcomes from platforms I have architected and led at H-E-B."
+    eyebrow="In production"
+    title="From the first customer conversation to production code"
   >
-    <MetricStrip items={proofPoints} size="lg" />
-    <div class="mt-12 grid gap-6 md:grid-cols-3">
-      {
-        enterprise.map((p) => (
-          <WorkCard
-            href={`/experience/#${p.id}`}
-            title={p.title}
-            summary={p.summary}
-            status="enterprise"
-            domains={p.domains}
-            capabilities={p.capabilities}
-            metric={p.outcomes[0]}
-          />
-        ))
-      }
+    <div class="grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:items-start">
+      <div class="max-w-2xl space-y-4 text-lg leading-relaxed text-ink-soft">
+        <p>
+          I work directly with the people who own the problem: framing the decision with them,
+          architecting the system, writing the production code myself, and staying through
+          evaluation, rollout and adoption.
+        </p>
+        <p>
+          Client and employer work stays confidential. The same approach is open to inspect in the
+          public applications below.
+        </p>
+        <p>
+          <a href="/experience/" class="link text-sm font-semibold">Experience and roles →</a>
+        </p>
+      </div>
+      <ul class="grid gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-2">
+        {
+          practice.map((p) => (
+            <li class="bg-elevated p-6">
+              <h3 class="font-sans text-base leading-snug font-semibold">{p.title}</h3>
+              <p class="mt-2 text-sm leading-relaxed text-ink-soft">{p.body}</p>
+            </li>
+          ))
+        }
+      </ul>
     </div>
-    <p class="mt-8">
-      <a href="/experience/" class="link text-sm font-semibold">All enterprise work and roles →</a>
-    </p>
   </Section>
 
   <!-- Featured independent work -->
@@ -205,7 +191,7 @@ const paths = [
     id="featured-work"
     eyebrow="Public portfolio"
     title="AI for regulated decisions, built in the open"
-    lead="Live applications in finance and healthcare, each with independent checks, human review and openly reported limits."
+    lead="Independent demonstrations in finance and healthcare, built on public or synthetic data — each with independent checks, human review and openly reported limits."
   >
     <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       {
@@ -232,13 +218,45 @@ const paths = [
     </div>
   </Section>
 
-  <!-- Principles -->
+  <!-- Engagement paths -->
   <Section
-    id="principles"
+    id="paths"
     tone="sunken"
-    eyebrow="How I work"
-    title="Principles I build and advise by"
+    eyebrow="Work together"
+    title="Three ways I can help"
+    lead="In any industry — from a first prototype to a production system, an independent review, or a seat at the board table."
   >
+    <div class="grid gap-6 md:grid-cols-3">
+      {
+        paths.map((p) => (
+          <a
+            href={p.href}
+            class="group card relative flex flex-col p-7 transition-all hover:-translate-y-0.5 hover:border-line-strong"
+            data-track="audience_path"
+            data-track-label={p.href}
+          >
+            <span class="grid size-11 place-items-center rounded-xl bg-accent-soft text-accent">
+              <Icon name={p.icon} class="size-5" aria-hidden="true" />
+            </span>
+            <p class="eyebrow mt-6 text-muted">{p.eyebrow}</p>
+            <h3 class="mt-2 text-2xl leading-snug font-medium">{p.title}</h3>
+            <p class="mt-3 leading-relaxed text-ink-soft">{p.body}</p>
+            <span class="mt-auto inline-flex items-center gap-1.5 pt-6 text-sm font-semibold text-accent">
+              {p.cta}
+              <Icon
+                name="lucide:arrow-right"
+                class="size-4 transition-transform group-hover:translate-x-0.5"
+                aria-hidden="true"
+              />
+            </span>
+          </a>
+        ))
+      }
+    </div>
+  </Section>
+
+  <!-- Principles -->
+  <Section id="principles" eyebrow="How I work" title="Principles I build and advise by">
     <ol
       class="grid gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-5"
     >
@@ -255,7 +273,12 @@ const paths = [
   </Section>
 
   <!-- Teaching & advisory -->
-  <Section id="beyond" eyebrow="Beyond the day job" title="Teaching, advising and research">
+  <Section
+    id="beyond"
+    tone="sunken"
+    eyebrow="Beyond the day job"
+    title="Teaching, advising and research"
+  >
     <div class="grid gap-6 lg:grid-cols-3">
       <a
         href="/speaking/"
@@ -290,11 +313,13 @@ const paths = [
         class="group card flex flex-col p-7 transition-colors hover:border-line-strong"
       >
         <p class="eyebrow text-muted">Research</p>
-        <p class="mt-4 font-serif text-3xl leading-tight font-medium">Game theory & security</p>
+        <p class="mt-4 font-serif text-3xl leading-tight font-medium">
+          Medical research & applied AI
+        </p>
         <p class="mt-1 text-sm text-muted">Ph.D., University of Texas at San Antonio</p>
         <p class="mt-4 leading-relaxed text-ink-soft">
-          Peer-reviewed work on cyber-physical security, risk and operations — the quantitative
-          roots of how I reason about AI risk today.
+          Current work in medical research and applied AI, built on peer-reviewed research in risk,
+          security and operations — the quantitative roots of how I evaluate AI today.
         </p>
         <span class="mt-auto pt-6 text-sm font-semibold text-accent">Publications →</span>
       </a>
@@ -310,36 +335,6 @@ const paths = [
       }
     </dl>
   </Section>
-
-  {
-    posts.length > 0 && (
-      <Section
-        id="writing"
-        tone="sunken"
-        eyebrow="Writing"
-        title="Notes on building trustworthy AI"
-      >
-        <ul class="grid gap-6 md:grid-cols-3">
-          {posts.map((post) => (
-            <li class="card p-6">
-              <p class="font-mono text-xs text-muted">{formatDate(post.data.date, "short")}</p>
-              <h3 class="mt-3 text-xl leading-snug font-medium">
-                <a href={postUrl(post)} class="hover:text-accent">
-                  {post.data.title}
-                </a>
-              </h3>
-              <p class="mt-3 text-sm leading-relaxed text-ink-soft">{post.data.description}</p>
-            </li>
-          ))}
-        </ul>
-        <p class="mt-8">
-          <a href="/writing/" class="link text-sm font-semibold">
-            All writing →
-          </a>
-        </p>
-      </Section>
-    )
-  }
 
   <CTABand />
 </BaseLayout>

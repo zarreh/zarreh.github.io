@@ -11,11 +11,11 @@ export const profile = {
   alternateNames: ["AliReza Zarreh", "Alireza Zarreh", "Ali R. Zarreh", "Dr. Ali Zarreh"],
   credentials: "Ph.D.",
   role: "AI Solution Architect & Senior Data Scientist",
-  roles: ["AI Solution Architect", "Educator", "Board Advisor"],
-  positioning: "Trustworthy AI for regulated, high-stakes businesses.",
-  headline: "Production AI that shows its work.",
+  roles: ["AI Engineer", "AI Solution Architect", "Data Scientist"],
+  positioning: "Trustworthy AI, built hands-on with the teams who use it.",
+  headline: "Hands-on AI leadership, from problem to production.",
   intro:
-    "I'm Ali Zarreh, Ph.D. — a hands-on AI leader with 17+ years of turning machine learning, optimization and generative AI into production systems. I architect agentic workflows on regulated data, build forecasting and optimization platforms that run a retailer's planning, teach applied generative and agentic AI, and advise founders on AI strategy.",
+    "I'm Ali Zarreh, Ph.D. — a hands-on AI engineer and solution architect with 18 years across engineering, data science and AI. I work forward-deployed with customer teams to design, build and ship solutions in any industry, from framing the problem to writing the production code.",
   availability: "Open to advisory roles, select projects and speaking.",
   location: "San Antonio, Texas",
   email: "ali@zarreh.ai",
@@ -64,10 +64,10 @@ export const proofPoints = [
 ] as const;
 
 export const credibility = [
-  { value: "17+", label: "years in applied ML & optimization" },
+  { value: "18", label: "years in engineering, data science & AI" },
   { value: "7", label: "live AI applications you can try" },
   { value: "250+", label: "students taught · 4.92 / 5 rating" },
-  { value: "Ph.D.", label: "game theory & cyber-physical security" },
+  { value: "Ph.D.", label: "research-driven engineering" },
 ] as const;
 
 export const affiliations = [
