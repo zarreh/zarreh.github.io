@@ -84,12 +84,14 @@ export function caseStudySchema(input: {
   title: string;
   description: string;
   path: string;
-  date: Date;
+  date?: Date;
   updated?: Date;
   keywords: string[];
   repo?: string;
   demo?: string;
 }) {
+  const created = input.date;
+  const modified = input.updated ?? input.date;
   return {
     "@context": "https://schema.org",
     "@type": "CreativeWork",
@@ -97,8 +99,8 @@ export function caseStudySchema(input: {
     description: input.description,
     url: `${site}${input.path}`,
     creator: { "@id": personId, "@type": "Person", name: profile.name },
-    dateCreated: input.date.toISOString(),
-    dateModified: (input.updated ?? input.date).toISOString(),
+    ...(created ? { dateCreated: created.toISOString() } : {}),
+    ...(modified ? { dateModified: modified.toISOString() } : {}),
     keywords: input.keywords,
     ...(input.repo || input.demo ? { sameAs: [input.demo, input.repo].filter(Boolean) } : {}),
   };

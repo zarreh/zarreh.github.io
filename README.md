@@ -14,7 +14,13 @@ then offers three engagement paths:
 | Evaluate & improve AI systems| `/work-with-me/#review` | Evaluation & guardrails review, verifier patterns |
 | Board & advisory             | `/advisory/`            | Advisory areas, current seat, principles, press kit |
 
-Employer project names and figures are kept off the homepage; career detail lives on `/experience/`.
+Employer project names and figures are kept off the homepage. The `/work/` library shows
+enterprise, teaching and advisory tiles alongside the public case studies. Each H-E-B project has
+its own page at `/work/enterprise/<id>/`, generated from `src/data/experience.ts`, and appears as a
+full card on `/experience/`. Teaching tiles link to the official program pages; the Experience page
+shows each program's main topics and skills. Everything in `src/data/experience.ts` is also
+published in `/ask/corpus.json` — leave out projections, unreleased roadmap items and findings that
+read as criticism of the employer.
 
 ## Stack
 
@@ -66,9 +72,9 @@ The underlying npm scripts:
 src/
   content/work/*.mdx       Case studies (one file each; schema in src/content.config.ts)
   content/posts/*.mdx      Writing
-  data/profile.ts          Name, headline, links, proof points, availability — single source of truth
-  data/experience.ts       Roles, H-E-B project stories, education, skills
-  data/offerings.ts        Services, advisory areas, talks, teaching, bios (press kit)
+  data/profile.ts          Name, headline, links, credibility facts, availability — single source of truth
+  data/experience.ts       Roles, H-E-B projects (one page each), education, skills
+  data/offerings.ts        Services, advisory areas, talks, teaching programs (topics, skills, links), bios
   data/publications.ts     Publications (DOIs verified via Crossref)
   data/lab.ts              Unreleased agents and smaller open-source work
   data/redirects.ts        Old *.html URLs → new routes

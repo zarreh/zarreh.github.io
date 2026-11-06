@@ -1,4 +1,5 @@
 import type { CapabilityKey, DomainKey } from "./taxonomy";
+import { teaching, type TeachingProgram } from "./offerings";
 
 export interface Outcome {
   value: string;
@@ -28,9 +29,19 @@ export interface Role {
   summary: string;
   highlights?: string[];
   projects?: EnterpriseProject[];
+  /** The organization's public website. */
+  website?: string;
+  /** Delivery partner, shown under the organization. */
+  partner?: string;
+  /** Programs taught in this role; each renders as a card on the Experience page. */
+  programs?: TeachingProgram[];
 }
 
-/** Enterprise work at H-E-B. Detail is kept at the level already public on the résumé. */
+/**
+ * Enterprise work at H-E-B, at the level already public on the résumé. Each project has its own
+ * page at /work/enterprise/<id>/ and is also published in the assistant corpus. Leave out
+ * projections, unreleased roadmap items and findings that read as criticism of the employer.
+ */
 export const hebProjects: EnterpriseProject[] = [
   {
     id: "work-order-intelligence",
@@ -42,15 +53,13 @@ export const hebProjects: EnterpriseProject[] = [
       "Maintenance work orders arrive as free text. Diagnostics, asset details and costs were buried in prose and typed in by hand, so nobody could trust or analyze them at scale.",
     built: [
       "Architected LangGraph agentic workflows that extract Problem–Cause–Remedy diagnostics from HVAC and refrigeration work orders, with agentic RAG over BigQuery vector search to match assets and components to the asset taxonomy and spec sheets.",
-      "Built an LLM-as-judge evaluation pipeline that exposed a 54% upstream data-quality gap and drove data-capture fixes at the source.",
+      "Built an LLM-as-judge evaluation pipeline that surfaced upstream data-quality issues and drove data-capture fixes at the source.",
       "Classified every work order into category-specific cost buckets: a JEV model (Typesafe AI) as the primary classifier, an LLM fallback below 0.9 probability, and a five-criteria evaluation step that ships, reviews or rejects each result.",
       "Designed a proof of concept for a multimodal (text and image) intake agent that replaces form-based requests: it gathers missing details, triages, and hands off each request with similar past incidents, likely duplicates and repair documents.",
     ],
     outcomes: [
       { value: "98%", label: "cost-bucket accuracy" },
       { value: "−99%", label: "manual data entry" },
-      { value: "54%", label: "data-quality gap surfaced" },
-      { value: "~50%", label: "projected faster time to repair (intake PoC)" },
     ],
     stack: [
       "LangGraph",
@@ -165,9 +174,8 @@ export const hebProjects: EnterpriseProject[] = [
       "Delivered it through a self-service Streamlit dashboard, and rebuilt the preprocessing, feature engineering and compute layers.",
     ],
     outcomes: [
-      { value: "2–4%", label: "projected sales & gross-profit lift" },
       { value: "−86%", label: "runtime (9 h → 75 min)" },
-      { value: "~−90%", label: "compute cost" },
+      { value: "−90%", label: "compute cost (approx.)" },
     ],
     stack: ["XGBoost", "PuLP (MIP)", "Databricks", "Spark", "Streamlit"],
     domains: ["retail"],
@@ -184,7 +192,7 @@ export const hebProjects: EnterpriseProject[] = [
     built: [
       "Architected a 21-day multi-horizon forecast of hourly orders and units for every EFC–store pair (9 EFCs, 73 stores), ensembling an ARIMA baseline, global LightGBM models and a Temporal Fusion Transformer.",
       "Engineered the MLOps pipeline on Databricks (AWS): MLflow-tracked experimentation and model selection, weekly retraining and daily inference via model serving.",
-      "Feeds EFC staffing and capacity planning (staff allocation partly live), with EFC-to-store allocation optimization and new-EFC planning next.",
+      "Feeds EFC staffing and capacity planning, with staff allocation partly live.",
     ],
     outcomes: [
       { value: "~14%", label: "WMAPE in staging" },
@@ -247,19 +255,22 @@ export const roles: Role[] = [
     period: "Aug 2026 – Present",
     summary:
       "Serve on the advisory board of a recovery-science wellness startup, advising the founding team on technology strategy, platform architecture and AI/ML strategy across the product.",
+    highlights: [
+      "Syne pairs a nightly recovery practice with an app that turns a member's own wearable data (Oura, Whoop or Apple Health) into one clear action each evening.",
+    ],
+    website: "https://syne.life/",
   },
   {
-    id: "great-learning",
-    org: "Great Learning — Johns Hopkins University & UT Austin programs",
+    id: "teaching",
+    org: "Johns Hopkins University & UT Austin McCombs",
+    partner: "Great Learning",
     title: "AI/ML Instructor (part-time)",
     location: "Remote · United States",
     period: "Nov 2025 – Present",
     summary:
-      "Teach the Agentic AI and Applied Generative AI certificate programs: production LLM applications end to end, from prompt optimization and retrieval to multi-agent systems, evaluation and guardrails.",
-    highlights: [
-      "250+ students taught to date, with a 4.92 / 5 instructor rating.",
-      "Topics: prompt optimization (DSPy, GEPA); RAG, GraphRAG and agentic RAG; fine-tuning; multi-agent systems (LangGraph, CrewAI) with MCP and A2A interoperability; evaluation, tracing and guardrails (DeepEval, LangSmith).",
-    ],
+      "Teach three programs — two certificate programs from Johns Hopkins University and a post-graduate program from UT Austin's McCombs School of Business — covering production LLM applications end to end, from prompt optimization and retrieval to multi-agent systems, evaluation and guardrails.",
+    highlights: ["250+ students taught to date, with a 4.92 / 5 instructor rating."],
+    programs: teaching.programs.filter((p) => p.href),
   },
   {
     id: "utsa",

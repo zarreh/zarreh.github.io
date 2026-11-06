@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro";
-import { getPosts, getWork, postUrl, workUrl } from "@/lib/content";
+import { enterpriseUrl, getPosts, getWork, postUrl, workUrl } from "@/lib/content";
 import { education, hebProjects, roles, skills } from "@/data/experience";
 import { labItems } from "@/data/lab";
 import { publications } from "@/data/publications";
@@ -90,7 +90,7 @@ export const GET: APIRoute = async () => {
 
   for (const p of hebProjects) {
     add({
-      url: `/experience/#${p.id}`,
+      url: enterpriseUrl(p.id),
       title: `${p.title} (H-E-B)`,
       section: p.role,
       text: [
@@ -108,7 +108,11 @@ export const GET: APIRoute = async () => {
       url: `/experience/#${r.id}`,
       title: `${r.title}, ${r.org}`,
       section: r.period,
-      text: [r.summary, ...(r.highlights ?? [])].join("\n"),
+      text: [
+        r.summary,
+        ...(r.partner ? [`Delivered with ${r.partner}.`] : []),
+        ...(r.highlights ?? []),
+      ].join("\n"),
     });
   }
 
@@ -156,7 +160,16 @@ export const GET: APIRoute = async () => {
     section: "Teaching and talks",
     text: [
       ...teaching.stats.map((s) => `${s.value} ${s.label}.`),
-      ...teaching.programs.map((p) => `${p.title} — ${p.org}: ${p.body}`),
+      ...teaching.programs.map((p) =>
+        [
+          `${p.title} — ${p.org}: ${p.body}`,
+          p.topics ? `Main topics: ${p.topics.join("; ")}.` : "",
+          p.skills ? `Skills taught: ${p.skills.join(", ")}.` : "",
+          p.href ? `Program page: ${p.href}` : "",
+        ]
+          .filter(Boolean)
+          .join(" "),
+      ),
       ...talkTopics.map((t) => `Talk: ${t.title} (${t.audience}): ${t.body}`),
     ].join("\n"),
   });

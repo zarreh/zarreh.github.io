@@ -19,7 +19,7 @@ export const legacyRedirects: Record<string, string> = {
   projects_genai_docs_helper: "/work/genai-docs-helper/",
   projects_genai_job_finder: "/work/genai-job-finder/",
   projects_car_insurance_telematics: "/work/telematics-risk-assessment/",
-  projects_demand_forecast: "/experience/#retail-demand-forecasting",
-  projects_price_optimization: "/experience/#retail-demand-forecasting",
+  projects_demand_forecast: "/work/enterprise/retail-demand-forecasting/",
+  projects_price_optimization: "/work/enterprise/retail-demand-forecasting/",
   projects_pipelearner: "/experience/#heb",
 };

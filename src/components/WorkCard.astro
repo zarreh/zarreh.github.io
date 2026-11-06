@@ -22,6 +22,10 @@ export interface Props {
   cover?: ImageMetadata;
   coverAlt?: string;
   metric?: { value: string; label: string };
+  /** Replaces the industry line next to the status badge (e.g. the institution for teaching). */
+  meta?: string;
+  /** Skills taught (teaching tiles); shown instead of capability chips. */
+  skills?: string[];
   external?: boolean;
   eager?: boolean;
   headingLevel?: "h2" | "h3";
@@ -37,6 +41,8 @@ const {
   cover,
   coverAlt,
   metric,
+  meta,
+  skills,
   external = false,
   eager = false,
   headingLevel = "h3",
@@ -47,8 +53,16 @@ const statusStyle: Record<StatusKey, string> = {
   live: "bg-accent-soft text-accent",
   "open-source": "bg-sunken text-ink-soft",
   enterprise: "bg-warm-soft text-warm",
+  teaching: "bg-accent-soft text-accent-strong",
+  advisory: "bg-sunken text-ink",
   lab: "bg-sunken text-muted",
 };
+const coverVariant =
+  status === "enterprise"
+    ? "warm"
+    : status === "teaching" || status === "advisory"
+      ? "ink"
+      : "accent";
 ---
 
 <article
@@ -70,12 +84,7 @@ const statusStyle: Record<StatusKey, string> = {
           loading={eager ? "eager" : "lazy"}
         />
       ) : (
-        <GeneratedCover
-          seed={title}
-          label={title}
-          variant={status === "enterprise" ? "warm" : "accent"}
-          class="h-full w-full"
-        />
+        <GeneratedCover seed={title} label={title} variant={coverVariant} class="h-full w-full" />
       )
     }
   </div>
@@ -90,7 +99,7 @@ const statusStyle: Record<StatusKey, string> = {
         {statuses[status]}
       </span>
       <span class="font-mono text-[0.7rem] tracking-wide text-muted uppercase">
-        {domainList.map((d) => domains[d]).join(" · ")}
+        {meta ?? domainList.map((d) => domains[d]).join(" · ")}
       </span>
     </div>
     <Heading class="mt-4 font-serif text-xl leading-snug font-medium">
@@ -102,7 +111,28 @@ const statusStyle: Record<StatusKey, string> = {
         {title}
       </a>
     </Heading>
-    <p class="mt-3 line-clamp-4 text-[0.95rem] leading-relaxed text-ink-soft">{summary}</p>
+    <p
+      class:list={[
+        "mt-3 text-[0.95rem] leading-relaxed text-ink-soft",
+        skills ? "line-clamp-3" : "line-clamp-4",
+      ]}
+    >
+      {summary}
+    </p>
+    {
+      skills && (
+        <div class="mt-4">
+          <p class="font-mono text-[0.65rem] tracking-[0.12em] text-muted uppercase">
+            Skills I teach
+          </p>
+          <ul class="mt-2 flex flex-wrap gap-1.5" aria-label="Skills taught">
+            {skills.map((s) => (
+              <li class="chip">{s}</li>
+            ))}
+          </ul>
+        </div>
+      )
+    }
     <div class="mt-auto pt-5">
       {
         metric && (
@@ -113,9 +143,17 @@ const statusStyle: Record<StatusKey, string> = {
         )
       }
       <div class="flex items-center justify-between gap-3">
-        <ul class="flex flex-wrap gap-1.5" aria-label="Capabilities">
-          {capabilityList.slice(0, 3).map((c) => <li class="chip">{capabilities[c]}</li>)}
-        </ul>
+        {
+          skills ? (
+            <span class="text-sm font-medium text-accent">Program details</span>
+          ) : (
+            <ul class="flex flex-wrap gap-1.5" aria-label="Capabilities">
+              {capabilityList.slice(0, 3).map((c) => (
+                <li class="chip">{capabilities[c]}</li>
+              ))}
+            </ul>
+          )
+        }
         <Icon
           name={external ? "lucide:arrow-up-right" : "lucide:arrow-right"}
           class="size-5 shrink-0 text-muted transition-all group-hover:translate-x-0.5 group-hover:text-accent"

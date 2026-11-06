@@ -4,14 +4,20 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import PageHeader from "@/components/PageHeader.astro";
 import Section from "@/components/Section.astro";
 import CTABand from "@/components/CTABand.astro";
-import MetricStrip from "@/components/MetricStrip.astro";
+import DetailCard from "@/components/DetailCard.astro";
+import RoleSection from "@/components/RoleSection.astro";
 import { education, hebProjects, roles, skills } from "@/data/experience";
+import { teaching } from "@/data/offerings";
 import { proofPoints, resumeLink } from "@/data/profile";
 import { capabilities } from "@/data/taxonomy";
+import { enterpriseUrl } from "@/lib/content";
 import { breadcrumbSchema, profilePageSchema } from "@/lib/schema";
 
 const resume = resumeLink();
-const [heb, ...otherRoles] = roles;
+const heb = roles.find((r) => r.id === "heb")!;
+const teachingRole = roles.find((r) => r.id === "teaching")!;
+const programs = teachingRole.programs ?? [];
+const otherRoles = roles.filter((r) => r !== heb && r !== teachingRole);
 ---
 
 <BaseLayout
@@ -57,109 +63,66 @@ const [heb, ...otherRoles] = roles;
     </div>
   </PageHeader>
 
-  <Section id="heb" innerClass="space-y-10">
-    <div class="grid gap-10 lg:grid-cols-[16rem_minmax(0,1fr)]">
-      <aside class="lg:sticky lg:top-24 lg:self-start" aria-label="On this page">
-        <p class="eyebrow">{heb!.period}</p>
-        <h2 class="mt-3 text-3xl font-medium">{heb!.org}</h2>
-        <p class="mt-1 font-medium text-ink-soft">{heb!.title}</p>
-        <p class="text-sm text-muted">{heb!.location}</p>
-        <nav class="mt-8 hidden lg:block" aria-label="H-E-B projects">
-          <p class="font-mono text-xs tracking-[0.12em] text-muted uppercase">Selected projects</p>
-          <ol class="mt-3 space-y-2 border-l border-line">
-            {
-              hebProjects.map((p) => (
-                <li>
-                  <a
-                    href={`#${p.id}`}
-                    class="-ml-px block border-l border-transparent pl-4 text-sm text-ink-soft hover:border-accent hover:text-ink"
-                  >
-                    {p.title}
-                  </a>
-                </li>
-              ))
-            }
-          </ol>
-        </nav>
-      </aside>
+  <RoleSection role={heb} navLabel="Selected projects" navItems={hebProjects} metrics={proofPoints}>
+    {
+      hebProjects.map((p) => (
+        <DetailCard
+          id={p.id}
+          chips={p.capabilities.map((c) => capabilities[c])}
+          title={p.title}
+          subtitle={p.role}
+          sections={[
+            { label: "The problem", text: p.problem },
+            { label: "What I built and led", items: p.built },
+          ]}
+          outcomes={p.outcomes}
+          tags={p.stack}
+          links={[{ href: enterpriseUrl(p.id), label: "Project page" }]}
+        />
+      ))
+    }
 
-      <div class="min-w-0 space-y-10">
-        <p class="lead">{heb!.summary}</p>
-        <MetricStrip items={proofPoints} />
+    {
+      heb.highlights && (
+        <div class="rounded-2xl border border-dashed border-line-strong p-6">
+          <p class="font-mono text-xs tracking-[0.12em] text-muted uppercase">Also at H-E-B</p>
+          <ul class="mt-3 space-y-2 text-ink-soft">
+            {heb.highlights.map((h) => (
+              <li>{h}</li>
+            ))}
+          </ul>
+        </div>
+      )
+    }
+  </RoleSection>
 
-        {
-          hebProjects.map((p) => (
-            <article id={p.id} class="card scroll-mt-24 p-6 sm:p-8">
-              <div class="flex flex-wrap items-center gap-2">
-                {p.capabilities.map((c) => (
-                  <span class="chip">{capabilities[c]}</span>
-                ))}
-              </div>
-              <h3 class="mt-4 text-2xl font-medium sm:text-3xl">{p.title}</h3>
-              <p class="mt-1 font-mono text-xs tracking-wide text-accent uppercase">{p.role}</p>
+  <RoleSection
+    role={teachingRole}
+    tone="sunken"
+    navLabel="Programs"
+    navItems={programs}
+    metrics={teaching.stats}
+  >
+    {
+      programs.map((prog) => (
+        <DetailCard
+          id={prog.id}
+          chips={(prog.capabilities ?? []).map((c) => capabilities[c])}
+          title={prog.title}
+          subtitle={prog.institution}
+          sections={[
+            { label: "The program", text: prog.body },
+            { label: "Main topics I teach", items: prog.topics ?? [] },
+          ]}
+          tags={prog.skills ?? []}
+          tagsLabel="Skills and techniques"
+          links={prog.href ? [{ href: prog.href, label: "Program details", external: true }] : []}
+        />
+      ))
+    }
+  </RoleSection>
 
-              <dl class="mt-6 grid gap-6">
-                <div>
-                  <dt class="font-mono text-xs tracking-[0.12em] text-muted uppercase">
-                    The problem
-                  </dt>
-                  <dd class="mt-2 leading-relaxed text-ink-soft">{p.problem}</dd>
-                </div>
-                <div>
-                  <dt class="font-mono text-xs tracking-[0.12em] text-muted uppercase">
-                    What I built and led
-                  </dt>
-                  <dd class="mt-2">
-                    <ul class="space-y-2.5 text-ink-soft">
-                      {p.built.map((b) => (
-                        <li class="flex gap-3 leading-relaxed">
-                          <span
-                            class="mt-2.5 size-1.5 shrink-0 rounded-full bg-accent"
-                            aria-hidden="true"
-                          />
-                          <span>{b}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </dd>
-                </div>
-              </dl>
-
-              <dl class="mt-7 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-4">
-                {p.outcomes.map((o) => (
-                  <div class="flex flex-col bg-sunken p-4">
-                    <dt class="order-2 text-xs leading-snug text-muted">{o.label}</dt>
-                    <dd class="order-1 font-serif text-2xl font-medium text-accent">{o.value}</dd>
-                  </div>
-                ))}
-              </dl>
-
-              <p class="mt-6 flex flex-wrap gap-1.5" aria-label="Stack">
-                {p.stack.map((s) => (
-                  <span class="chip">{s}</span>
-                ))}
-              </p>
-            </article>
-          ))
-        }
-
-        {
-          heb!.highlights && (
-            <div class="rounded-2xl border border-dashed border-line-strong p-6">
-              <p class="font-mono text-xs tracking-[0.12em] text-muted uppercase">Also at H-E-B</p>
-              <ul class="mt-3 space-y-2 text-ink-soft">
-                {heb!.highlights.map((h) => (
-                  <li>{h}</li>
-                ))}
-              </ul>
-            </div>
-          )
-        }
-      </div>
-    </div>
-  </Section>
-
-  <Section id="roles" tone="sunken" eyebrow="Career" title="Teaching, advisory and the path here">
+  <Section id="roles" eyebrow="Career" title="Advisory and the path here">
     <ol class="relative space-y-8 border-l border-line-strong pl-8">
       {
         otherRoles.map((r) => (
@@ -181,13 +144,24 @@ const [heb, ...otherRoles] = roles;
                 ))}
               </ul>
             )}
+            {r.website && (
+              <a
+                href={r.website}
+                class="link mt-4 inline-flex items-center gap-1.5 text-sm font-medium"
+                target="_blank"
+                rel="noopener"
+              >
+                {new URL(r.website).hostname.replace(/^www\./, "")}
+                <Icon name="lucide:arrow-up-right" class="size-4" aria-hidden="true" />
+              </a>
+            )}
           </li>
         ))
       }
     </ol>
   </Section>
 
-  <Section id="education" eyebrow="Foundations" title="Education & skills">
+  <Section id="education" tone="sunken" eyebrow="Foundations" title="Education & skills">
     <div class="grid gap-10 lg:grid-cols-[1fr_1.4fr]">
       <ul class="space-y-6">
         {

@@ -5,6 +5,7 @@ const pages = [
   "/",
   "/work/",
   "/work/clinical-care-navigator/",
+  "/work/enterprise/retail-demand-forecasting/",
   "/experience/",
   "/advisory/",
   "/contact/",

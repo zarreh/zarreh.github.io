@@ -25,6 +25,8 @@ export const statuses = {
   live: "Live demo",
   "open-source": "Open source",
   enterprise: "Enterprise",
+  teaching: "Teaching",
+  advisory: "Advisory",
   lab: "In the lab",
 } as const;
 

@@ -3,6 +3,7 @@ import { renderOgImage, type OgInput } from "@/lib/og";
 import { getPosts, getWork } from "@/lib/content";
 import { capabilities, domains } from "@/data/taxonomy";
 import { profile } from "@/data/profile";
+import { hebProjects } from "@/data/experience";
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const work = await getWork();
@@ -24,6 +25,15 @@ export const getStaticPaths: GetStaticPaths = async () => {
         title: w.data.title,
         subtitle: w.data.headline,
         chips: w.data.capabilities.slice(0, 3).map((c) => capabilities[c]),
+      },
+    })),
+    ...hebProjects.map((p) => ({
+      slug: `work/enterprise/${p.id}`,
+      card: {
+        eyebrow: `Enterprise · H-E-B · ${p.domains.map((d) => domains[d]).join(" · ")}`,
+        title: p.title,
+        subtitle: p.summary,
+        chips: p.capabilities.slice(0, 3).map((c) => capabilities[c]),
       },
     })),
     ...posts.map((p) => ({

@@ -16,6 +16,7 @@ export async function getPosts(): Promise<PostEntry[]> {
 }
 
 export const workUrl = (entry: WorkEntry) => `/work/${entry.id}/`;
+export const enterpriseUrl = (id: string) => `/work/enterprise/${id}/`;
 export const postUrl = (entry: PostEntry) => `/writing/${entry.id}/`;
 
 export function formatDate(date: Date, style: "long" | "short" = "long") {

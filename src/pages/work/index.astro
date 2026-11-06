@@ -5,7 +5,8 @@ import PageHeader from "@/components/PageHeader.astro";
 import Section from "@/components/Section.astro";
 import WorkCard from "@/components/WorkCard.astro";
 import CTABand from "@/components/CTABand.astro";
-import { hebProjects } from "@/data/experience";
+import { hebProjects, roles } from "@/data/experience";
+import { teaching } from "@/data/offerings";
 import { labItems, otherWork } from "@/data/lab";
 import {
   capabilities,
@@ -13,14 +14,32 @@ import {
   statuses,
   type CapabilityKey,
   type DomainKey,
+  type StatusKey,
 } from "@/data/taxonomy";
-import { getWork, workUrl } from "@/lib/content";
+import type { ImageMetadata } from "astro";
+import { enterpriseUrl, getWork, workUrl } from "@/lib/content";
 import { breadcrumbSchema } from "@/lib/schema";
 
 const work = await getWork();
+const syne = roles.find((r) => r.id === "syne-life")!;
 
-const items = [
-  ...work.map((w) => ({
+type Tile = {
+  href: string;
+  title: string;
+  summary: string;
+  status: StatusKey;
+  domains: DomainKey[];
+  capabilities: CapabilityKey[];
+  cover?: ImageMetadata;
+  coverAlt?: string;
+  metric?: { value: string; label: string };
+  meta?: string;
+  skills?: string[];
+  external?: boolean;
+};
+
+const items: Tile[] = [
+  ...work.map((w): Tile => ({
     href: workUrl(w),
     title: w.data.title,
     summary: w.data.summary,
@@ -31,8 +50,8 @@ const items = [
     coverAlt: w.data.coverAlt,
     metric: undefined,
   })),
-  ...hebProjects.map((p) => ({
-    href: `/experience/#${p.id}`,
+  ...hebProjects.map((p): Tile => ({
+    href: enterpriseUrl(p.id),
     title: p.title,
     summary: p.summary,
     status: "enterprise" as const,
@@ -42,6 +61,33 @@ const items = [
     coverAlt: undefined,
     metric: p.outcomes[0],
   })),
+  ...teaching.programs
+    .filter((t) => t.href)
+    .map((t): Tile => ({
+      href: t.href!,
+      title: t.title,
+      summary: t.body,
+      status: "teaching",
+      domains: [],
+      capabilities: t.capabilities ?? [],
+      skills: t.skills,
+      cover: undefined,
+      coverAlt: undefined,
+      metric: undefined,
+      meta: t.institution,
+      external: true,
+    })),
+  {
+    href: "/advisory/",
+    title: `${syne.org} — Board Advisor`,
+    summary: syne.summary,
+    status: "advisory",
+    domains: ["healthcare"],
+    capabilities: ["ml", "mlops"],
+    cover: undefined,
+    coverAlt: undefined,
+    metric: undefined,
+  },
 ];
 
 const usedDomains = (Object.keys(domains) as DomainKey[]).filter((d) =>
@@ -50,9 +96,9 @@ const usedDomains = (Object.keys(domains) as DomainKey[]).filter((d) =>
 const usedCapabilities = (Object.keys(capabilities) as CapabilityKey[]).filter((c) =>
   items.some((i) => i.capabilities.includes(c)),
 );
-const statusFilters = (["live", "enterprise", "open-source"] as const).filter((s) =>
-  items.some((i) => i.status === s),
-);
+const statusFilters = (
+  ["live", "enterprise", "open-source", "teaching", "advisory"] as const
+).filter((s) => items.some((i) => i.status === s));
 
 const filterGroups = [
   {
@@ -74,8 +120,8 @@ const filterGroups = [
 ---
 
 <BaseLayout
-  title="Work — Case studies in agentic AI, forecasting & optimization · Ali Zarreh"
-  description="Case studies from Ali Zarreh: live AI applications for finance, healthcare and insurance with verifiers and human review, plus enterprise forecasting, optimization and agentic-AI platforms."
+  title="Work — Case studies, teaching & advisory in agentic AI, forecasting & optimization · Ali Zarreh"
+  description="Work by Ali Zarreh: live AI applications for finance, healthcare and insurance with verifiers and human review, enterprise forecasting, optimization and agentic-AI platforms, the AI programs he teaches at Johns Hopkins and UT Austin, and board advisory."
   jsonLd={breadcrumbSchema([
     { name: "Home", path: "/" },
     { name: "Work", path: "/work/" },
@@ -83,8 +129,8 @@ const filterGroups = [
 >
   <PageHeader
     eyebrow="Work"
-    title="Case studies"
-    lead="Enterprise platforms in production, and a public portfolio of AI applications for regulated decisions — each one explicit about what is AI, what is code, what is checked and where a human decides."
+    title="Case studies, teaching & advisory"
+    lead="Enterprise platforms in production and a public portfolio of AI applications for regulated decisions — each one explicit about what is AI, what is code, what is checked and where a human decides — plus the programs I teach and the board I advise."
   />
 
   <section class="container-site py-12" aria-label="Case study library">
@@ -116,7 +162,7 @@ const filterGroups = [
         ))
       }
       <p class="text-sm text-muted" aria-live="polite">
-        Showing <span data-work-count>{items.length}</span> of {items.length} case studies
+        Showing <span data-work-count>{items.length}</span> of {items.length}
         <button type="reset" class="link ml-3 hidden text-sm" data-work-reset>Clear filters</button>
       </p>
     </form>

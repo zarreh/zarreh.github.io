@@ -108,7 +108,107 @@ test.describe("navigation & theme", () => {
   });
 });
 
+const enterpriseIds = [
+  "work-order-intelligence",
+  "expense-classification",
+  "retail-demand-forecasting",
+  "markdown-optimization",
+  "assortment-space-optimization",
+  "efc-forecasting",
+  "warehouse-forecasting",
+];
+
+test.describe("enterprise project pages", () => {
+  for (const id of enterpriseIds) {
+    test(`/work/enterprise/${id}/ renders the full project`, async ({ page }) => {
+      const response = await page.goto(`/work/enterprise/${id}/`);
+      expect(response?.status()).toBe(200);
+      await expect(page.locator("h1")).toHaveCount(1);
+      const main = page.locator("main");
+      await expect(main.getByRole("heading", { name: "The problem" })).toBeVisible();
+      await expect(main.getByRole("heading", { name: "What I built and led" })).toBeVisible();
+      await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
+        "content",
+        new RegExp(`/og/work/enterprise/${id}\\.png$`),
+      );
+    });
+  }
+
+  test("omit projections and the data-quality gap figure", async ({ page }) => {
+    for (const id of [
+      "work-order-intelligence",
+      "assortment-space-optimization",
+      "efc-forecasting",
+    ]) {
+      await page.goto(`/work/enterprise/${id}/`);
+      await expect(page.locator("main")).not.toContainText(/projected|54%|planning next/i);
+    }
+  });
+});
+
+test.describe("experience", () => {
+  test("shows full H-E-B cards linking to project pages", async ({ page }) => {
+    await page.goto("/experience/");
+    const cards = page.locator("#heb article[id]");
+    await expect(cards).toHaveCount(enterpriseIds.length);
+    for (const card of await cards.all()) {
+      await expect(card).toContainText("The problem");
+      await expect(card).toContainText("What I built and led");
+      const id = await card.getAttribute("id");
+      await expect(card.locator(`a[href="/work/enterprise/${id}/"]`)).toHaveCount(1);
+    }
+    await expect(page.locator("#heb")).not.toContainText(/projected|54%/i);
+  });
+
+  test("shows program cards with topics and Syne Life link", async ({ page }) => {
+    await page.goto("/experience/");
+    const ids = await page.locator("main section[id]").evaluateAll((els) => els.map((e) => e.id));
+    expect(ids.indexOf("teaching")).toBe(ids.indexOf("heb") + 1);
+    const programs = page.locator("#teaching article[id]");
+    await expect(programs).toHaveCount(3);
+    await expect(programs.locator("h3")).toHaveText([
+      "Certificate Program in Agentic AI",
+      "Post Graduate Program in AI Agents for Business Applications",
+      "Certificate Program in Applied Generative AI and Agentic AI",
+    ]);
+    for (const program of await programs.all()) {
+      await expect(program).toContainText("Main topics I teach");
+      expect(
+        await program.locator('ul[aria-label="Skills and techniques"] li').count(),
+      ).toBeGreaterThan(4);
+      const link = program.locator('a[target="_blank"]');
+      await expect(link).toHaveAttribute("href", /^https:\/\/[^#]+$/);
+    }
+    await expect(page.locator('#syne-life a[href="https://syne.life/"]')).toHaveCount(1);
+    await page.goto("/advisory/");
+    await expect(page.locator('a[href="https://syne.life/"]')).toHaveCount(1);
+  });
+});
+
 test.describe("work library", () => {
+  test("enterprise tiles link to project pages", async ({ page }) => {
+    await page.goto("/work/?status=enterprise");
+    const tiles = page.locator("[data-work-card]:visible");
+    await expect(tiles).toHaveCount(enterpriseIds.length);
+    for (const tile of await tiles.all()) {
+      await expect(tile.locator("h2 a")).toHaveAttribute("href", /^\/work\/enterprise\/[a-z-]+\/$/);
+    }
+  });
+
+  test("teaching tiles show skills and link to official program pages", async ({ page }) => {
+    await page.goto("/work/?status=teaching");
+    const tiles = page.locator("[data-work-card]:visible");
+    await expect(tiles).toHaveCount(3);
+    for (const tile of await tiles.all()) {
+      await expect(tile.locator("h2 a")).toHaveAttribute("href", /^https:\/\/[^#]+$/);
+      expect(await tile.locator('ul[aria-label="Skills taught"] li').count()).toBeGreaterThan(4);
+    }
+    await page.goto("/work/?status=advisory");
+    const advisory = page.locator("[data-work-card]:visible");
+    await expect(advisory).toHaveCount(1);
+    await expect(advisory.locator("h2 a")).toHaveAttribute("href", "/advisory/");
+  });
+
   test("filters narrow the case studies and sync to the URL", async ({ page }) => {
     await page.goto("/work/");
     const cards = page.locator("[data-work-card]:visible");
