@@ -116,7 +116,10 @@ const otherRoles = roles.filter((r) => r !== heb && r !== teachingRole);
           ]}
           tags={prog.skills ?? []}
           tagsLabel="Skills and techniques"
-          links={prog.href ? [{ href: prog.href, label: "Program details", external: true }] : []}
+          links={[
+            ...(prog.href ? [{ href: prog.href, label: "Program details", external: true }] : []),
+            { href: `/students/#${prog.id}`, label: "Course materials" },
+          ]}
         />
       ))
     }

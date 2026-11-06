@@ -9,8 +9,8 @@ import {
   bios,
   faqs,
   principles,
+  process,
   services,
-  talkTopics,
   teaching,
 } from "@/data/offerings";
 import { profile } from "@/data/profile";
@@ -127,9 +127,9 @@ export const GET: APIRoute = async () => {
   });
 
   add({
-    url: "/work-with-me/",
-    title: "Work with me",
-    section: "Engagements",
+    url: "/advisory/",
+    title: "Advisory & consulting",
+    section: "Projects & consulting",
     text: services
       .map(
         (s) =>
@@ -138,14 +138,17 @@ export const GET: APIRoute = async () => {
       .join("\n"),
   });
   add({
-    url: "/work-with-me/",
-    title: "Work with me",
-    section: "FAQ",
-    text: faqs.map((f) => `Q: ${f.q} A: ${f.a}`).join("\n"),
+    url: "/advisory/",
+    title: "Advisory & consulting",
+    section: "How we'd work together and FAQ",
+    text: [
+      ...process.map((p, i) => `Step ${i + 1} — ${p.title}: ${p.body}`),
+      ...faqs.map((f) => `Q: ${f.q} A: ${f.a}`),
+    ].join("\n"),
   });
   add({
     url: "/advisory/",
-    title: "Board & advisory",
+    title: "Advisory & consulting",
     section: "Advisory",
     text: [
       "Current: Health Tech Board Advisor (AI & Technology) at Syne Life since August 2026.",
@@ -155,9 +158,9 @@ export const GET: APIRoute = async () => {
     ].join("\n"),
   });
   add({
-    url: "/speaking/",
-    title: "Speaking & teaching",
-    section: "Teaching and talks",
+    url: "/experience/#teaching",
+    title: "Teaching",
+    section: "Programs taught",
     text: [
       ...teaching.stats.map((s) => `${s.value} ${s.label}.`),
       ...teaching.programs.map((p) =>
@@ -170,8 +173,13 @@ export const GET: APIRoute = async () => {
           .filter(Boolean)
           .join(" "),
       ),
-      ...talkTopics.map((t) => `Talk: ${t.title} (${t.audience}): ${t.body}`),
     ].join("\n"),
+  });
+  add({
+    url: "/students/",
+    title: "Students",
+    section: "Course materials",
+    text: "Students in the programs Ali teaches can sign in to find course materials organized by program and course: slides and session notes, notebooks and code, case studies and project templates, reading lists, session recaps, and announcements and office hours. Student sign-in is being set up; until then, students can request materials through the contact page.",
   });
   add({
     url: "/research/",

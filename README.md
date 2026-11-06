@@ -8,11 +8,19 @@ with the customer teams who use it, in any industry.
 The homepage leads with public evidence (a qualitative production summary and the open portfolio),
 then offers three engagement paths:
 
-| Path                         | Lands on                | Proof they need                                   |
-| ---------------------------- | ----------------------- | ------------------------------------------------- |
-| Design & build solutions     | `/work-with-me/`        | Case studies, live demos, engagement models, FAQ  |
-| Evaluate & improve AI systems| `/work-with-me/#review` | Evaluation & guardrails review, verifier patterns |
-| Board & advisory             | `/advisory/`            | Advisory areas, current seat, principles, press kit |
+| Path                          | Lands on              | What they find                                      |
+| ----------------------------- | --------------------- | --------------------------------------------------- |
+| Design & build solutions      | `/advisory/#projects` | Engagement types, how we'd work together, FAQ       |
+| Evaluate & improve AI systems | `/advisory/#review`   | Evaluation & guardrails review                      |
+| Board & advisory              | `/advisory/#advisory` | Advisory formats, current seat, value areas         |
+
+`/advisory/` ("Advisory & consulting") is the single page for projects, consulting and advisory;
+every other call to action is "Contact me" (`/contact/`).
+
+`/students/` explains the course-materials area for the programs Ali teaches and links to
+`/students/login/`. The sign-in form is a placeholder: it sends and stores nothing and is excluded
+from search and the sitemap. A static site cannot protect files, so real student access needs an
+identity provider (e.g. Auth0, Clerk or Cloudflare Access) with the materials hosted behind it.
 
 Employer project names and figures are kept off the homepage. The `/work/` library shows
 enterprise, teaching and advisory tiles alongside the public case studies. Each H-E-B project has

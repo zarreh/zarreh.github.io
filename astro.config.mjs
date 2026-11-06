@@ -15,7 +15,8 @@ export default defineConfig({
     mdx(),
     icon(),
     sitemap({
-      filter: (page) => !/\.html$/.test(page) && !page.includes("/404"),
+      filter: (page) =>
+        !/\.html$/.test(page) && !page.includes("/404") && !page.includes("/students/login"),
     }),
   ],
   markdown: {

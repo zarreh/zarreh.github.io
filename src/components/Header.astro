@@ -5,8 +5,8 @@ import ThemeToggle from "./ThemeToggle.astro";
 const nav = [
   { href: "/work/", label: "Work" },
   { href: "/experience/", label: "Experience" },
-  { href: "/advisory/", label: "Advisory" },
-  { href: "/speaking/", label: "Speaking" },
+  { href: "/advisory/", label: "Advisory & consulting" },
+  { href: "/students/", label: "Students" },
   { href: "/about/", label: "About" },
 ];
 
@@ -59,10 +59,10 @@ const isActive = (href: string) => path === href || path.startsWith(href);
       </button>
       <ThemeToggle />
       <a
-        href="/work-with-me/"
+        href="/contact/"
         class="btn btn-primary ml-1 hidden sm:inline-flex"
         data-track="cta_click"
-        data-track-label="header_work_with_me">Work with me</a
+        data-track-label="header_contact">Contact me</a
       >
       <button
         type="button"
@@ -97,7 +97,7 @@ const isActive = (href: string) => path === href || path.startsWith(href);
         ))
       }
       <li class="pt-2">
-        <a href="/work-with-me/" class="btn btn-primary w-full">Work with me</a>
+        <a href="/contact/" class="btn btn-primary w-full">Contact me</a>
       </li>
     </ul>
   </nav>

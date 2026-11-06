@@ -6,12 +6,11 @@ and the Pages source is switched.
 ## 1. Review before merging
 
 - [ ] Read every page in a preview build (`npm run build && npm run preview`), especially the
-      copy written for you: homepage, About, Advisory (bios), Work with me, Speaking, and the two
-      essays in `src/content/posts/`.
+      copy written for you: homepage, About, Experience, Advisory & consulting, and Students.
 - [ ] Confirm the facts flagged in the redesign notes (publication statuses, PipeLearner wording,
       RxFlow / Claim agent metrics, "In the lab" projects being public).
-- [ ] Check that your employer's outside-activity / disclosure policy covers the _Work with me_
-      and _Advisory_ pages.
+- [ ] Check that your employer's outside-activity / disclosure policy covers the
+      _Advisory & consulting_ page and the enterprise project pages under `/work/enterprise/`.
 - [ ] Optional: add `public/resume/Ali-Zarreh-Resume.pdf` (a phone-free version).
 
 ## 2. Configure

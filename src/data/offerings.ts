@@ -1,4 +1,4 @@
-/** Copy for the audience pages: Work with me, Advisory and Speaking. */
+/** Copy for Advisory & consulting, teaching (Experience, Students) and bios. */
 import type { CapabilityKey } from "./taxonomy";
 
 export const services = [
@@ -176,39 +176,6 @@ export const principles = [
   {
     title: "Honest limits",
     body: "I publish where a system falls short. Knowing the failure modes is what makes it safe to use.",
-  },
-] as const;
-
-export const talkTopics = [
-  {
-    title: "AI that shows its work",
-    body: "Verifiers, guardrails and honest limits: patterns for deploying LLMs and agents where mistakes are expensive.",
-    audience: "Leaders · practitioners",
-  },
-  {
-    title: "From pilot to production with agentic AI",
-    body: "What it actually takes to operate agent workflows: evaluation, cost budgets, human review, observability and failover.",
-    audience: "Engineering teams",
-  },
-  {
-    title: "Evaluating LLM systems you can trust",
-    body: "LLM-as-judge, golden sets, mutation testing for guardrails, and knowing when to trust the numbers.",
-    audience: "Practitioners",
-  },
-  {
-    title: "From forecasts to decisions",
-    body: "Pairing machine learning with optimization so predictions become plans that planners and merchants adopt.",
-    audience: "Retail & operations",
-  },
-  {
-    title: "AI for the boardroom",
-    body: "A hype-free briefing on AI opportunity, risk and governance for directors and executive teams.",
-    audience: "Boards · executives",
-  },
-  {
-    title: "Game theory for security risk",
-    body: "Strategic attacker–defender models for cyber-physical systems, from my doctoral research.",
-    audience: "Academic · security",
   },
 ] as const;
 

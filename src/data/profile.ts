@@ -16,7 +16,7 @@ export const profile = {
   headline: "Hands-on AI leadership, from problem to production.",
   intro:
     "I'm Ali Zarreh, Ph.D. — a hands-on AI engineer and solution architect with 18 years across engineering, data science and AI. I work forward-deployed with customer teams to design, build and ship solutions in any industry, from framing the problem to writing the production code.",
-  availability: "Open to advisory roles, select projects and speaking.",
+  availability: "Open to consulting, advisory roles and select projects.",
   location: "San Antonio, Texas",
   email: "ali@zarreh.ai",
   siteUrl: "https://zarreh.ai",

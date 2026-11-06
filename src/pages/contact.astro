@@ -7,8 +7,9 @@ import { breadcrumbSchema } from "@/lib/schema";
 
 const topics = [
   { value: "project", label: "An AI, forecasting or optimization project" },
-  { value: "advisory", label: "A board or advisory role" },
-  { value: "speaking", label: "Speaking, teaching or a workshop" },
+  { value: "advisory", label: "Advisory or consulting" },
+  { value: "student", label: "A course I teach" },
+  { value: "speaking", label: "A talk or workshop" },
   { value: "opportunity", label: "A leadership opportunity" },
   { value: "research", label: "Research or collaboration" },
   { value: "general", label: "Something else" },
@@ -17,7 +18,7 @@ const topics = [
 
 <BaseLayout
   title="Contact · Ali Zarreh"
-  description="Get in touch with Ali Zarreh about AI projects, board and advisory roles, speaking and workshops, or collaboration."
+  description="Get in touch with Ali Zarreh about AI projects, consulting and advisory roles, courses he teaches, workshops, or collaboration."
   jsonLd={breadcrumbSchema([
     { name: "Home", path: "/" },
     { name: "Contact", path: "/contact/" },

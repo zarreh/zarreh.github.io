@@ -8,6 +8,8 @@ const pages = [
   "/work/enterprise/retail-demand-forecasting/",
   "/experience/",
   "/advisory/",
+  "/students/",
+  "/students/login/",
   "/contact/",
   "/writing/",
 ];

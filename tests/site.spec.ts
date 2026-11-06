@@ -7,8 +7,7 @@ const pages = [
   "/work/credit-decisioning/",
   "/experience/",
   "/advisory/",
-  "/work-with-me/",
-  "/speaking/",
+  "/students/",
   "/writing/",
   "/research/",
   "/about/",
@@ -56,7 +55,7 @@ test.describe("homepage", () => {
     expect(ids.indexOf("featured-work")).toBeGreaterThan(-1);
     expect(ids.indexOf("featured-work")).toBeLessThan(ids.indexOf("paths"));
     const paths = page.locator("#paths");
-    for (const href of ["/work-with-me/", "/work-with-me/#review", "/advisory/"]) {
+    for (const href of ["/advisory/#projects", "/advisory/#review", "/advisory/#advisory"]) {
       await expect(paths.locator(`a[href="${href}"]`)).toHaveCount(1);
     }
     await expect(page.locator("#beyond")).toContainText("Medical research & applied AI");
@@ -67,7 +66,10 @@ test.describe("homepage", () => {
     const main = page.locator("main");
     await expect(main).not.toContainText(/markdown|~350|\+11%|99\.76%|hiring manager/i);
     await expect(main.locator('[data-work-card][data-status="enterprise"]')).toHaveCount(0);
-    await expect(main.locator('a[href^="/experience/#"]')).toHaveCount(0);
+    await expect(
+      main.locator('a[href^="/experience/#"]:not([href="/experience/#teaching"])'),
+    ).toHaveCount(0);
+    await expect(main.locator('a[href^="/work/enterprise/"]')).toHaveCount(0);
     await expect(page.locator("#writing")).toHaveCount(0);
   });
 });
@@ -85,6 +87,65 @@ test.describe("writing (hidden until the first article)", () => {
     const response = await page.goto("/writing/");
     expect(response?.status()).toBe(200);
     await expect(page.getByText("The first essays are on their way.")).toBeVisible();
+  });
+});
+
+test.describe("advisory & consulting", () => {
+  test("covers projects, advisory and FAQ without a press kit", async ({ page }) => {
+    await page.goto("/advisory/");
+    await expect(page.locator("h1")).toContainText("AI decisions");
+    for (const id of ["projects", "review", "advisory", "process", "faq"]) {
+      await expect(page.locator(`#${id}`)).toHaveCount(1);
+    }
+    await expect(page.locator("#press-kit")).toHaveCount(0);
+    await expect(page.locator("main")).not.toContainText(/press kit|headshot/i);
+  });
+
+  test("speaking and work-with-me pages are gone and unlinked", async ({ page, request }) => {
+    for (const path of ["/speaking/", "/work-with-me/"]) {
+      expect((await request.get(path)).status()).toBe(404);
+    }
+    for (const path of ["/", "/advisory/", "/experience/", "/about/"]) {
+      await page.goto(path);
+      await expect(
+        page.locator('a[href^="/speaking/"], a[href^="/work-with-me/"], a[href*="press-kit"]'),
+      ).toHaveCount(0);
+    }
+  });
+
+  test("header offers Contact me", async ({ page, isMobile }) => {
+    await page.goto("/");
+    if (isMobile) await page.getByRole("button", { name: "Open menu" }).click();
+    const link = page.locator("header").getByRole("link", { name: "Contact me" }).last();
+    await expect(link).toHaveAttribute("href", "/contact/");
+  });
+});
+
+test.describe("students", () => {
+  test("lists programs and links to sign-in", async ({ page }) => {
+    await page.goto("/students/");
+    await expect(page.locator("#programs article[id]")).toHaveCount(3);
+    await expect(page.locator('main a[href="/students/login/"]').first()).toBeVisible();
+  });
+
+  test("sign-in is a placeholder that sends nothing", async ({ page }) => {
+    const requests: string[] = [];
+    await page.goto("/students/login/");
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
+    page.on("request", (r) => requests.push(r.url()));
+    await page.getByLabel("Email").fill("student@example.com");
+    await page.getByLabel("Password").fill("not-a-real-password");
+    await page.getByRole("button", { name: "Sign in" }).click();
+    await expect(page.locator("[data-login-status]")).toContainText("isn't open yet");
+    await expect(page.getByLabel("Password")).toHaveValue("");
+    expect(requests).toEqual([]);
+  });
+
+  test("experience links each program to its materials", async ({ page }) => {
+    await page.goto("/experience/");
+    for (const id of ["jhu-agentic-ai", "ut-austin-ai-agents", "jhu-applied-genai"]) {
+      await expect(page.locator(`#${id} a[href="/students/#${id}"]`)).toHaveCount(1);
+    }
   });
 });
 
