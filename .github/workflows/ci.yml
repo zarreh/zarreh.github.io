@@ -87,7 +87,7 @@ jobs:
             --exclude 'linkedin\.com' --exclude 'researchgate\.net' --exclude 'medium\.com'
             --exclude 'scholar\.google\.com'
             --exclude 'doi\.org' --exclude 'googletagmanager' --exclude 'api\.web3forms\.com'
-            --exclude '^https://zarreh\.ai/(?:$|about|experience|work|research|contact|writing|advisory|speaking|og/|rss|sitemap|press)'
+            --exclude '^https://zarreh\.ai/(?:$|about|experience|work|research|contact|writing|advisory|students|og/|rss|sitemap|press)'
             --root-dir ${{ github.workspace }}/dist
             'dist/**/*.html'
           fail: true
