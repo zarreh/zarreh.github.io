@@ -1,0 +1,48 @@
+---
+import { env } from "@/data/profile";
+
+const enabled = import.meta.env.PROD && Boolean(env.gaId);
+---
+
+<script is:inline define:vars={{ gaId: enabled ? env.gaId : "" }}>
+  if (gaId && !navigator.webdriver) {
+    const tag = document.createElement("script");
+    tag.async = true;
+    tag.src = `https://www.googletagmanager.com/gtag/js?id=${gaId}`;
+    document.head.appendChild(tag);
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function gtag() {
+      window.dataLayer.push(arguments);
+    };
+    window.gtag("js", new Date());
+    window.gtag("config", gaId);
+  }
+</script>
+
+<script>
+  type Gtag = (command: "event", name: string, params?: Record<string, unknown>) => void;
+
+  const track = (name: string, params: Record<string, unknown> = {}) => {
+    const gtag = (window as unknown as { gtag?: Gtag }).gtag;
+    if (typeof gtag === "function") gtag("event", name, params);
+  };
+
+  (window as unknown as { zTrack: typeof track }).zTrack = track;
+
+  // Elements opt in to conversion tracking with data-track="event_name" data-track-label="detail".
+  document.addEventListener("click", (event) => {
+    const target = (event.target as HTMLElement | null)?.closest<HTMLElement>("[data-track]");
+    if (target) {
+      track(target.dataset.track!, {
+        label: target.dataset.trackLabel ?? "",
+        page: location.pathname,
+        link_url: target instanceof HTMLAnchorElement ? target.href : undefined,
+      });
+      return;
+    }
+    const link = (event.target as HTMLElement | null)?.closest<HTMLAnchorElement>("a[href]");
+    if (link && link.hostname && link.hostname !== location.hostname) {
+      track("outbound_click", { link_url: link.href, page: location.pathname });
+    }
+  });
+</script>

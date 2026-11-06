@@ -1,0 +1,206 @@
+---
+import { Image } from "astro:assets";
+import { Icon } from "astro-icon/components";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import PageHeader from "@/components/PageHeader.astro";
+import Section from "@/components/Section.astro";
+import CTABand from "@/components/CTABand.astro";
+import portrait from "@/assets/images/profile/portrait.jpg";
+import { education } from "@/data/experience";
+import { principles } from "@/data/offerings";
+import { profile, resumeLink, socialLabels, type SocialKey } from "@/data/profile";
+import { breadcrumbSchema, profilePageSchema } from "@/lib/schema";
+
+const resume = resumeLink();
+
+const path = [
+  {
+    years: "2009 – 2015",
+    title: "Factory floors",
+    body: "Maintenance analytics at Isfahan Steel, then ML anomaly detection at Reef Chemical Industries that cut downtime by 30% and saved more than $200K a year.",
+  },
+  {
+    years: "2016 – 2019",
+    title: "Ph.D., UT San Antonio",
+    body: "Game-theoretic models of attackers and defenders in cyber-physical manufacturing, while teaching engineering students.",
+  },
+  {
+    years: "2020 – today",
+    title: "H-E-B",
+    body: "Hands-on technical lead for forecasting, optimization and agentic-AI platforms used across the business.",
+  },
+  {
+    years: "2025 – today",
+    title: "Teaching & advisory",
+    body: "Instructor in Johns Hopkins University and UT Austin programs; board advisor to Syne Life.",
+  },
+];
+---
+
+<BaseLayout
+  title="About Ali Zarreh, Ph.D. · AI leader, educator & board advisor"
+  description="About Ali Zarreh: from predictive maintenance on factory floors to a Ph.D. in game-theoretic cybersecurity to leading AI at H-E-B, teaching in Johns Hopkins University and UT Austin programs, and advising startups."
+  type="profile"
+  jsonLd={[
+    profilePageSchema("/about/"),
+    breadcrumbSchema([
+      { name: "Home", path: "/" },
+      { name: "About", path: "/about/" },
+    ]),
+  ]}
+>
+  <PageHeader
+    eyebrow="About"
+    title="Engineer by training, data scientist by trade, teacher by choice."
+    lead={profile.positioning}
+  />
+
+  <Section>
+    <div class="grid gap-12 lg:grid-cols-[22rem_minmax(0,1fr)]">
+      <div class="lg:sticky lg:top-24 lg:self-start">
+        <div class="overflow-hidden rounded-[1.75rem] border border-line bg-sunken shadow-card">
+          <Image
+            src={portrait}
+            alt="Ali Zarreh outdoors in a navy suit"
+            widths={[360, 540, 720]}
+            sizes="(min-width: 1024px) 352px, 90vw"
+            class="aspect-[4/5] w-full object-cover object-[50%_30%]"
+            loading="eager"
+          />
+        </div>
+        <ul class="mt-6 space-y-2 text-sm">
+          <li class="flex items-center gap-2 text-ink-soft">
+            <Icon name="lucide:map-pin" class="size-4 text-muted" aria-hidden="true" />
+            {profile.location}
+          </li>
+          <li>
+            <a
+              href={`mailto:${profile.email}`}
+              class="link inline-flex items-center gap-2"
+              data-track="email_click"
+              data-track-label="about"
+            >
+              <Icon name="lucide:mail" class="size-4" aria-hidden="true" />
+              {profile.email}
+            </a>
+          </li>
+          {
+            (Object.keys(profile.links) as SocialKey[]).map((k) => (
+              <li>
+                <a href={profile.links[k]} class="link" rel="me noopener" target="_blank">
+                  {socialLabels[k]}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div class="prose prose-lg prose-site">
+        <p class="lead !mt-0">
+          I build AI systems that people can trust with real decisions — and I've learned that trust
+          comes from evidence, not from eloquence.
+        </p>
+        <p>
+          I started my career on factory floors. At Isfahan Steel and later Reef Chemical
+          Industries, I used statistics and machine learning to predict equipment failures. It
+          taught me something I still rely on: a model only matters when the people running the
+          operation trust it enough to act on it.
+        </p>
+        <p>
+          That question — how do you make a system trustworthy when someone may be actively trying
+          to break it? — took me to the University of Texas at San Antonio. My Ph.D. research used
+          game theory to model attackers and defenders of cyber-physical manufacturing systems and
+          to quantify where security investment pays off. I taught engineering students along the
+          way.
+        </p>
+        <p>
+          Since 2020 I have been at H-E-B, where I lead AI and data-science work as a hands-on
+          technical lead: demand forecasting that cut forecast error roughly in half, markdown and
+          shelf-space optimization, and, more recently, LangGraph agentic workflows on regulated
+          data. I work directly with executives on what to build, set the evaluation bar for the
+          team, and still write production code.
+        </p>
+        <p>
+          Outside the day job I build a <a href="/work/">public portfolio</a> of AI applications for regulated
+          decisions — credit, clinical, trade surveillance — each with independent verifiers, human review
+          and honestly reported limits. I teach agentic and generative AI programs offered by Johns Hopkins
+          University and UT Austin, and I serve as an AI and technology <a href="/advisory/"
+            >board advisor</a
+          > to the health-tech startup Syne Life.
+        </p>
+        <h2>Outside work</h2>
+        <p>
+          I live in San Antonio, Texas. When I'm not working you'll usually find me climbing, in the
+          mountains, or at a CrossFit box — pursuits that reward the same patience and respect for
+          risk that good engineering does.
+        </p>
+        <p class="not-prose mt-8 flex flex-wrap gap-3">
+          <a
+            href={resume.href}
+            class="btn btn-secondary"
+            {...resume.download ? { download: "" } : { target: "_blank", rel: "noopener" }}
+            data-track="resume_click"
+            data-track-label="about"
+          >
+            {resume.label}
+          </a>
+          <a href="/contact/" class="btn btn-ghost">Contact me →</a>
+        </p>
+      </div>
+    </div>
+  </Section>
+
+  <Section tone="sunken" eyebrow="The path" title="How I got here">
+    <ol class="grid gap-px overflow-hidden rounded-2xl border border-line bg-line md:grid-cols-4">
+      {
+        path.map((p) => (
+          <li class="bg-elevated p-6">
+            <p class="font-mono text-xs text-accent">{p.years}</p>
+            <h3 class="mt-2 font-sans text-lg font-semibold">{p.title}</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink-soft">{p.body}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </Section>
+
+  <Section eyebrow="Beliefs" title="What I hold myself to">
+    <div class="grid gap-10 lg:grid-cols-[1.5fr_1fr]">
+      <ul class="space-y-5">
+        {
+          principles.map((p) => (
+            <li class="flex gap-4">
+              <Icon
+                name="lucide:check"
+                class="mt-1 size-5 shrink-0 text-accent"
+                aria-hidden="true"
+              />
+              <div>
+                <p class="font-semibold">{p.title}</p>
+                <p class="text-ink-soft">{p.body}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+      <div>
+        <p class="font-mono text-xs tracking-[0.12em] text-muted uppercase">Education</p>
+        <ul class="mt-4 space-y-4">
+          {
+            education.map((e) => (
+              <li>
+                <p class="font-semibold">{e.degree}</p>
+                <p class="text-sm text-muted">
+                  {e.school} · {e.year}
+                </p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </Section>
+
+  <CTABand />
+</BaseLayout>

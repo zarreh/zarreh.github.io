@@ -1,0 +1,75 @@
+---
+title: "Clinical Care Navigator"
+headline: "A patient-facing assistant that is allowed to refuse."
+summary: "An assistant that explains a patient's own record, with independent safety checks before and after the AI. Dosing questions are refused, emergencies get urgent guidance, and answers that conflict with the record — such as a critical lab value — are overridden and sent to a clinician."
+domains: [healthcare]
+capabilities: [evaluation, agents, rag]
+status: live
+featured: true
+order: 4
+cover: ../../assets/images/work/clinical_care_navigator.png
+coverAlt: "Clinical Care Navigator home page with the four-step guardrail flow: pre-flight screen, record lookup, post-flight check, and publish, hold or replace"
+links:
+  demo: https://clinical-care.zarreh.ai/
+  docs: https://zarreh.ai/clinical_care_navigator/
+  repo: https://github.com/zarreh/clinical_care_navigator
+metrics:
+  - { value: "16", label: "canonical eval cases gating every PR" }
+  - { value: "16 / 16", label: "passed on the last live-model run" }
+  - { value: "11", label: "Playwright browser specs" }
+stack: [LangGraph, FastAPI + SSE, Next.js, SQLite, Qdrant, pytest, mypy (strict), import-linter, Playwright]
+scopeNote: "An architectural demonstration on fully synthetic Synthea records. It is not a medical device, does not diagnose, and is not a screener, triage tool or symptom checker."
+legacy: projects_clinical_care_navigator
+date: 2026-11-02
+---
+
+## Why it exists
+
+A patient reads a lab result in their portal and does not understand it: *"My A1c came back 7.8 — what does that mean?"* An assistant that explains it is genuinely useful. An assistant that answers **everything** is a liability, because the same box will also receive *"should I stop taking my metformin?"*, *"do I have lupus?"* and *"I have crushing chest pain."*
+
+Most healthcare AI demos put a disclaimer in the system prompt and call it safety. That is hard to test, easy to bypass and impossible to measure. A healthcare organization needs the opposite: safety rules that sit outside the model, have their own tests and publish their own numbers — so that a clinical owner, not the model vendor, decides how cautious the assistant should be.
+
+## How it works
+
+Policy runs **before** the model and again **after** it — a guardrail sandwich. The second half is not a replay of the first; it judges the retrieved evidence and the drafted answer on its own authority.
+
+<Flow
+  steps={[
+    { label: "Patient question", kind: "input" },
+    { label: "Pre-flight screen", kind: "check", note: "rules + classifier" },
+    { label: "Read the record", kind: "ai", note: "scoped, read-only tools" },
+    { label: "Post-flight check", kind: "check", note: "claims must match the record" },
+    { label: "Publish, hold or replace", kind: "code" },
+    { label: "Clinician review if held", kind: "human" },
+  ]}
+/>
+
+- **Pre-flight screen:** emergencies and decisions only a clinician can make are stopped before the AI reads anything.
+- **Read the record:** the model looks up labs, medications and conditions for the selected patient only.
+- **Post-flight check:** the draft is split into claims; each clinical claim must resolve to something actually retrieved, and critical values override the draft.
+- **Publish, hold or replace:** code — not the AI — publishes the answer, holds it for a clinician, or swaps in a safe pre-written reply.
+
+### Why two independent halves
+
+Take *"What does my potassium of 6.9 mean?"* It is a benign education question, so the pre-flight screen correctly allows it. But the retrieved value is above the critical-high threshold — a medical emergency — and only the post-flight half can know that. It overrides the draft with an urgent safety message and routes the case to clinician review. A single up-front filter cannot do this.
+
+## Results and honest limits
+
+- **Gating every pull request:** a canonical evaluation of 16 cases (18 runs) that needs no model key, plus lint, strict typing, import contracts and tests.
+- **Live-model check:** the same 16 cases passed 16 of 16 against the real model on the last run.
+
+<Callout type="limit">
+The live run is not recorded or gated, so it is a smoke test rather than a measured rate. A larger stratified evaluation with hand-labelled cases and confidence intervals — and a statistically meaningful latency and cost sample — has not been done yet.
+</Callout>
+
+## Engineering decisions
+
+- **A refusal never reaches a patient tool.** This is enforced by the shape of the graph, not by a check inside a node.
+- **Substring matching is not a guardrail.** A metaphor can defeat a keyword filter and an attributed mention must not trigger one, so classification is explicit and tested against both failure modes.
+- **Publication is deterministic.** Final text is chosen by code from approved outcomes after the checks pass.
+- **Citations are real.** Education links point to public-domain National Library of Medicine sources, and lookups use exact matching before semantic search.
+- **Every answer shows its work.** Held answers wait in a durable queue and resume when a clinician decides, and the interface streams a step-by-step timeline with a per-node model and cost meter.
+
+## Who it's for
+
+For **health systems and digital-health teams**, it is a pattern for patient-facing AI where the clinical owner controls the boundaries. For **engineering leaders**, it shows how to turn "the model should be careful" into components you can test and measure.

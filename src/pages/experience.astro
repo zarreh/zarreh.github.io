@@ -1,0 +1,205 @@
+---
+import { Icon } from "astro-icon/components";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import PageHeader from "@/components/PageHeader.astro";
+import Section from "@/components/Section.astro";
+import CTABand from "@/components/CTABand.astro";
+import DetailCard from "@/components/DetailCard.astro";
+import RoleSection from "@/components/RoleSection.astro";
+import { education, hebProjects, roles, skills } from "@/data/experience";
+import { teaching } from "@/data/offerings";
+import { proofPoints, resumeLink } from "@/data/profile";
+import { capabilities } from "@/data/taxonomy";
+import { enterpriseUrl } from "@/lib/content";
+import { breadcrumbSchema, profilePageSchema } from "@/lib/schema";
+
+const resume = resumeLink();
+const heb = roles.find((r) => r.id === "heb")!;
+const teachingRole = roles.find((r) => r.id === "teaching")!;
+const programs = teachingRole.programs ?? [];
+const otherRoles = roles.filter((r) => r !== heb && r !== teachingRole);
+---
+
+<BaseLayout
+  title="Experience — AI, forecasting & optimization leadership · Ali Zarreh"
+  description="Ali Zarreh's experience: hands-on AI technical lead at H-E-B — agentic workflows on regulated data, demand forecasting, markdown and space optimization — plus teaching, board advisory and research."
+  type="profile"
+  jsonLd={[
+    profilePageSchema("/experience/"),
+    breadcrumbSchema([
+      { name: "Home", path: "/" },
+      { name: "Experience", path: "/experience/" },
+    ]),
+  ]}
+>
+  <PageHeader
+    eyebrow="Experience"
+    title="Eighteen years of turning models into decisions people use."
+    lead="I am a hands-on technical lead: I architect the system, write production code, set the evaluation bar and work directly with executives on what to build next. Most recently that has meant agentic AI on regulated data, and forecasting and optimization platforms that run planning across hundreds of stores."
+  >
+    <div class="mt-8 flex flex-wrap gap-3">
+      <a
+        href={resume.href}
+        class="btn btn-primary"
+        {...resume.download ? { download: "" } : { target: "_blank", rel: "noopener" }}
+        data-track="resume_click"
+        data-track-label="experience_header"
+      >
+        <Icon
+          name={resume.download ? "lucide:download" : "simple-icons:linkedin"}
+          class="size-4"
+          aria-hidden="true"
+        />
+        {resume.label}
+      </a>
+      <a
+        href="/contact/?topic=opportunity"
+        class="btn btn-secondary"
+        data-track="cta_click"
+        data-track-label="experience_contact"
+      >
+        Get in touch
+      </a>
+    </div>
+  </PageHeader>
+
+  <RoleSection role={heb} navLabel="Selected projects" navItems={hebProjects} metrics={proofPoints}>
+    {
+      hebProjects.map((p) => (
+        <DetailCard
+          id={p.id}
+          chips={p.capabilities.map((c) => capabilities[c])}
+          title={p.title}
+          subtitle={p.role}
+          sections={[
+            { label: "The problem", text: p.problem },
+            { label: "What I built and led", items: p.built },
+          ]}
+          outcomes={p.outcomes}
+          tags={p.stack}
+          links={[{ href: enterpriseUrl(p.id), label: "Project page" }]}
+        />
+      ))
+    }
+
+    {
+      heb.highlights && (
+        <div class="rounded-2xl border border-dashed border-line-strong p-6">
+          <p class="font-mono text-xs tracking-[0.12em] text-muted uppercase">Also at H-E-B</p>
+          <ul class="mt-3 space-y-2 text-ink-soft">
+            {heb.highlights.map((h) => (
+              <li>{h}</li>
+            ))}
+          </ul>
+        </div>
+      )
+    }
+  </RoleSection>
+
+  <RoleSection
+    role={teachingRole}
+    tone="sunken"
+    navLabel="Programs"
+    navItems={programs}
+    metrics={teaching.stats}
+  >
+    {
+      programs.map((prog) => (
+        <DetailCard
+          id={prog.id}
+          chips={(prog.capabilities ?? []).map((c) => capabilities[c])}
+          title={prog.title}
+          subtitle={prog.institution}
+          sections={[
+            { label: "The program", text: prog.body },
+            { label: "Main topics I teach", items: prog.topics ?? [] },
+          ]}
+          tags={prog.skills ?? []}
+          tagsLabel="Skills and techniques"
+          links={[
+            ...(prog.href ? [{ href: prog.href, label: "Program details", external: true }] : []),
+            { href: `/students/#${prog.id}`, label: "Course materials" },
+          ]}
+        />
+      ))
+    }
+  </RoleSection>
+
+  <Section id="roles" eyebrow="Career" title="Advisory and the path here">
+    <ol class="relative space-y-8 border-l border-line-strong pl-8">
+      {
+        otherRoles.map((r) => (
+          <li id={r.id} class="relative scroll-mt-24">
+            <span
+              class="absolute top-2 -left-[2.32rem] size-3 rounded-full border-2 border-accent bg-bg"
+              aria-hidden="true"
+            />
+            <p class="font-mono text-xs tracking-wide text-muted uppercase">
+              {r.period} · {r.location}
+            </p>
+            <h3 class="mt-1.5 text-2xl font-medium">{r.org}</h3>
+            <p class="font-medium text-ink-soft">{r.title}</p>
+            <p class="mt-3 max-w-3xl leading-relaxed text-ink-soft">{r.summary}</p>
+            {r.highlights && (
+              <ul class="mt-3 max-w-3xl list-disc space-y-1.5 pl-5 text-ink-soft marker:text-accent">
+                {r.highlights.map((h) => (
+                  <li>{h}</li>
+                ))}
+              </ul>
+            )}
+            {r.website && (
+              <a
+                href={r.website}
+                class="link mt-4 inline-flex items-center gap-1.5 text-sm font-medium"
+                target="_blank"
+                rel="noopener"
+              >
+                {new URL(r.website).hostname.replace(/^www\./, "")}
+                <Icon name="lucide:arrow-up-right" class="size-4" aria-hidden="true" />
+              </a>
+            )}
+          </li>
+        ))
+      }
+    </ol>
+  </Section>
+
+  <Section id="education" tone="sunken" eyebrow="Foundations" title="Education & skills">
+    <div class="grid gap-10 lg:grid-cols-[1fr_1.4fr]">
+      <ul class="space-y-6">
+        {
+          education.map((e) => (
+            <li class="card p-5">
+              <p class="font-mono text-xs text-muted">{e.year}</p>
+              <p class="mt-1 font-semibold">{e.degree}</p>
+              <p class="text-sm text-ink-soft">{e.school}</p>
+            </li>
+          ))
+        }
+      </ul>
+      <dl class="space-y-6">
+        {
+          skills.map((s) => (
+            <div>
+              <dt class="font-mono text-xs tracking-[0.12em] text-muted uppercase">{s.group}</dt>
+              <dd class="mt-2 flex flex-wrap gap-1.5">
+                {s.items.map((i) => (
+                  <span class="rounded-lg border border-line bg-elevated px-2.5 py-1 text-sm text-ink-soft">
+                    {i}
+                  </span>
+                ))}
+              </dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </Section>
+
+  <CTABand
+    title="Want to go deeper?"
+    body="I'm glad to walk through any of these systems — the architecture, how the teams worked, and what I would do differently next time."
+    primary={{ href: "/contact/", label: "Start a conversation" }}
+    topic="opportunity"
+  />
+</BaseLayout>

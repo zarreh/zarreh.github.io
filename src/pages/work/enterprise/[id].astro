@@ -1,0 +1,198 @@
+---
+import { Icon } from "astro-icon/components";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import MetricStrip from "@/components/MetricStrip.astro";
+import WorkCard from "@/components/WorkCard.astro";
+import CTABand from "@/components/CTABand.astro";
+import GeneratedCover from "@/components/GeneratedCover.astro";
+import { hebProjects, roles, type EnterpriseProject } from "@/data/experience";
+import { capabilities, domains, statuses } from "@/data/taxonomy";
+import { enterpriseUrl } from "@/lib/content";
+import { breadcrumbSchema, caseStudySchema } from "@/lib/schema";
+
+export function getStaticPaths() {
+  return hebProjects.map((project) => ({ params: { id: project.id }, props: { project } }));
+}
+
+interface Props {
+  project: EnterpriseProject;
+}
+
+const { project: p } = Astro.props;
+const heb = roles.find((r) => r.id === "heb")!;
+const path = enterpriseUrl(p.id);
+
+const score = (other: EnterpriseProject) =>
+  other.domains.filter((d) => p.domains.includes(d)).length +
+  other.capabilities.filter((c) => p.capabilities.includes(c)).length * 2;
+const related = hebProjects
+  .filter((other) => other.id !== p.id)
+  .map((other, i) => ({ other, i, s: score(other) }))
+  .sort((a, b) => b.s - a.s || a.i - b.i)
+  .slice(0, 3)
+  .map(({ other }) => other);
+
+const jsonLd = [
+  caseStudySchema({
+    title: `${p.title} (H-E-B)`,
+    description: p.summary,
+    path,
+    keywords: [...p.capabilities.map((c) => capabilities[c]), ...p.stack],
+  }),
+  breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Work", path: "/work/" },
+    { name: p.title, path },
+  ]),
+];
+---
+
+<BaseLayout
+  title={`${p.title} — enterprise AI at H-E-B · Ali Zarreh`}
+  description={p.summary}
+  ogImage={`/og/work/enterprise/${p.id}.png`}
+  type="article"
+  jsonLd={jsonLd}
+>
+  <article>
+    <header class="relative overflow-hidden border-b border-line">
+      <div class="bg-grid pointer-events-none absolute inset-0 opacity-60" aria-hidden="true"></div>
+      <div class="container-site relative pt-10 pb-12 sm:pt-14">
+        <nav aria-label="Breadcrumb" class="text-sm text-muted">
+          <ol class="flex items-center gap-2">
+            <li><a href="/work/" class="hover:text-ink">Work</a></li>
+            <li aria-hidden="true">/</li>
+            <li aria-current="page" class="text-ink-soft">{p.title}</li>
+          </ol>
+        </nav>
+        <div class="mt-8 flex flex-wrap items-center gap-2">
+          <span
+            class="rounded-full bg-warm-soft px-2.5 py-1 font-mono text-[0.68rem] font-medium tracking-wide text-warm uppercase"
+          >
+            {statuses.enterprise}
+          </span>
+          <span class="font-mono text-xs tracking-wide text-muted uppercase">
+            {p.domains.map((d) => domains[d]).join(" · ")}
+          </span>
+        </div>
+        <h1 class="mt-5 max-w-4xl text-4xl leading-[1.08] font-medium sm:text-5xl lg:text-6xl">
+          {p.title}
+        </h1>
+        <p class="mt-4 font-mono text-sm tracking-wide text-accent uppercase">{p.role} · H-E-B</p>
+        <p class="lead mt-6 max-w-3xl">{p.summary}</p>
+        <MetricStrip items={p.outcomes} class="mt-12" />
+      </div>
+    </header>
+
+    <div class="container-site pt-12">
+      <div class="overflow-hidden rounded-2xl border border-line shadow-card">
+        <GeneratedCover
+          seed={p.title}
+          label={p.title}
+          variant="warm"
+          class="aspect-[21/9] w-full"
+        />
+      </div>
+    </div>
+
+    <div class="container-site grid gap-12 py-14 lg:grid-cols-[minmax(0,1fr)_18rem]">
+      <div class="prose prose-lg prose-site min-w-0">
+        <h2>The problem</h2>
+        <p>{p.problem}</p>
+        <h2>What I built and led</h2>
+        <ul>
+          {p.built.map((b) => <li>{b}</li>)}
+        </ul>
+        <h2>Results</h2>
+        <ul>
+          {
+            p.outcomes.map((o) => (
+              <li>
+                <strong>{o.value}</strong> {o.label}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <aside class="space-y-6 lg:sticky lg:top-24 lg:self-start" aria-label="Project details">
+        <div class="card p-5">
+          <p class="eyebrow">At a glance</p>
+          <dl class="mt-4 space-y-4 text-sm">
+            <div>
+              <dt class="text-muted">Where</dt>
+              <dd class="mt-1 text-ink-soft">
+                {heb.org} · {heb.period}
+              </dd>
+            </div>
+            <div>
+              <dt class="text-muted">My role</dt>
+              <dd class="mt-1 text-ink-soft">{p.role}</dd>
+            </div>
+            <div>
+              <dt class="text-muted">Capabilities</dt>
+              <dd class="mt-1.5 flex flex-wrap gap-1.5">
+                {p.capabilities.map((c) => <span class="chip">{capabilities[c]}</span>)}
+              </dd>
+            </div>
+            <div>
+              <dt class="text-muted">Stack</dt>
+              <dd class="mt-1.5 flex flex-wrap gap-1.5">
+                {p.stack.map((s) => <span class="chip">{s}</span>)}
+              </dd>
+            </div>
+          </dl>
+        </div>
+        <div class="card p-5">
+          <p class="text-sm font-semibold">Working on something similar?</p>
+          <p class="mt-1.5 text-sm text-muted">I'm glad to compare notes or help you build it.</p>
+          <a
+            href="/contact/?topic=project"
+            class="btn btn-primary mt-4 w-full"
+            data-track="cta_click"
+            data-track-label={`enterprise_${p.id}`}>Discuss a project</a
+          >
+        </div>
+        <a href={`/experience/#${p.id}`} class="link inline-flex items-center gap-1.5 text-sm">
+          <Icon name="lucide:briefcase" class="size-4" aria-hidden="true" />
+          See it in my experience
+        </a>
+      </aside>
+    </div>
+  </article>
+
+  <section
+    class="border-t border-line bg-sunken/60 py-16"
+    aria-labelledby="related-title"
+    data-no-print
+  >
+    <div class="container-site">
+      <div class="flex items-end justify-between gap-4">
+        <h2 id="related-title" class="text-3xl font-medium">More enterprise work</h2>
+        <a href="/work/?status=enterprise" class="link text-sm font-medium">All enterprise work</a>
+      </div>
+      <div class="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {
+          related.map((r) => (
+            <WorkCard
+              href={enterpriseUrl(r.id)}
+              title={r.title}
+              summary={r.summary}
+              status="enterprise"
+              domains={r.domains}
+              capabilities={r.capabilities}
+              metric={r.outcomes[0]}
+            />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <CTABand
+    title="Need this on your problem?"
+    body="I work directly with teams to design, build and ship AI, forecasting and optimization systems — and stay through rollout."
+    primary={{ href: "/contact/", label: "Discuss a project" }}
+    topic="project"
+  />
+</BaseLayout>

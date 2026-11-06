@@ -1,0 +1,72 @@
+---
+title: "RxFlow Pharmacy Assistant"
+headline: "A refill assistant that knows when a doctor or pharmacist has to step in."
+summary: "A conversational prescription-refill assistant built on a 10-state workflow and a LangChain agent with 16+ tools. Controlled substances, expired prescriptions and unknown medications are routed to a doctor or pharmacist instead of being handled by the AI."
+domains: [healthcare]
+capabilities: [agents, evaluation]
+status: live
+featured: false
+order: 5
+cover: ../../assets/images/work/rxflow_pharmacy_assistant.png
+coverAlt: "RxFlow Pharmacy Assistant chat interface with the current patient, insurance and medication summary in the sidebar"
+links:
+  demo: https://rxflow.zarreh.ai/
+  docs: https://docs-rxflow.zarreh.ai/
+  repo: https://github.com/zarreh/rxflow-pharmacy-assistant
+metrics:
+  - { value: "10", label: "workflow states with explicit transitions" }
+  - { value: "16+", label: "specialized tools" }
+  - { value: "5 / 5", label: "escalation scenarios passing" }
+  - { value: "8", label: "end-to-end workflow scenarios tested" }
+stack: [LangChain agents, Custom state machine, Streamlit, OpenAI · Anthropic · Ollama, Docker, pytest]
+scopeNote: "A technical demonstration that runs against mock patient, pharmacy and insurance APIs. It does not process real prescriptions and is not a medical device."
+legacy: projects_rxflow_pharmacy
+date: 2025-09-28
+updated: 2026-11-02
+---
+
+## Why it exists
+
+Prescription refills look routine, and most of them are. The hard part is the minority that are not: a controlled substance, a prescription with no refills left, an expired script, a medication the system does not recognize, a store that is out of stock. A refill assistant earns its keep by handling the routine cases end to end — and by recognizing the others and handing them to the right professional.
+
+RxFlow explores that boundary. The conversation is driven by an LLM agent, but the workflow it moves through, and the decision to escalate, are explicit and testable.
+
+## How it works
+
+<Flow
+  steps={[
+    { label: "Patient request", kind: "input", note: "\"Refill my medication\"" },
+    { label: "Identify & clarify medication", kind: "ai", note: "patient history, RxNorm lookup" },
+    { label: "Safety & coverage checks", kind: "check", note: "dosage, interactions, allergies, formulary" },
+    { label: "Escalation routing", kind: "code", note: "doctor or pharmacist" },
+    { label: "Pharmacy & order", kind: "code", note: "fallback if out of stock" },
+    { label: "Doctor / pharmacist", kind: "human", note: "for escalated cases" },
+  ]}
+/>
+
+- **A 10-state workflow** — from identifying the medication through confirmation and order submission — defines what can happen next at every step, with conditional transitions and error recovery. The agent converses; the state machine keeps the process on rails.
+- **A LangChain agent with 16+ tools** handles patient history, RxNorm lookups, adherence, dosage validation, interaction and allergy screening, insurance formulary and prior-authorization checks, cost comparison and order management.
+- **Medical escalation is explicit.** Controlled substances, expired prescriptions and zero-refill scripts route to a **doctor**; unknown medications and verification questions route to a **pharmacist**.
+- **Pharmacy fallback** retries across stores in a defined order when a medication is out of stock, instead of failing the request.
+- **Multiple model providers** (OpenAI, Anthropic, or a local model via Ollama) sit behind the same interface.
+
+## Results and honest limits
+
+- **Escalation:** all 5 escalation scenarios — including controlled-substance detection and pharmacy fallback — pass.
+- **Workflow coverage:** integration tests exercise 8 end-to-end workflow scenarios, including edge cases and failure modes.
+- **Delivery:** a Streamlit interface, Docker deployment and a documentation site covering user, developer and deployment guides.
+
+<Callout type="limit">
+RxFlow runs against **mock** healthcare APIs, so it says nothing yet about real-world refill volumes, processing time or resolution rates — and earlier versions of this page overstated that. The escalation results come from scripted scenarios, not from a labelled sample of real conversations.
+</Callout>
+
+## Engineering decisions
+
+- **State machine plus agent**, rather than an agent alone: the LLM handles language, while the process and its allowed transitions are deterministic and inspectable.
+- **Escalation as a first-class outcome**, with its own routing rules and logging, not as an error path.
+- **Tools over free text:** clinical and coverage checks are tool calls with structured results the workflow can act on.
+- **Provider-agnostic model layer**, so the same workflow can run on a hosted or a local model.
+
+## Who it's for
+
+For **pharmacy and digital-health teams**, it shows how to automate the routine path of a regulated workflow while making the hand-off to professionals explicit. For **engineering leaders**, it is a compact example of pairing a conversational agent with a deterministic process model.

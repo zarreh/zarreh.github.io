@@ -1,0 +1,77 @@
+---
+import { Icon } from "astro-icon/components";
+---
+
+<dialog
+  id="search-dialog"
+  class="m-auto mt-[10vh] w-[min(42rem,calc(100vw-2rem))] rounded-2xl border border-line bg-elevated p-0 text-ink shadow-2xl backdrop:bg-black/40 backdrop:backdrop-blur-sm"
+  aria-label="Search"
+>
+  <div class="flex items-center justify-between border-b border-line px-5 py-3">
+    <p class="eyebrow">Search zarreh.ai</p>
+    <button type="button" class="btn btn-ghost" data-search-close aria-label="Close search">
+      <Icon name="lucide:x" class="size-5" aria-hidden="true" />
+    </button>
+  </div>
+  <div class="max-h-[70vh] overflow-y-auto p-5">
+    <div id="pagefind-search"></div>
+    <p class="hidden text-sm text-muted" data-search-unavailable>
+      Search is available on the built site. Run <code>npm run build</code> and
+      <code>npm run preview</code> to try it locally.
+    </p>
+  </div>
+</dialog>
+
+<script>
+  const dialog = document.getElementById("search-dialog") as HTMLDialogElement | null;
+  let loaded = false;
+
+  async function loadPagefind() {
+    if (loaded) return;
+    loaded = true;
+    try {
+      const pagefindPath = "/pagefind/pagefind-ui.js";
+      const css = document.createElement("link");
+      css.rel = "stylesheet";
+      css.href = "/pagefind/pagefind-ui.css";
+      document.head.appendChild(css);
+      await import(/* @vite-ignore */ pagefindPath);
+      const PagefindUI = (window as unknown as { PagefindUI: new (opts: object) => unknown })
+        .PagefindUI;
+      new PagefindUI({
+        element: "#pagefind-search",
+        showSubResults: true,
+        showImages: false,
+        resetStyles: false,
+        autofocus: true,
+      });
+    } catch {
+      dialog?.querySelector("[data-search-unavailable]")?.classList.remove("hidden");
+    }
+  }
+
+  function open() {
+    if (!dialog) return;
+    dialog.showModal();
+    void loadPagefind().then(() => {
+      dialog.querySelector<HTMLInputElement>("input")?.focus();
+    });
+  }
+
+  document
+    .querySelectorAll("[data-search-open]")
+    .forEach((el) => el.addEventListener("click", open));
+  dialog?.querySelector("[data-search-close]")?.addEventListener("click", () => dialog.close());
+  dialog?.addEventListener("click", (event) => {
+    if (event.target === dialog) dialog.close();
+  });
+  document.addEventListener("keydown", (event) => {
+    const target = event.target as HTMLElement;
+    const typing =
+      ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName) || target.isContentEditable;
+    if (event.key === "/" && !typing && !dialog?.open) {
+      event.preventDefault();
+      open();
+    }
+  });
+</script>

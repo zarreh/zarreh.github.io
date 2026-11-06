@@ -1,0 +1,42 @@
+---
+import { Icon } from "astro-icon/components";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const links = [
+  { href: "/work/", label: "Case studies" },
+  { href: "/experience/", label: "Experience" },
+  { href: "/advisory/", label: "Advisory & consulting" },
+  { href: "/contact/", label: "Contact" },
+];
+---
+
+<BaseLayout
+  title="Page not found · Ali Zarreh"
+  description="The page you were looking for could not be found."
+  noindex
+  searchable={false}
+>
+  <section class="container-site flex min-h-[60vh] flex-col justify-center py-20">
+    <p class="eyebrow">404</p>
+    <h1 class="mt-4 text-5xl font-medium sm:text-6xl">
+      This page didn't make it into the new site.
+    </h1>
+    <p class="lead mt-6 max-w-2xl">
+      zarreh.ai was rebuilt from the ground up, so some old addresses have moved. Try searching, or
+      start from one of these:
+    </p>
+    <div class="mt-8 flex flex-wrap gap-3">
+      <button type="button" class="btn btn-primary" data-search-open>
+        <Icon name="lucide:search" class="size-4" aria-hidden="true" />
+        Search the site
+      </button>
+      {
+        links.map((l) => (
+          <a href={l.href} class="btn btn-secondary">
+            {l.label}
+          </a>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>

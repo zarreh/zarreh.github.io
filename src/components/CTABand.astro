@@ -1,0 +1,67 @@
+---
+import { Icon } from "astro-icon/components";
+import { env, profile } from "@/data/profile";
+
+export interface Props {
+  title?: string;
+  body?: string;
+  primary?: { href: string; label: string };
+  topic?: string;
+}
+
+const {
+  title = "Have a hard problem worth solving well?",
+  body = "Whether it's an AI initiative, an advisory seat or a talk, I'd be glad to hear what you're working on.",
+  primary = { href: "/contact/", label: "Start a conversation" },
+  topic,
+} = Astro.props;
+
+const contactHref = topic ? `${primary.href}?topic=${topic}` : primary.href;
+---
+
+<section class="py-16 sm:py-20" aria-labelledby="cta-title" data-no-print>
+  <div class="container-site">
+    <div class="relative overflow-hidden rounded-3xl bg-ink px-8 py-12 text-bg sm:px-14 sm:py-16">
+      <div
+        class="pointer-events-none absolute -top-24 -right-24 size-80 rounded-full bg-accent/30 blur-3xl"
+        aria-hidden="true"
+      >
+      </div>
+      <div class="relative grid gap-8 lg:grid-cols-[1.6fr_1fr] lg:items-end">
+        <div>
+          <p class="font-mono text-xs tracking-[0.14em] text-bg/60 uppercase">
+            {profile.availability}
+          </p>
+          <h2 id="cta-title" class="mt-4 text-3xl font-medium text-bg sm:text-4xl">{title}</h2>
+          <p class="mt-4 max-w-xl text-lg leading-relaxed text-bg/75">{body}</p>
+        </div>
+        <div class="flex flex-wrap gap-3 lg:justify-end">
+          <a
+            href={contactHref}
+            class="btn bg-bg text-ink hover:bg-accent-soft"
+            data-track="cta_click"
+            data-track-label={`cta_band_${topic ?? "general"}`}
+          >
+            {primary.label}
+            <Icon name="lucide:arrow-right" class="size-4" aria-hidden="true" />
+          </a>
+          {
+            env.bookingUrl && (
+              <a
+                href={env.bookingUrl}
+                class="btn border border-bg/30 text-bg hover:border-bg"
+                target="_blank"
+                rel="noopener"
+                data-track="book_call"
+                data-track-label="cta_band"
+              >
+                <Icon name="lucide:calendar" class="size-4" aria-hidden="true" />
+                Book a call
+              </a>
+            )
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

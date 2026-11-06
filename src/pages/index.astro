@@ -1,0 +1,340 @@
+---
+import { Image } from "astro:assets";
+import { Icon } from "astro-icon/components";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Section from "@/components/Section.astro";
+import WorkCard from "@/components/WorkCard.astro";
+import CTABand from "@/components/CTABand.astro";
+import headshot from "@/assets/images/profile/headshot.jpg";
+import { affiliations, credibility, profile } from "@/data/profile";
+import { principles, teaching } from "@/data/offerings";
+import { getWork, workUrl } from "@/lib/content";
+import { personSchema, websiteSchema } from "@/lib/schema";
+
+const work = await getWork();
+const featured = work.filter((w) => w.data.featured).slice(0, 3);
+
+// Kept qualitative on purpose: employer project names and figures stay off the homepage.
+const practice = [
+  {
+    title: "Agentic AI & LLM systems",
+    body: "Agentic workflows, retrieval and multimodal intake on real enterprise data.",
+  },
+  {
+    title: "Forecasting & optimization",
+    body: "Forecasting and optimization platforms that planners rely on week to week.",
+  },
+  {
+    title: "Evaluation & guardrails",
+    body: "Evaluation from day one, LLM-as-judge pipelines and human review where stakes are high.",
+  },
+  {
+    title: "MLOps & cloud",
+    body: "Production pipelines and services on GCP, AWS and Databricks.",
+  },
+];
+
+const paths = [
+  {
+    eyebrow: "Design & build",
+    title: "Have a problem worth solving with AI?",
+    body: "I work with your team to design and implement AI, forecasting and optimization solutions in any field — from framing the problem to production code.",
+    href: "/advisory/#projects",
+    cta: "Ways to work together",
+    icon: "lucide:layers",
+  },
+  {
+    eyebrow: "Evaluate & improve",
+    title: "Need to trust an AI system you already have?",
+    body: "An independent review of an LLM or agent system: evaluation, guardrails, failure modes and a prioritized plan to fix them.",
+    href: "/advisory/#review",
+    cta: "Evaluation reviews",
+    icon: "lucide:shield-check",
+  },
+  {
+    eyebrow: "Board & advisory",
+    title: "Strengthening your advisory bench?",
+    body: "Independent counsel for founders and boards on AI strategy, architecture, governance and technical due diligence.",
+    href: "/advisory/#advisory",
+    cta: "Board & advisory",
+    icon: "lucide:landmark",
+  },
+];
+---
+
+<BaseLayout
+  title="Ali Zarreh, Ph.D. — AI Engineer & AI Solution Architect"
+  description="Ali Zarreh is a hands-on AI engineer and AI solution architect who works directly with customer teams to design, build and deploy AI in any industry, and advises founders and boards."
+  type="profile"
+  jsonLd={[websiteSchema(), personSchema()]}
+>
+  <!-- Hero -->
+  <section class="relative overflow-hidden border-b border-line">
+    <div class="bg-grid pointer-events-none absolute inset-0 opacity-70" aria-hidden="true"></div>
+    <div
+      class="container-site relative grid items-center gap-12 pt-14 pb-16 sm:pt-20 lg:grid-cols-[1.35fr_1fr] lg:pt-24 lg:pb-24"
+    >
+      <div>
+        <p class="eyebrow">{profile.roles.join(" · ")}</p>
+        <h1 class="mt-5 text-5xl leading-[1.02] font-medium tracking-tight sm:text-6xl lg:text-7xl">
+          Hands-on AI leadership, <em class="text-accent">from problem to production.</em>
+        </h1>
+        <p class="lead mt-7 max-w-2xl">{profile.intro}</p>
+        <div class="mt-9 flex flex-wrap items-center gap-3">
+          <a
+            href="/work/"
+            class="btn btn-primary"
+            data-track="cta_click"
+            data-track-label="hero_work"
+          >
+            See the work
+            <Icon name="lucide:arrow-right" class="size-4" aria-hidden="true" />
+          </a>
+          <a
+            href="/contact/"
+            class="btn btn-secondary"
+            data-track="cta_click"
+            data-track-label="hero_contact">Contact me</a
+          >
+        </div>
+        <p class="mt-8 flex items-center gap-2.5 text-sm text-muted">
+          <span class="relative flex size-2.5" aria-hidden="true">
+            <span
+              class="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-50 motion-reduce:animate-none"
+            ></span>
+            <span class="relative inline-flex size-2.5 rounded-full bg-accent"></span>
+          </span>
+          {profile.availability}
+        </p>
+      </div>
+
+      <div class="relative mx-auto w-full max-w-xs sm:max-w-sm lg:max-w-none">
+        <div
+          class="relative overflow-hidden rounded-[2rem] border border-line bg-sunken shadow-card"
+        >
+          <Image
+            src={headshot}
+            alt="Portrait of Ali Zarreh"
+            widths={[360, 540, 720]}
+            sizes="(min-width: 1024px) 420px, 80vw"
+            class="aspect-[4/5] w-full object-cover object-[50%_20%]"
+            loading="eager"
+            fetchpriority="high"
+          />
+        </div>
+        <div
+          class="card absolute -bottom-6 left-3 max-w-[15rem] p-4 sm:-left-8"
+          aria-label="Credentials"
+        >
+          <p class="font-mono text-[0.65rem] tracking-[0.14em] text-muted uppercase">
+            Ph.D. · 17+ years
+          </p>
+          <p class="mt-1.5 text-sm leading-snug font-medium">
+            Hands-on with customer teams · Teaching in JHU & UT Austin programs
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Affiliations -->
+  <div class="border-b border-line">
+    <div
+      class="container-site flex flex-col items-start gap-4 py-6 sm:flex-row sm:items-center sm:justify-between"
+    >
+      <p class="font-mono text-xs tracking-[0.14em] text-muted uppercase">
+        Work, teaching & advisory
+      </p>
+      <ul class="flex flex-wrap gap-x-7 gap-y-2">
+        {affiliations.map((a) => <li class="font-serif text-lg font-medium text-ink-soft">{a}</li>)}
+      </ul>
+    </div>
+  </div>
+
+  <!-- Production practice -->
+  <Section
+    id="practice"
+    tone="sunken"
+    eyebrow="In production"
+    title="From the first customer conversation to production code"
+  >
+    <div class="grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:items-start">
+      <div class="max-w-2xl space-y-4 text-lg leading-relaxed text-ink-soft">
+        <p>
+          I work directly with the people who own the problem: framing the decision with them,
+          architecting the system, writing the production code myself, and staying through
+          evaluation, rollout and adoption.
+        </p>
+        <p>
+          Client and employer work stays confidential. The same approach is open to inspect in the
+          public applications below.
+        </p>
+        <p>
+          <a href="/experience/" class="link text-sm font-semibold">Experience and roles →</a>
+        </p>
+      </div>
+      <ul class="grid gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-2">
+        {
+          practice.map((p) => (
+            <li class="bg-elevated p-6">
+              <h3 class="font-sans text-base leading-snug font-semibold">{p.title}</h3>
+              <p class="mt-2 text-sm leading-relaxed text-ink-soft">{p.body}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </Section>
+
+  <!-- Featured independent work -->
+  <Section
+    id="featured-work"
+    eyebrow="Public portfolio"
+    title="AI for regulated decisions, built in the open"
+    lead="Independent demonstrations in finance and healthcare, built on public or synthetic data — each with independent checks, human review and openly reported limits."
+  >
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {
+        featured.map((entry, i) => (
+          <WorkCard
+            href={workUrl(entry)}
+            title={entry.data.title}
+            summary={entry.data.summary}
+            status={entry.data.status}
+            domains={entry.data.domains}
+            capabilities={entry.data.capabilities}
+            cover={entry.data.cover}
+            coverAlt={entry.data.coverAlt}
+            eager={i === 0}
+          />
+        ))
+      }
+    </div>
+    <div class="mt-10 flex flex-wrap items-center gap-3">
+      <a href="/work/" class="btn btn-secondary">
+        Browse all {work.length} case studies
+        <Icon name="lucide:arrow-right" class="size-4" aria-hidden="true" />
+      </a>
+    </div>
+  </Section>
+
+  <!-- Engagement paths -->
+  <Section
+    id="paths"
+    tone="sunken"
+    eyebrow="Work together"
+    title="Three ways I can help"
+    lead="In any industry — from a first prototype to a production system, an independent review, or a seat at the board table."
+  >
+    <div class="grid gap-6 md:grid-cols-3">
+      {
+        paths.map((p) => (
+          <a
+            href={p.href}
+            class="group card relative flex flex-col p-7 transition-all hover:-translate-y-0.5 hover:border-line-strong"
+            data-track="audience_path"
+            data-track-label={p.href}
+          >
+            <span class="grid size-11 place-items-center rounded-xl bg-accent-soft text-accent">
+              <Icon name={p.icon} class="size-5" aria-hidden="true" />
+            </span>
+            <p class="eyebrow mt-6 text-muted">{p.eyebrow}</p>
+            <h3 class="mt-2 text-2xl leading-snug font-medium">{p.title}</h3>
+            <p class="mt-3 leading-relaxed text-ink-soft">{p.body}</p>
+            <span class="mt-auto inline-flex items-center gap-1.5 pt-6 text-sm font-semibold text-accent">
+              {p.cta}
+              <Icon
+                name="lucide:arrow-right"
+                class="size-4 transition-transform group-hover:translate-x-0.5"
+                aria-hidden="true"
+              />
+            </span>
+          </a>
+        ))
+      }
+    </div>
+  </Section>
+
+  <!-- Principles -->
+  <Section id="principles" eyebrow="How I work" title="Principles I build and advise by">
+    <ol
+      class="grid gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-5"
+    >
+      {
+        principles.map((p, i) => (
+          <li class="flex flex-col bg-elevated p-6">
+            <span class="font-mono text-xs text-accent">0{i + 1}</span>
+            <h3 class="mt-3 font-sans text-base leading-snug font-semibold">{p.title}</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink-soft">{p.body}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </Section>
+
+  <!-- Teaching & advisory -->
+  <Section
+    id="beyond"
+    tone="sunken"
+    eyebrow="Beyond the day job"
+    title="Teaching, advising and research"
+  >
+    <div class="grid gap-6 lg:grid-cols-3">
+      <a
+        href="/experience/#teaching"
+        class="group card flex flex-col p-7 transition-colors hover:border-line-strong"
+      >
+        <p class="eyebrow text-muted">Teaching</p>
+        <p class="mt-4 font-serif text-5xl font-medium text-accent">{teaching.stats[0].value}</p>
+        <p class="mt-1 text-sm text-muted">
+          students · {teaching.stats[1].value} rating
+        </p>
+        <p class="mt-4 leading-relaxed text-ink-soft">
+          Instructor for agentic and generative AI programs from Johns Hopkins University and UT
+          Austin McCombs.
+        </p>
+        <span class="mt-auto pt-6 text-sm font-semibold text-accent">Teaching →</span>
+      </a>
+      <a
+        href="/advisory/"
+        class="group card flex flex-col p-7 transition-colors hover:border-line-strong"
+      >
+        <p class="eyebrow text-muted">Board advisory</p>
+        <p class="mt-4 font-serif text-3xl leading-tight font-medium">Syne Life</p>
+        <p class="mt-1 text-sm text-muted">Health Tech Board Advisor · AI & Technology</p>
+        <p class="mt-4 leading-relaxed text-ink-soft">
+          Advising the founding team of a recovery-science wellness startup on technology strategy,
+          platform architecture and AI.
+        </p>
+        <span class="mt-auto pt-6 text-sm font-semibold text-accent">Board & advisory →</span>
+      </a>
+      <a
+        href="/research/"
+        class="group card flex flex-col p-7 transition-colors hover:border-line-strong"
+      >
+        <p class="eyebrow text-muted">Research</p>
+        <p class="mt-4 font-serif text-3xl leading-tight font-medium">
+          Medical research & applied AI
+        </p>
+        <p class="mt-1 text-sm text-muted">Ph.D., University of Texas at San Antonio</p>
+        <p class="mt-4 leading-relaxed text-ink-soft">
+          Current work in medical research and applied AI, built on peer-reviewed research in risk,
+          security and operations — the quantitative roots of how I evaluate AI today.
+        </p>
+        <span class="mt-auto pt-6 text-sm font-semibold text-accent">Publications →</span>
+      </a>
+    </div>
+    <dl class="mt-10 grid grid-cols-2 gap-6 border-t border-line pt-8 lg:grid-cols-4">
+      {
+        credibility.map((c) => (
+          <div class="flex flex-col">
+            <dt class="text-sm text-muted">{c.label}</dt>
+            <dd class="order-first font-serif text-3xl font-medium">{c.value}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </Section>
+
+  <CTABand />
+</BaseLayout>

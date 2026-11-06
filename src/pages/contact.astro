@@ -1,0 +1,230 @@
+---
+import { Icon } from "astro-icon/components";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import PageHeader from "@/components/PageHeader.astro";
+import { env, profile, socialLabels, type SocialKey } from "@/data/profile";
+import { breadcrumbSchema } from "@/lib/schema";
+
+const topics = [
+  { value: "project", label: "An AI, forecasting or optimization project" },
+  { value: "advisory", label: "Advisory or consulting" },
+  { value: "student", label: "A course I teach" },
+  { value: "speaking", label: "A talk or workshop" },
+  { value: "opportunity", label: "A leadership opportunity" },
+  { value: "research", label: "Research or collaboration" },
+  { value: "general", label: "Something else" },
+];
+---
+
+<BaseLayout
+  title="Contact · Ali Zarreh"
+  description="Get in touch with Ali Zarreh about AI projects, consulting and advisory roles, courses he teaches, workshops, or collaboration."
+  jsonLd={breadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Contact", path: "/contact/" },
+  ])}
+>
+  <PageHeader
+    eyebrow="Contact"
+    title="Let's talk."
+    lead="A few sentences about what you're working on is plenty. I read every message and reply personally, usually within a few working days."
+  />
+
+  <section class="container-site grid gap-12 py-14 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
+    <form
+      class="card space-y-5 p-6 sm:p-8"
+      method="POST"
+      action="https://api.web3forms.com/submit"
+      data-contact-form
+      data-web3forms={env.web3formsKey ? "true" : "false"}
+      data-email={profile.email}
+    >
+      {env.web3formsKey && <input type="hidden" name="access_key" value={env.web3formsKey} />}
+      <input type="hidden" name="subject" value="New message from zarreh.ai" />
+      <input type="hidden" name="from_name" value="zarreh.ai contact form" />
+      <input type="checkbox" name="botcheck" class="hidden" tabindex="-1" autocomplete="off" />
+
+      <div>
+        <label for="topic" class="block text-sm font-medium">What is this about?</label>
+        <select
+          id="topic"
+          name="topic"
+          class="mt-2 w-full rounded-xl border border-line-strong bg-bg px-3.5 py-2.5 text-ink"
+        >
+          {topics.map((t) => <option value={t.value}>{t.label}</option>)}
+        </select>
+      </div>
+      <div class="grid gap-5 sm:grid-cols-2">
+        <div>
+          <label for="name" class="block text-sm font-medium">Name</label>
+          <input
+            id="name"
+            name="name"
+            required
+            autocomplete="name"
+            class="mt-2 w-full rounded-xl border border-line-strong bg-bg px-3.5 py-2.5 text-ink"
+          />
+        </div>
+        <div>
+          <label for="email" class="block text-sm font-medium">Email</label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            required
+            autocomplete="email"
+            class="mt-2 w-full rounded-xl border border-line-strong bg-bg px-3.5 py-2.5 text-ink"
+          />
+        </div>
+      </div>
+      <div>
+        <label for="organization" class="block text-sm font-medium">
+          Organization <span class="font-normal text-muted">(optional)</span>
+        </label>
+        <input
+          id="organization"
+          name="organization"
+          autocomplete="organization"
+          class="mt-2 w-full rounded-xl border border-line-strong bg-bg px-3.5 py-2.5 text-ink"
+        />
+      </div>
+      <div>
+        <label for="message" class="block text-sm font-medium">Message</label>
+        <textarea
+          id="message"
+          name="message"
+          required
+          rows="6"
+          class="mt-2 w-full rounded-xl border border-line-strong bg-bg px-3.5 py-2.5 text-ink"
+          placeholder="What are you working on, and how could I help?"></textarea>
+      </div>
+      <div class="flex flex-wrap items-center gap-4">
+        <button type="submit" class="btn btn-primary">
+          Send message
+          <Icon name="lucide:send" class="size-4" aria-hidden="true" />
+        </button>
+        <p class="text-sm text-muted" data-form-status role="status" aria-live="polite"></p>
+      </div>
+      {
+        !env.web3formsKey && (
+          <p class="text-xs text-muted">Sending opens a pre-filled email in your mail app.</p>
+        )
+      }
+    </form>
+
+    <aside class="space-y-8">
+      {
+        env.bookingUrl && (
+          <div class="card p-6">
+            <p class="font-semibold">Prefer to talk?</p>
+            <p class="mt-1 text-sm text-muted">
+              Book a 30-minute intro call at a time that suits you.
+            </p>
+            <a
+              href={env.bookingUrl}
+              class="btn btn-primary mt-4"
+              target="_blank"
+              rel="noopener"
+              data-track="book_call"
+              data-track-label="contact"
+            >
+              <Icon name="lucide:calendar" class="size-4" aria-hidden="true" />
+              Book a call
+            </a>
+          </div>
+        )
+      }
+      <div>
+        <p class="font-mono text-xs tracking-[0.12em] text-muted uppercase">Email</p>
+        <a
+          href={`mailto:${profile.email}`}
+          class="mt-2 inline-block font-serif text-2xl font-medium hover:text-accent"
+          data-track="email_click"
+          data-track-label="contact"
+        >
+          {profile.email}
+        </a>
+      </div>
+      <div>
+        <p class="font-mono text-xs tracking-[0.12em] text-muted uppercase">Elsewhere</p>
+        <ul class="mt-3 space-y-2">
+          {
+            (Object.keys(profile.links) as SocialKey[]).map((k) => (
+              <li>
+                <a
+                  href={profile.links[k]}
+                  class="link"
+                  target="_blank"
+                  rel="me noopener"
+                  data-track="profile_click"
+                  data-track-label={k}
+                >
+                  {socialLabels[k]}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      <div
+        class="rounded-2xl border border-line bg-sunken p-5 text-sm leading-relaxed text-ink-soft"
+      >
+        <p class="font-semibold text-ink">Based in {profile.location}</p>
+        <p class="mt-1">
+          Working remotely across US time zones; on-site for workshops and kick-offs.
+        </p>
+      </div>
+    </aside>
+  </section>
+</BaseLayout>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>("[data-contact-form]");
+  const status = document.querySelector<HTMLElement>("[data-form-status]");
+  const topic = new URLSearchParams(location.search).get("topic");
+  const select = form?.querySelector<HTMLSelectElement>("select[name=topic]");
+  if (topic && select && [...select.options].some((o) => o.value === topic)) select.value = topic;
+
+  const track = (name: string, params: Record<string, unknown>) =>
+    (window as unknown as { zTrack?: (n: string, p: Record<string, unknown>) => void }).zTrack?.(
+      name,
+      params,
+    );
+
+  form?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const data = new FormData(form);
+    if (data.get("botcheck")) return;
+    const topicLabel = select?.selectedOptions[0]?.textContent ?? "";
+
+    if (form.dataset.web3forms !== "true") {
+      const body = [
+        String(data.get("message") ?? ""),
+        "",
+        `— ${data.get("name")}${data.get("organization") ? `, ${data.get("organization")}` : ""}`,
+        String(data.get("email") ?? ""),
+      ].join("\n");
+      const subject = `[zarreh.ai] ${topicLabel}`;
+      track("contact_submit", { method: "mailto", topic: data.get("topic") });
+      location.href = `mailto:${form.dataset.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      return;
+    }
+
+    status!.textContent = "Sending…";
+    data.set("subject", `[zarreh.ai] ${topicLabel} — ${data.get("name")}`);
+    try {
+      const response = await fetch(form.action, {
+        method: "POST",
+        headers: { Accept: "application/json" },
+        body: data,
+      });
+      const result = (await response.json()) as { success?: boolean };
+      if (!response.ok || !result.success) throw new Error("failed");
+      track("contact_submit", { method: "form", topic: data.get("topic") });
+      form.reset();
+      status!.textContent = "Thanks — your message is on its way. I'll reply soon.";
+    } catch {
+      status!.textContent = `Something went wrong. Please email ${form.dataset.email} directly.`;
+    }
+  });
+</script>

@@ -1,0 +1,64 @@
+---
+title: "GenAI Docs Helper"
+headline: "Question answering over technical documentation that checks its own answers."
+summary: "A LangGraph RAG workflow that grades retrieved documents, rephrases the question when nothing relevant comes back, and checks each answer for hallucination before returning it — with caching and parallel retrieval to keep it fast."
+domains: [developer-tools]
+capabilities: [rag, agents, evaluation]
+status: open-source
+featured: false
+order: 8
+links:
+  repo: https://github.com/zarreh/genai_docs_helper
+metrics:
+  - { value: "3", label: "retrieval strategies: fast, standard, comprehensive" }
+  - { value: "2", label: "self-checks: document grading and hallucination detection" }
+  - { value: "2", label: "cache layers: Redis and in-memory" }
+stack: [LangGraph, LangChain, OpenAI, Ollama, Redis, Poetry]
+legacy: projects_genai_docs_helper
+date: 2025-09-16
+updated: 2026-11-02
+---
+
+## Why it exists
+
+Technical documentation — for forecasting systems, model performance, time-series methods — is exactly where a plain retrieve-then-generate pipeline fails quietly. It retrieves something loosely related, and the model writes a confident answer anyway.
+
+This project explores the corrective-RAG pattern: let the workflow notice when retrieval was poor or the answer drifted from the sources, and do something about it before the user sees the result.
+
+## How it works
+
+<Flow
+  steps={[
+    { label: "Question", kind: "input" },
+    { label: "Retrieve documents", kind: "code", note: "fast / standard / comprehensive" },
+    { label: "Grade relevance", kind: "check", note: "batch grading" },
+    { label: "Rephrase & retry", kind: "ai", note: "only if nothing relevant" },
+    { label: "Generate answer", kind: "ai" },
+    { label: "Hallucination check", kind: "check", note: "retry if it fails" },
+  ]}
+/>
+
+- **Retrieval has three paths** — fast, standard and comprehensive — so simple questions do not pay the cost of an exhaustive search.
+- **Documents are graded before use.** A grader assesses relevance in batches; if nothing relevant is found, the question is paraphrased and retrieval runs again.
+- **Answers are checked against their sources.** A hallucination grader verifies the generated answer is supported by the retrieved documents; if it is not, the workflow loops back rather than returning it.
+- **Speed where it matters:** a dual-layer cache (Redis and in-memory), parallel retrieval, batch grading and early stopping.
+
+## Results and honest limits
+
+- **Delivery:** a modular LangGraph workflow with separate, documented nodes for retrieval, grading, generation and paraphrasing, runnable in LangGraph Studio for step-by-step inspection.
+- **Model flexibility:** works with hosted OpenAI models or local models through Ollama.
+- **Operations:** structured logging and performance metrics for each step.
+
+<Callout type="limit">
+This is an open-source reference implementation, not a measured production system. The graders are themselves LLMs, so the self-checks reduce — but do not eliminate — unsupported answers, and the project does not include a labelled evaluation set that would put a number on retrieval or answer accuracy. Earlier versions of this page quoted accuracy and uptime figures that were not backed by such an evaluation; they have been removed.
+</Callout>
+
+## Engineering decisions
+
+- **Loops instead of one-shot generation:** poor retrieval and unsupported answers are handled as explicit graph transitions, not as prompt instructions.
+- **Separate, single-purpose chains** for generation, retrieval grading and hallucination grading, so each can be tested and swapped independently.
+- **Cost-aware paths:** multiple retrieval depths, caching and early stopping keep simple questions cheap.
+
+## Who it's for
+
+For **teams building internal knowledge assistants**, it is a compact, readable example of corrective RAG. For **engineers learning LangGraph**, it shows how self-checks become nodes and edges rather than hopes.

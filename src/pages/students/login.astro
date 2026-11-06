@@ -1,0 +1,94 @@
+---
+import { Icon } from "astro-icon/components";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { teaching } from "@/data/offerings";
+
+const programs = teaching.programs.filter((p) => p.href);
+---
+
+<BaseLayout
+  title="Student sign-in · Ali Zarreh"
+  description="Sign in to access course materials for the programs Ali Zarreh teaches."
+  noindex
+  searchable={false}
+>
+  <section class="container-site flex min-h-[70vh] items-center justify-center py-16">
+    <div class="w-full max-w-md">
+      <a href="/students/" class="link inline-flex items-center gap-1.5 text-sm">
+        <Icon name="lucide:arrow-left" class="size-4" aria-hidden="true" />
+        Students
+      </a>
+      <div class="card mt-4 p-6 sm:p-8">
+        <p class="eyebrow">Students</p>
+        <h1 class="mt-3 text-3xl font-medium">Sign in</h1>
+        <p class="mt-2 text-sm leading-relaxed text-muted">
+          Use the email address you registered with for your program.
+        </p>
+
+        <p
+          class="mt-5 flex gap-2.5 rounded-xl border border-warm/40 bg-warm-soft p-3.5 text-sm leading-relaxed text-ink-soft"
+        >
+          <Icon name="lucide:info" class="mt-0.5 size-4 shrink-0 text-warm" aria-hidden="true" />
+          <span> Student sign-in isn't open yet. Nothing you enter here is sent or stored. </span>
+        </p>
+
+        <form class="mt-6 space-y-5" data-student-login novalidate>
+          <div>
+            <label for="student-email" class="block text-sm font-medium">Email</label>
+            <input
+              id="student-email"
+              name="email"
+              type="email"
+              autocomplete="email"
+              required
+              class="mt-2 w-full rounded-xl border border-line-strong bg-bg px-3.5 py-2.5 text-ink"
+            />
+          </div>
+          <div>
+            <label for="student-password" class="block text-sm font-medium">Password</label>
+            <input
+              id="student-password"
+              name="password"
+              type="password"
+              autocomplete="current-password"
+              required
+              class="mt-2 w-full rounded-xl border border-line-strong bg-bg px-3.5 py-2.5 text-ink"
+            />
+          </div>
+          <div>
+            <label for="student-program" class="block text-sm font-medium">Program</label>
+            <select
+              id="student-program"
+              name="program"
+              class="mt-2 w-full rounded-xl border border-line-strong bg-bg px-3.5 py-2.5 text-ink"
+            >
+              {programs.map((p) => <option value={p.id}>{p.title}</option>)}
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary w-full">
+            <Icon name="lucide:log-in" class="size-4" aria-hidden="true" />
+            Sign in
+          </button>
+          <p class="text-sm text-ink-soft" role="status" aria-live="polite" data-login-status></p>
+        </form>
+      </div>
+      <p class="mt-5 text-center text-sm text-muted">
+        Need access now? <a href="/contact/?topic=student" class="link">Contact me</a>.
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  // Placeholder until an identity provider is connected: never sends or stores anything.
+  const form = document.querySelector<HTMLFormElement>("[data-student-login]");
+  const status = document.querySelector<HTMLElement>("[data-login-status]");
+  form?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    form.reset();
+    if (status) {
+      status.textContent =
+        "Student sign-in isn't open yet. Please use the contact page to request your course materials.";
+    }
+  });
+</script>

@@ -1,0 +1,138 @@
+---
+import { Icon } from "astro-icon/components";
+
+export interface Section {
+  label: string;
+  /** A paragraph, or a list of points rendered as bullets. */
+  text?: string;
+  items?: string[];
+}
+
+export interface Props {
+  id: string;
+  chips: string[];
+  title: string;
+  subtitle: string;
+  /** Short muted line under the subtitle (e.g. the institution). */
+  meta?: string;
+  sections: Section[];
+  outcomes?: { value: string; label: string }[];
+  /** Small chips at the bottom (stack, tools). */
+  tags?: string[];
+  tagsLabel?: string;
+  links?: { href: string; label: string; external?: boolean }[];
+  headingLevel?: "h3" | "h4";
+}
+
+const {
+  id,
+  chips,
+  title,
+  subtitle,
+  meta,
+  sections,
+  outcomes = [],
+  tags = [],
+  tagsLabel = "Stack",
+  links = [],
+  headingLevel = "h3",
+} = Astro.props;
+
+const Heading = headingLevel;
+---
+
+<article id={id} class="card scroll-mt-24 p-6 sm:p-8">
+  <div class="flex flex-wrap items-center gap-2">
+    {chips.map((c) => <span class="chip">{c}</span>)}
+  </div>
+  <Heading class="mt-4 font-serif text-2xl font-medium sm:text-3xl">{title}</Heading>
+  <p class="mt-1 font-mono text-xs tracking-wide text-accent uppercase">{subtitle}</p>
+  {meta && <p class="mt-1 text-sm text-muted">{meta}</p>}
+
+  <dl class="mt-6 grid gap-6">
+    {
+      sections.map((s) => (
+        <div>
+          <dt class="font-mono text-xs tracking-[0.12em] text-muted uppercase">{s.label}</dt>
+          {s.text && <dd class="mt-2 leading-relaxed text-ink-soft">{s.text}</dd>}
+          {s.items && (
+            <dd class="mt-2">
+              <ul class="space-y-2.5 text-ink-soft">
+                {s.items.map((item) => (
+                  <li class="flex gap-3 leading-relaxed">
+                    <span
+                      class="mt-2.5 size-1.5 shrink-0 rounded-full bg-accent"
+                      aria-hidden="true"
+                    />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </dd>
+          )}
+        </div>
+      ))
+    }
+  </dl>
+
+  {
+    outcomes.length > 0 && (
+      <dl
+        class:list={[
+          "mt-7 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-line bg-line",
+          outcomes.length >= 4
+            ? "sm:grid-cols-4"
+            : outcomes.length === 3
+              ? "sm:grid-cols-3"
+              : outcomes.length === 1
+                ? "grid-cols-1 sm:max-w-xs"
+                : "sm:max-w-md",
+        ]}
+      >
+        {outcomes.map((o, i) => (
+          <div
+            class:list={[
+              "flex flex-col bg-sunken p-4",
+              outcomes.length % 2 === 1 && i === outcomes.length - 1 && "col-span-2 sm:col-span-1",
+            ]}
+          >
+            <dt class="order-2 text-xs leading-snug text-muted">{o.label}</dt>
+            <dd class="order-1 font-serif text-2xl font-medium text-accent">{o.value}</dd>
+          </div>
+        ))}
+      </dl>
+    )
+  }
+
+  {
+    tags.length > 0 && (
+      <ul class="mt-6 flex flex-wrap gap-1.5" aria-label={tagsLabel}>
+        {tags.map((t) => (
+          <li class="chip">{t}</li>
+        ))}
+      </ul>
+    )
+  }
+
+  {
+    links.length > 0 && (
+      <p class="mt-6 flex flex-wrap gap-x-6 gap-y-2">
+        {links.map((l) => (
+          <a
+            href={l.href}
+            class="link inline-flex items-center gap-1.5 text-sm font-semibold"
+            {...(l.external ? { target: "_blank", rel: "noopener" } : {})}
+          >
+            {l.label}
+            <span class="sr-only">: {title}</span>
+            <Icon
+              name={l.external ? "lucide:arrow-up-right" : "lucide:arrow-right"}
+              class="size-4"
+              aria-hidden="true"
+            />
+          </a>
+        ))}
+      </p>
+    )
+  }
+</article>

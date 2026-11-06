@@ -1,0 +1,166 @@
+---
+import { Icon } from "astro-icon/components";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import PageHeader from "@/components/PageHeader.astro";
+import Section from "@/components/Section.astro";
+import CTABand from "@/components/CTABand.astro";
+import { publications, researchThemes, type Publication } from "@/data/publications";
+import { profile } from "@/data/profile";
+import { breadcrumbSchema, personId } from "@/lib/schema";
+
+const published = publications
+  .filter((p) => p.status === "published")
+  .sort((a, b) => b.year - a.year);
+const manuscripts = publications.filter((p) => p.status === "manuscript");
+const years = [...new Set(published.map((p) => p.year))];
+
+const scholarly = published.map((p) => ({
+  "@context": "https://schema.org",
+  "@type": "ScholarlyArticle",
+  headline: p.title,
+  datePublished: String(p.year),
+  isPartOf: { "@type": "Periodical", name: p.venue },
+  author: { "@id": personId },
+  ...(p.doi ? { sameAs: `https://doi.org/${p.doi}` } : {}),
+}));
+
+const highlight = (authors: string) => authors.replace(/(Zarreh, A\.)/g, "<strong>$1</strong>");
+const doiUrl = (p: Publication) => (p.doi ? `https://doi.org/${p.doi}` : undefined);
+---
+
+<BaseLayout
+  title="Research & publications · Ali Zarreh"
+  description="Research by Ali Zarreh, now focused on medical research and applied AI, including vascular biomechanics, building on peer-reviewed work in game-theoretic cybersecurity, risk assessment and operations in cyber-physical manufacturing systems."
+  jsonLd={[
+    breadcrumbSchema([
+      { name: "Home", path: "/" },
+      { name: "Research", path: "/research/" },
+    ]),
+    ...scholarly,
+  ]}
+>
+  <PageHeader
+    eyebrow="Research"
+    title="Quantitative research, now focused on medicine and applied AI."
+    lead="My current research is in medical research and applied AI — most recently a peer-reviewed collaboration in vascular biomechanics. It builds on doctoral work that modeled attackers and defenders of cyber-physical manufacturing systems: the same habit of quantifying risk and failure modes shapes how I evaluate AI systems today."
+  >
+    <div class="mt-8 flex flex-wrap gap-3">
+      <a
+        href={profile.links.scholar}
+        class="btn btn-primary"
+        target="_blank"
+        rel="noopener"
+        data-track="profile_click"
+        data-track-label="scholar"
+      >
+        <Icon name="simple-icons:googlescholar" class="size-4" aria-hidden="true" />
+        Google Scholar
+      </a>
+      <a
+        href={profile.links.researchgate}
+        class="btn btn-secondary"
+        target="_blank"
+        rel="noopener"
+        data-track="profile_click"
+        data-track-label="researchgate"
+      >
+        ResearchGate
+      </a>
+    </div>
+  </PageHeader>
+
+  <Section eyebrow="Themes" title="What the research is about">
+    <div class="grid gap-6 md:grid-cols-3">
+      {
+        researchThemes.map((t) => (
+          <div class="card p-6">
+            <h3 class="font-sans text-lg font-semibold">{t.title}</h3>
+            <p class="mt-2 leading-relaxed text-ink-soft">{t.body}</p>
+          </div>
+        ))
+      }
+    </div>
+  </Section>
+
+  <Section
+    id="publications"
+    tone="sunken"
+    eyebrow="Publications"
+    title={`${published.length} peer-reviewed publications`}
+  >
+    <div class="space-y-12">
+      {
+        years.map((year) => (
+          <div class="grid gap-4 md:grid-cols-[6rem_minmax(0,1fr)]">
+            <h3 class="font-mono text-sm text-muted">{year}</h3>
+            <ul class="space-y-4">
+              {published
+                .filter((p) => p.year === year)
+                .map((p) => (
+                  <li class="card p-5">
+                    <div class="flex flex-wrap items-center gap-2">
+                      <span class="chip">{p.topic}</span>
+                      {p.featured && (
+                        <span class="chip border-accent/40 text-accent">Selected</span>
+                      )}
+                    </div>
+                    <p class="mt-3 font-serif text-lg leading-snug font-medium">
+                      {doiUrl(p) ? (
+                        <a
+                          href={doiUrl(p)}
+                          class="hover:text-accent"
+                          target="_blank"
+                          rel="noopener"
+                        >
+                          {p.title}
+                        </a>
+                      ) : (
+                        p.title
+                      )}
+                    </p>
+                    <p class="mt-2 text-sm text-ink-soft" set:html={highlight(p.authors)} />
+                    <p class="mt-1 text-sm text-muted">
+                      <em>{p.venue}</em>
+                      {p.details && `, ${p.details}`}
+                      {p.doi && (
+                        <>
+                          {" · "}
+                          <a href={doiUrl(p)} class="link" target="_blank" rel="noopener">
+                            doi:{p.doi}
+                          </a>
+                        </>
+                      )}
+                    </p>
+                  </li>
+                ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+
+    {
+      manuscripts.length > 0 && (
+        <details class="mt-12 rounded-2xl border border-line bg-elevated p-5">
+          <summary class="cursor-pointer font-medium">
+            Earlier manuscripts ({manuscripts.length})
+          </summary>
+          <ul class="mt-4 space-y-3 text-sm text-ink-soft">
+            {manuscripts.map((p) => (
+              <li>
+                <span set:html={highlight(p.authors)} /> ({p.year}). {p.title}. <em>{p.venue}</em>.
+              </li>
+            ))}
+          </ul>
+        </details>
+      )
+    }
+  </Section>
+
+  <CTABand
+    title="Working on medical or applied AI research?"
+    body="I'm always interested in collaborations that connect rigorous methods with systems people actually use."
+    primary={{ href: "/contact/", label: "Get in touch" }}
+    topic="research"
+  />
+</BaseLayout>

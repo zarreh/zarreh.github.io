@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "generated": "2026-11-03T00:00:00Z",
+  "chunks": [
+    {
+      "id": "c1",
+      "url": "/about/",
+      "title": "About Ali Zarreh",
+      "section": "Profile",
+      "text": "Ali Zarreh, Ph.D. is an AI solution architect and senior data scientist in San Antonio, Texas. He teaches the Agentic AI and Applied Generative AI programs offered by Johns Hopkins University and UT Austin."
+    },
+    {
+      "id": "c2",
+      "url": "/work/credit-decisioning/",
+      "title": "Credit Decisioning",
+      "section": "Overview",
+      "text": "Adverse-action notices written by code from a reviewed template and checked by an independent eight-check verifier proven with 14 mutation classes. AUROC 0.780."
+    },
+    {
+      "id": "c3",
+      "url": "/experience/#markdown-optimization",
+      "title": "Markdown Optimization (H-E-B)",
+      "section": "Lead Data Scientist",
+      "text": "Price-elasticity forecasting and a pruned combinatorial optimizer for multi-week discount schedules. Increased markdown revenue by 11% in the most recent benchmark."
+    },
+    {
+      "id": "c4",
+      "url": "/advisory/",
+      "title": "Board & advisory",
+      "section": "Advisory",
+      "text": "Current: Health Tech Board Advisor (AI & Technology) at Syne Life since August 2026. AI strategy, governance and technical due diligence."
+    },
+    {
+      "id": "c5",
+      "url": "/work/clinical-care-navigator/",
+      "title": "Clinical Care Navigator",
+      "section": "How it works",
+      "text": "A guardrail sandwich: a pre-flight screen before the model and a post-flight check after it. Critical lab values such as potassium 6.9 override the draft and route to a clinician."
+    }
+  ]
+}

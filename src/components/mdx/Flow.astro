@@ -1,0 +1,91 @@
+---
+import { Icon } from "astro-icon/components";
+
+type Kind = "input" | "code" | "ai" | "check" | "human" | "output";
+
+export interface Props {
+  steps: { label: string; kind: Kind; note?: string }[];
+  caption?: string;
+}
+
+const { steps, caption } = Astro.props;
+
+const kinds: Record<Kind, { label: string; icon: string; cls: string }> = {
+  input: { label: "Input", icon: "lucide:inbox", cls: "border-line-strong bg-elevated text-ink" },
+  code: { label: "Code", icon: "lucide:braces", cls: "border-line-strong bg-elevated text-ink" },
+  ai: {
+    label: "Model / AI",
+    icon: "lucide:sparkles",
+    cls: "border-accent/50 bg-accent-soft text-ink",
+  },
+  check: {
+    label: "Check",
+    icon: "lucide:shield-check",
+    cls: "border-warm/50 bg-warm-soft text-ink",
+  },
+  human: { label: "Human", icon: "lucide:user-check", cls: "border-ink bg-ink text-bg" },
+  output: { label: "Output", icon: "lucide:send", cls: "border-line-strong bg-elevated text-ink" },
+};
+
+// Balanced columns: 6 steps → 3 + 3 rather than 4 + 2.
+const n = steps.length;
+const colsSm = n === 4 ? 2 : Math.min(n, 3);
+const colsLg = n <= 4 ? n : n % 4 === 0 || n === 7 ? 4 : 3;
+
+const usedKinds = [...new Set(steps.map((s) => s.kind))].filter((k) =>
+  ["code", "ai", "check", "human"].includes(k),
+);
+---
+
+<figure class="not-prose my-10">
+  <ol class="flow-grid grid gap-3" style={`--cols-sm:${colsSm};--cols-lg:${colsLg}`}>
+    {
+      steps.map((step, i) => (
+        <li class="relative flex">
+          <div
+            class:list={[
+              "flex w-full flex-col rounded-xl border px-3.5 py-3",
+              kinds[step.kind].cls,
+            ]}
+          >
+            <span class="flex items-center gap-1.5 font-mono text-[0.62rem] tracking-[0.12em] uppercase opacity-70">
+              <span class="tabular-nums">{String(i + 1).padStart(2, "0")}</span>
+              <Icon name={kinds[step.kind].icon} class="size-3.5" aria-hidden="true" />
+              {kinds[step.kind].label}
+            </span>
+            <span class="mt-1.5 text-sm leading-snug font-semibold">{step.label}</span>
+            {step.note && <span class="mt-1 text-xs leading-snug opacity-75">{step.note}</span>}
+          </div>
+        </li>
+      ))
+    }
+  </ol>
+  <figcaption class="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted">
+    {caption && <span class="mr-2">{caption}</span>}
+    <span class="font-mono tracking-wide uppercase">In order ·</span>
+    {
+      usedKinds.map((k) => (
+        <span class="inline-flex items-center gap-1.5">
+          <span class:list={["inline-block size-2.5 rounded-sm border", kinds[k].cls]} />
+          {k === "check" ? "Independent check" : kinds[k].label}
+        </span>
+      ))
+    }
+  </figcaption>
+</figure>
+
+<style>
+  .flow-grid {
+    grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
+  }
+  @media (min-width: 640px) {
+    .flow-grid {
+      grid-template-columns: repeat(var(--cols-sm), minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 1280px) {
+    .flow-grid {
+      grid-template-columns: repeat(var(--cols-lg), minmax(0, 1fr));
+    }
+  }
+</style>

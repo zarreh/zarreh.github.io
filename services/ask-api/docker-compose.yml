@@ -1,0 +1,26 @@
+# Runs the assistant on the VPS, bound to localhost only; nginx terminates TLS in front of it.
+#   cp deploy/settings.example ask.env   # add your API key (never commit ask.env)
+#   docker compose up -d --build
+services:
+  ask-api:
+    build: .
+    image: zarreh/ask-api:latest
+    restart: unless-stopped
+    env_file: ask.env
+    ports:
+      - "127.0.0.1:8090:8080"
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+          cpus: "1.0"
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
